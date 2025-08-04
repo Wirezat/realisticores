@@ -27,7 +27,7 @@ public class ModBlocks {
 
     public static void registerModBlocks() {
         RealisticOres.LOGGER.info("Registering blocks for " + RealisticOres.MOD_ID);
-        // Registrierungen hierher verschoben
+
         KIMBERLITE = registerBlock("kimberlite",
                 new Block(FabricBlockSettings.create()
                         .strength(2.0f, 8.0f)

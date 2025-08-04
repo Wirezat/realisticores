@@ -3,6 +3,7 @@
   "block.realisticores.kimberlite_diamond_ore": "Kimberlit Diamanterz",
   "item.realisticores.raw_diamond": "Rohdiamant",
   "item.realisticores.synthetic_diamond": "Synthetischer Diamant",
+  "item.realisticores.synthetic_diamond_pickaxe": "'Diamant' Spitzhacke",
   "itemGroup.realisticores.realistic_ores_tab": "Realistische Erze",
 
   "advancements.realisticores.diamonds_question.title": "Diamanten?",

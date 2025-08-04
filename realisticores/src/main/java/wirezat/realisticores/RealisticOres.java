@@ -28,7 +28,6 @@ public class RealisticOres implements ModInitializer {
 				GenerationStep.Feature.UNDERGROUND_ORES,
 				KIMBERLITE_MAGMA_PLACED_KEY
 		);
-
-		LOGGER.info("RealisticOres initialized successfully!");
+		
 	}
 }

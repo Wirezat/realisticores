@@ -9,11 +9,10 @@
 
     public class ModFeatures {
 
-        // Die Variable wird nur deklariert
         public static Feature<KimberliteMagmaFeatureConfig> KIMBERLITE_MAGMA;
 
-        // Die Registrierung findet in dieser Methode statt
         public static void registerModFeatures() {
+            RealisticOres.LOGGER.info("Registering features for " + RealisticOres.MOD_ID);
             KIMBERLITE_MAGMA = Registry.register(
                     Registries.FEATURE,
                     new Identifier(RealisticOres.MOD_ID, "kimberlite_magma"),

@@ -17,10 +17,11 @@ public class ModItemGroups {
             .displayName(Text.translatable("itemGroup.realisticores.realistic_ores_tab"))
             .icon(() -> new ItemStack(ModBlocks.KIMBERLITE_DIAMOND_ORE))
             .entries((context, entries) -> {
-                entries.add(ModBlocks.KIMBERLITE);
-                entries.add(ModBlocks.KIMBERLITE_DIAMOND_ORE);
+                entries.add(ModItems.SYNTHETIC_DIAMOND_PICKAXE);
                 entries.add(ModItems.RAW_DIAMOND);
                 entries.add(ModItems.SYNTHETIC_DIAMOND);
+                entries.add(ModBlocks.KIMBERLITE);
+                entries.add(ModBlocks.KIMBERLITE_DIAMOND_ORE);
             })
             .build()
     );
