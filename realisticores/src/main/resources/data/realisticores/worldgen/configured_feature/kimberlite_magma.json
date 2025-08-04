@@ -1,0 +1,15 @@
+{
+  "type": "realisticores:kimberlite_magma",
+  "config": {
+    "height": 384,
+    "radius": 24.0,
+    "noise": 0.2,
+    "oreChance": 0.01,
+    "ore_block": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "realisticores:kimberlite_diamond_ore"
+      }
+    }
+  }
+}

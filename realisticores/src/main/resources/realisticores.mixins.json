@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "wirezat.realisticores.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"OreFeatureMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

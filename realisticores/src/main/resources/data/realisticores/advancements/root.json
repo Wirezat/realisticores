@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "realisticores:kimberlite_diamond_ore"
+    },
+    "title": {
+      "translate": "advancements.realisticores.root.title"
+    },
+    "description": {
+      "translate": "advancements.realisticores.root.description"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "always_true": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

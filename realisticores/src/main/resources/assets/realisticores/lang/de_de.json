@@ -1,0 +1,16 @@
+{
+  "block.realisticores.kimberlite": "Kimberlit",
+  "block.realisticores.kimberlite_diamond_ore": "Kimberlit Diamanterz",
+  "item.realisticores.raw_diamond": "Rohdiamant",
+  "item.realisticores.synthetic_diamond": "Synthetischer Diamant",
+  "itemGroup.realisticores.realistic_ores_tab": "Realistische Erze",
+
+  "advancements.realisticores.diamonds_question.title": "Diamanten?",
+  "advancements.realisticores.diamonds_question.description": "Knapp drann aber fast. Von einem echten Diamanten kaum zu unterscheiden!",
+
+  "advancements.realisticores.diamonds_sad.title": "Diamanten :(",
+  "advancements.realisticores.diamonds_sad.description": "Ein echter Diamant! Aber sollte er nicht mehr glänzen?",
+
+  "advancements.realisticores.root.title": "Realistische Erze",
+  "advancements.realisticores.root.description": "Beginne deine Reise, um die wahren Erze zu finden."
+}

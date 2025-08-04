@@ -1,0 +1,16 @@
+{
+  "block.realisticores.kimberlite": "Kimberlite",
+  "block.realisticores.kimberlite_diamond_ore": "Kimberlite Diamond Ore",
+  "item.realisticores.raw_diamond": "Raw Diamond",
+  "item.realisticores.synthetic_diamond": "Synthetic Diamond",
+  "itemGroup.realisticores.realistic_ores_tab": "Realistic Ores",
+
+  "advancements.realisticores.diamonds_question.title": "Diamonds?",
+  "advancements.realisticores.diamonds_question.description": "Almost there, but not quite. Hard to distinguish from a real diamond!",
+
+  "advancements.realisticores.diamonds_sad.title": "Diamonds :(",
+  "advancements.realisticores.diamonds_sad.description": "A real diamond! But shouldn't it be more shiny?",
+
+  "advancements.realisticores.root.title": "Realistic Ores",
+  "advancements.realisticores.root.description": "Begin your journey to the real ores."
+}

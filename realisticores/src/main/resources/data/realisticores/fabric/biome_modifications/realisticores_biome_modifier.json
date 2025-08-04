@@ -1,0 +1,8 @@
+{
+  "type": "fabric:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "realisticores:kimberlite_magma_placed"
+  ],
+  "step": "underground_ores"
+}

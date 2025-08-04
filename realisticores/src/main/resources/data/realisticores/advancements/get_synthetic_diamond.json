@@ -1,0 +1,37 @@
+{
+  "parent": "realisticores:root",
+  "display": {
+    "icon": {
+      "item": "realisticores:synthetic_diamond"
+    },
+    "title": {
+      "translate": "advancements.realisticores.diamonds_question.title"
+    },
+    "description": {
+      "translate": "advancements.realisticores.diamonds_question.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "get_synthetic_diamond": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "realisticores:synthetic_diamond"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "get_synthetic_diamond"
+    ]
+  ]
+}
