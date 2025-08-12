@@ -1,6 +1,8 @@
 {
   "block.realisticores.kimberlite": "Kimberlite",
   "block.realisticores.kimberlite_diamond_ore": "Kimberlite Diamond Ore",
+  "block.realisticores.cubic_press": "Cubic Press",
+
   "item.realisticores.raw_diamond": "Raw Diamond",
   "item.realisticores.synthetic_diamond": "Synthetic Diamond",
   "item.realisticores.synthetic_diamond_pickaxe": "'Diamond' Pickaxe",

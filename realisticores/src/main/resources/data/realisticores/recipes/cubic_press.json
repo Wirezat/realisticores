@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#P#",
+        "PBP",
+        "#P#"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:obsidian"
+        },
+        "P": {
+            "item": "minecraft:piston"
+        },
+        "B": {
+            "item": "minecraft:blast_furnace"
+        }
+    },
+    "result": {
+        "item": "realisticores:cubic_press"
+    }
+}

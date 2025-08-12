@@ -20,6 +20,7 @@ public class ModItemGroups {
                 entries.add(ModItems.SYNTHETIC_DIAMOND_PICKAXE);
                 entries.add(ModItems.RAW_DIAMOND);
                 entries.add(ModItems.SYNTHETIC_DIAMOND);
+                entries.add(ModBlocks.CUBIC_PRESS_BLOCK);
                 entries.add(ModBlocks.KIMBERLITE);
                 entries.add(ModBlocks.KIMBERLITE_DIAMOND_ORE);
             })

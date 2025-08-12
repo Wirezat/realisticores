@@ -1,0 +1,16 @@
+{
+  "type": "realisticores:cubic_press",
+  "input": {
+    "item": "minecraft:coal_block",
+    "count": 1
+  },
+  "catalyst": {
+    "item": "minecraft:iron_ingot",
+    "count": 1
+  },
+  "output": {
+    "item": "realisticores:synthetic_diamond",
+    "count": 1
+  },
+  "processingTime": 1200
+}

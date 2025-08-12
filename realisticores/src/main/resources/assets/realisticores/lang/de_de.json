@@ -1,6 +1,8 @@
 {
   "block.realisticores.kimberlite": "Kimberlit",
   "block.realisticores.kimberlite_diamond_ore": "Kimberlit Diamanterz",
+  "block.realisticores.cubic_press": "Kubuspresse",
+
   "item.realisticores.raw_diamond": "Rohdiamant",
   "item.realisticores.synthetic_diamond": "Synthetischer Diamant",
   "item.realisticores.synthetic_diamond_pickaxe": "'Diamant' Spitzhacke",
