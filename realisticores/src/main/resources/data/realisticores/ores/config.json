@@ -1,34 +1,51 @@
 {
   "_readme": [
-    "RealisticOres configuration.",
-    "THRESHOLD SEMANTICS: sparsity [0,1]. 0.0 = everywhere | 1.0 = never present.",
-    "FREQUENCY GUIDE: 1 / frequency ≈ structural period in blocks."
+    "RealisticOres — Kimberlite pipe configuration.",
+    "",
+    "PLACEMENT:",
+    "  gridSize 4096 + spawnChance 0.25 → ~1 pipe per 67 km².",
+    "  Real world (South Africa, densest cratons): ~1 per 300-500 km².",
+    "  Increase gridSize or decrease spawnChance for more realism at the cost of findability.",
+    "",
+    "SHAPE:",
+    "  True carrot/cone geometry. maxRadius = surface diameter / 2.",
+    "  taperPower 0.55 (≈sqrt) = rapid widening near surface, very narrow root. Realistic.",
+    "  edgeNoiseStrength adds ±5 blocks of wall irregularity.",
+    "",
+    "ORE:",
+    "  Diamond ore concentrated below Y=-20 (root zone, ~6% of volume).",
+    "  Sparse secondary zone Y=-20 to Y=5 (~2.5% of volume)."
   ],
 
   "kimberlite": {
+    "placement": {
+      "gridSize": 4096,
+      "spawnChance": 0.25,
+      "jitter": 0.40
+    },
     "shape": {
-      "pipeFrequency": 0.00030,
-      "pipeThreshold": 0.91,
-      "taperPower": 0.50,
+      "maxRadius": 40.0,
+      "taperPower": 0.55,
       "craterBaseY": 64,
-      "craterWideningFactor": 1.15,
-      "craterDepthBlocks": 20,
-      "edgeNoiseFrequency": 0.020,
-      "edgeNoiseStrength": 0.018
+      "craterWideningFactor": 1.20,
+      "craterHeightBlocks": 16,
+      "edgeNoiseFrequency": 0.035,
+      "edgeNoiseStrength": 5.0
     },
     "zones": {
       "rootZoneMaxY": -20,
-      "rootTaperPower": 1.6,
-      "brecciaCoreRatio": 0.30
+      "rootTaperPower": 1.8,
+      "brecciaFraction": 0.35,
+      "rootMinRadius": 5.0
     },
     "ore": {
-      "oreNoiseFrequency": 0.10,
-      "oreThreshold": 0.96,
+      "oreNoiseFrequency": 0.12,
+      "oreThreshold": 0.94,
       "oreMaxY": -20,
-      "oreUpperMaxY": 10,
-      "oreUpperThreshold": 0.985,
-      "xenolithFrequency": 0.08,
-      "xenolithThreshold": 0.97
+      "oreUpperMaxY": 5,
+      "oreUpperThreshold": 0.975,
+      "xenolithFrequency": 0.09,
+      "xenolithThreshold": 0.96
     },
     "replaceable": [
       "minecraft:stone",
