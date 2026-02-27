@@ -12,7 +12,6 @@
         public static Feature<KimberliteMagmaFeatureConfig> KIMBERLITE_MAGMA;
 
         public static void registerModFeatures() {
-            RealisticOres.LOGGER.info("Registering features for " + RealisticOres.MOD_ID);
             KIMBERLITE_MAGMA = Registry.register(
                     Registries.FEATURE,
                     new Identifier(RealisticOres.MOD_ID, "kimberlite_magma"),

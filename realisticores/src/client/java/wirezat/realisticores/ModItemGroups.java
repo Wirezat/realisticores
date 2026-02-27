@@ -22,12 +22,12 @@ public class ModItemGroups {
                 entries.add(ModItems.SYNTHETIC_DIAMOND);
                 entries.add(ModBlocks.CUBIC_PRESS_BLOCK);
                 entries.add(ModBlocks.KIMBERLITE);
+                entries.add(ModBlocks.KIMBERLITE_STAIRS);
+                entries.add(ModBlocks.KIMBERLITE_SLAB);
                 entries.add(ModBlocks.KIMBERLITE_DIAMOND_ORE);
             })
             .build()
     );
-
     public static void registerModItemGroups() {
-        RealisticOres.LOGGER.info("Registering Item Groups for " + RealisticOres.MOD_ID);
     }
 }

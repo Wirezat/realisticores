@@ -101,8 +101,6 @@ public class CubicPressRecipe implements Recipe<Inventory> {
 
         @Override
         public CubicPressRecipe read(Identifier id, JsonObject json) {
-            // Fügt eine Logger-Nachricht hinzu, um zu überprüfen, ob das Rezept geladen wird.
-            RealisticOres.LOGGER.info("Attempting to read Cubic Press recipe: " + id.toString());
 
             JsonObject inputJson = json.getAsJsonObject("input");
             ItemStack input = new ItemStack(
@@ -110,7 +108,6 @@ public class CubicPressRecipe implements Recipe<Inventory> {
                     JsonHelper.getInt(inputJson, "count", 1)
             );
 
-            // Liest den Katalysator, der jetzt optional ist.
             ItemStack catalyst = ItemStack.EMPTY;
             if (json.has("catalyst")) {
                 JsonObject catalystJson = json.getAsJsonObject("catalyst");

@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.SlabBlock;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -19,6 +21,8 @@ import wirezat.realisticores.blocks.machines.cubicpress.CubicPressScreenHandler;
 public class ModBlocks {
 
     public static Block KIMBERLITE;
+    public static Block KIMBERLITE_STAIRS;
+    public static Block KIMBERLITE_SLAB;
     public static Block KIMBERLITE_DIAMOND_ORE;
     public static Block CUBIC_PRESS_BLOCK;
     public static BlockEntityType<CubicPressBlockEntity> CUBIC_PRESS_BLOCK_ENTITY;
@@ -35,12 +39,16 @@ public class ModBlocks {
     }
 
     public static void registerModBlocks() {
-        RealisticOres.LOGGER.info("Registering blocks for " + RealisticOres.MOD_ID);
 
         KIMBERLITE = registerBlock("kimberlite",
                 new Block(FabricBlockSettings.create()
                         .strength(2.0f, 8.0f)
                         .requiresTool()));
+
+        KIMBERLITE_STAIRS = registerBlock("kimberlite_stairs",
+                new StairsBlock(KIMBERLITE.getDefaultState(), FabricBlockSettings.copy(KIMBERLITE)));
+        KIMBERLITE_SLAB = registerBlock("kimberlite_slab",
+                new SlabBlock(FabricBlockSettings.copy(KIMBERLITE)));
 
         KIMBERLITE_DIAMOND_ORE = registerBlock("kimberlite_diamond_ore",
                 new Block(FabricBlockSettings.create()

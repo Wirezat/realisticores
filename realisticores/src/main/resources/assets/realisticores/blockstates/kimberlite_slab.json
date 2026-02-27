@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "realisticores:block/kimberlite_slab" },
+    "type=top":    { "model": "realisticores:block/kimberlite_slab_top" },
+    "type=double": { "model": "realisticores:block/kimberlite_slab_double" }
+  }
+}

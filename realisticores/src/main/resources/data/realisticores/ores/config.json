@@ -1,0 +1,203 @@
+{
+  "_readme": [
+    "RealisticOres configuration. Each ore type is a top-level key.",
+    "1 block = 1 meter. Frequency guide: 1 / frequency ≈ structure size in blocks.",
+    "",
+    "THRESHOLD SEMANTICS (presenceThreshold, secondaryThreshold, regionThreshold, gasThreshold):",
+    "  These are sparsity values from 0.0 to 1.0.",
+    "  0.0 = present everywhere | 0.5 = present in ~50% of area | 1.0 = never present.",
+    "",
+    "COAL REGION COVERAGE:",
+    "  regionThreshold 0.80 → ~20% of world is inside a coal basin.",
+    "  Coal basins exist on virtually every continent; 20% is realistic and playable.",
+    "  Within a basin: shallow_tertiary is the accessible early-game seam (~25% of basin columns).",
+    "  Deep seams are rarer within basins (~10-15% of basin columns) and are late-game resources.",
+    "",
+    "LATERAL EXTENT:",
+    "  presenceFrequency ~0.001 → ~1000-block seam diameter (≈ 1 km). Realistic for major seams.",
+    "  Threshold compensation keeps total coal coverage similar to vanilla while making individual",
+    "  seams much larger and separated by realistic coal-free gaps.",
+    "",
+    "COAL RANK (depth-based):",
+    "  Y >= deepRankY  →  Bituminous coal  →  coal_ore dominant (coreThresholdShallow)",
+    "  Y <  deepRankY  →  Anthracite       →  coal_block dominant (coreThresholdDeep)"
+  ],
+
+  "coal": {
+    "geology": {
+      "regionFrequency": 0.00035,
+      "_regionThreshold_note": "0.80 = coal in ~20% of world. Realistic (coal widespread globally) and playable.",
+      "regionThreshold": 0.80,
+      "gasFrequency": 0.040,
+      "_gasThreshold_note": "0.95 = gas in ~5% of seam volume. Rare but present, as in real coal mines.",
+      "gasThreshold": 0.95
+    },
+    "seams": [
+      {
+        "id": "deep_primary",
+        "_notes": [
+          "Deepest seam. Late-game resource equivalent to anthracite in the deepslate zone.",
+          "Rare within basins (high thresholds). Large seam blobs (~1050 block diameter) but sparse.",
+          "Realistic: deep primary seams in the Appalachian Basin extend hundreds of km but are",
+          "patchy within that range due to erosion, faulting, and depositional variation."
+        ],
+        "enabled": true,
+        "depth": {
+          "centerY": 10,
+          "yVarianceFrequency": 0.003,
+          "yVarianceAmplitude": 10
+        },
+        "size": {
+          "_presenceFreq_note": "1/0.00095 ≈ 1050 block structural diameter.",
+          "presenceFrequencyX": 0.00095,
+          "presenceFrequencyZ": 0.00110,
+          "_presenceThreshold_note": "0.72 → ~28% of basin columns hit this seam. Deep seam = rare.",
+          "presenceThreshold": 0.72,
+          "secondaryFrequencyX": 0.0050,
+          "secondaryFrequencyZ": 0.0050,
+          "_secondaryThreshold_note": "0.62 → further ~38% reduction. Creates internal gaps and lenses.",
+          "secondaryThreshold": 0.62
+        },
+        "thickness": {
+          "baseMin": 2,
+          "baseMax": 8,
+          "noiseFrequency": 0.009
+        },
+        "tilt": {
+          "angleXDegrees": 12.0,
+          "angleZDegrees": -4.0,
+          "tiltVarianceFrequency": 0.002,
+          "tiltVarianceStrength": 6.0
+        },
+        "edge": {
+          "noiseFrequency": 0.022,
+          "noiseStrength": 1.8
+        },
+        "composition": {
+          "deepRankY": 0,
+          "coreThresholdShallow": 0.15,
+          "coreThresholdDeep": 0.55
+        },
+        "split": {
+          "enabled": false,
+          "frequency": 0.0018,
+          "threshold": 0.65,
+          "gapSize": 2.5
+        }
+      },
+      {
+        "id": "mid_secondary",
+        "_notes": [
+          "Mid-depth seam. Standard bituminous coal zone. Splitting enabled to simulate the",
+          "Pittsburgh coal bed style where a sandstone channel splits the seam into two benches.",
+          "Moderately rare within basins (threshold 0.69). Larger blobs than shallow seam but",
+          "interrupted by secondary noise more aggressively."
+        ],
+        "enabled": true,
+        "depth": {
+          "centerY": 48,
+          "yVarianceFrequency": 0.004,
+          "yVarianceAmplitude": 12
+        },
+        "size": {
+          "presenceFrequencyX": 0.00105,
+          "presenceFrequencyZ": 0.00095,
+          "_presenceThreshold_note": "0.69 → ~31% of basin columns. Moderately rare.",
+          "presenceThreshold": 0.69,
+          "secondaryFrequencyX": 0.0055,
+          "secondaryFrequencyZ": 0.0050,
+          "secondaryThreshold": 0.60
+        },
+        "thickness": {
+          "baseMin": 1,
+          "baseMax": 5,
+          "noiseFrequency": 0.013
+        },
+        "tilt": {
+          "angleXDegrees": -6.0,
+          "angleZDegrees": 14.0,
+          "tiltVarianceFrequency": 0.0025,
+          "tiltVarianceStrength": 8.0
+        },
+        "edge": {
+          "noiseFrequency": 0.028,
+          "noiseStrength": 1.4
+        },
+        "composition": {
+          "deepRankY": 0,
+          "coreThresholdShallow": 0.15,
+          "coreThresholdDeep": 0.55
+        },
+        "split": {
+          "enabled": true,
+          "frequency": 0.0018,
+          "_threshold_note": "0.62 → ~38% of seam area splits into two benches.",
+          "threshold": 0.62,
+          "gapSize": 2.5
+        }
+      },
+      {
+        "id": "shallow_tertiary",
+        "_notes": [
+          "The primary early-game coal source. Deliberately more accessible than deep seams.",
+          "Lower presence/secondary thresholds = more continuous seam coverage within a basin.",
+          "Net coverage within basin: ~42% * 55% ≈ 23% of basin columns hit this seam.",
+          "Total world coverage: ~20% basin * 23% = ~4.6% of world XZ columns at this Y range.",
+          "This means: a player IN a basin finds coal within ~50-100 blocks. A player OUTSIDE",
+          "a basin may need to travel 500-1000 blocks — realistic, but not punishing.",
+          "centerY fixed at 58, amplitude 8 → range Y=50-66, stays below surface."
+        ],
+        "enabled": true,
+        "depth": {
+          "centerY": 58,
+          "_amplitude_note": "Amplitude 8 → Y range 50-66. Always sub-surface, never exposed.",
+          "yVarianceFrequency": 0.005,
+          "yVarianceAmplitude": 8
+        },
+        "size": {
+          "presenceFrequencyX": 0.00120,
+          "presenceFrequencyZ": 0.00110,
+          "_presenceThreshold_note": "0.58 → ~42% of basin columns. Accessible early-game seam.",
+          "presenceThreshold": 0.58,
+          "secondaryFrequencyX": 0.0065,
+          "secondaryFrequencyZ": 0.0060,
+          "_secondaryThreshold_note": "0.45 → ~55% pass. Less fragmentation = more findable by player.",
+          "secondaryThreshold": 0.45
+        },
+        "thickness": {
+          "baseMin": 1,
+          "baseMax": 3,
+          "noiseFrequency": 0.018
+        },
+        "tilt": {
+          "angleXDegrees": 18.0,
+          "angleZDegrees": -10.0,
+          "tiltVarianceFrequency": 0.004,
+          "tiltVarianceStrength": 12.0
+        },
+        "edge": {
+          "noiseFrequency": 0.038,
+          "noiseStrength": 1.2
+        },
+        "composition": {
+          "deepRankY": 0,
+          "_coreShallow_note": "Only 12% coal_block in shallow zone. Bituminous coal is mostly ore.",
+          "coreThresholdShallow": 0.12,
+          "coreThresholdDeep": 0.55
+        },
+        "split": {
+          "enabled": false,
+          "frequency": 0.0020,
+          "threshold": 0.70,
+          "gapSize": 1.5
+        }
+      }
+    ],
+    "replaceable": [
+      "minecraft:stone",
+      "minecraft:deepslate",
+      "minecraft:sandstone",
+      "minecraft:gravel"
+    ]
+  }
+}

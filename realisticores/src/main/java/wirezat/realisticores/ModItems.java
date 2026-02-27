@@ -19,8 +19,6 @@ public class ModItems {
     }
 
     public static void registerModItems() {
-        RealisticOres.LOGGER.info("Registering items for " + RealisticOres.MOD_ID);
-
         RAW_DIAMOND = registerItem("raw_diamond",
                 new Item(new FabricItemSettings()));
         SYNTHETIC_DIAMOND = registerItem("synthetic_diamond",

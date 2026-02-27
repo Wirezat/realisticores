@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "realisticores:block/kimberlite",
+    "top":    "realisticores:block/kimberlite",
+    "side":   "realisticores:block/kimberlite"
+  }
+}
