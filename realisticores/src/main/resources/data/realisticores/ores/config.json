@@ -1,0 +1,47 @@
+{
+  "_readme": [
+    "RealisticOres configuration.",
+    "THRESHOLD SEMANTICS: sparsity [0,1]. 0.0 = everywhere | 1.0 = never present.",
+    "FREQUENCY GUIDE: 1 / frequency ≈ structural period in blocks."
+  ],
+
+  "kimberlite": {
+    "shape": {
+      "pipeFrequency": 0.00030,
+      "pipeThreshold": 0.91,
+      "taperPower": 0.50,
+      "craterBaseY": 64,
+      "craterWideningFactor": 1.15,
+      "craterDepthBlocks": 20,
+      "edgeNoiseFrequency": 0.020,
+      "edgeNoiseStrength": 0.018
+    },
+    "zones": {
+      "rootZoneMaxY": -20,
+      "rootTaperPower": 1.6,
+      "brecciaCoreRatio": 0.30
+    },
+    "ore": {
+      "oreNoiseFrequency": 0.10,
+      "oreThreshold": 0.96,
+      "oreMaxY": -20,
+      "oreUpperMaxY": 10,
+      "oreUpperThreshold": 0.985,
+      "xenolithFrequency": 0.08,
+      "xenolithThreshold": 0.97
+    },
+    "replaceable": [
+      "minecraft:stone",
+      "minecraft:deepslate",
+      "minecraft:granite",
+      "minecraft:diorite",
+      "minecraft:andesite",
+      "minecraft:tuff",
+      "minecraft:calcite",
+      "minecraft:smooth_basalt",
+      "minecraft:gravel",
+      "minecraft:dirt",
+      "minecraft:cave_air"
+    ]
+  }
+}
