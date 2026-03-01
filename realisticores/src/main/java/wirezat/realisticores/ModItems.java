@@ -13,6 +13,12 @@ public class ModItems {
     // ── Coal ──────────────────────────────────────────────────────────────────
     public static Item LIGNIT;
     public static Item COKE;
+    /*
+    TODO: Coal Tar as a waste product:
+    Black fluid. this would need a new machine, some kind of pyrolyze oven to allow secondary output
+    Usage ideas: make blocks inflammable, black dye, black really sticky water (trapping mobs?)
+     Lookup other possible uses when implementing
+     */
 
     // ── Diamonds ──────────────────────────────────────────────────────────────
     public static Item RAW_DIAMOND;

@@ -29,9 +29,9 @@ public class RealisticOres implements ModInitializer {
 				new Identifier(MOD_ID, "cubic_press"),
 				CubicPressRecipe.Serializer.INSTANCE);
 
-		ModFuels.register();
 		ModBlocks.registerModBlocks();
 		ModItems.registerModItems();
+		ModFuels.register();
 
 	}
 }
