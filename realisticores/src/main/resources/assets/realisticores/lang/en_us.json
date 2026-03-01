@@ -5,24 +5,37 @@
   "advancements.realisticores.diamonds_sad.title": "Diamonds :(",
   "advancements.realisticores.root.description": "Begin your journey to the real ores.",
   "advancements.realisticores.root.title": "Realistic Ores",
-  "block.realisticores.blackshale": "Blackshale",
-  "block.realisticores.blackshale_slab": "Blackshale Slab",
-  "block.realisticores.blackshale_stairs": "Blackshale Stairs",
-  "block.realisticores.blackshale_wall": "Blackshale Wall",
+
+  "itemGroup.realisticores.realistic_ores_tab": "Realistic Ores",
+
+  "block.minecraft.coal_block": "Bituminous Coal Block",
+  "block.minecraft.coal_ore": "Bituminous Coal Ore",
+  "block.minecraft.deepslate_coal_ore": "Deepslate Bituminous Coal Ore",
+  "item.minecraft.coal": "Bituminous Coal",
+
+  "block.realisticores.blackshale": "Black Shale",
+  "block.realisticores.blackshale_slab": "Black Shale Slab",
+  "block.realisticores.blackshale_stairs": "Black Shale Stairs",
+  "block.realisticores.blackshale_wall": "Black Shale Wall",
+  "block.realisticores.coke_block": "Coke Block",
   "block.realisticores.cubic_press": "Cubic Press",
   "block.realisticores.kimberlite": "Kimberlite",
   "block.realisticores.kimberlite_diamond_ore": "Kimberlite Diamond Ore",
   "block.realisticores.kimberlite_slab": "Kimberlite Slab",
   "block.realisticores.kimberlite_stairs": "Kimberlite Stairs",
   "block.realisticores.kimberlite_wall": "Kimberlite Wall",
+  "block.realisticores.lignit_block": "Lignite Block",
+  "block.realisticores.lignit_ore": "Lignite Ore",
   "block.realisticores.mudstone": "Mudstone",
   "block.realisticores.mudstone_slab": "Mudstone Slab",
   "block.realisticores.shale": "Shale",
   "block.realisticores.shale_slab": "Shale Slab",
   "block.realisticores.shale_stairs": "Shale Stairs",
   "block.realisticores.shale_wall": "Shale Wall",
+
+  "item.realisticores.coke": "Coke",
+  "item.realisticores.lignit": "Lignite",
   "item.realisticores.raw_diamond": "Raw Diamond",
   "item.realisticores.synthetic_diamond": "Synthetic Diamond",
-  "item.realisticores.synthetic_diamond_pickaxe": "'Diamond' Pickaxe",
-  "itemGroup.realisticores.realistic_ores_tab": "Realistic Ores"
+  "item.realisticores.synthetic_diamond_pickaxe": "'Diamond' Pickaxe"
 }

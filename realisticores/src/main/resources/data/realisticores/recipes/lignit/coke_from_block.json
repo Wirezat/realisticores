@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "realisticores:coke_block"
+    }
+  ],
+  "result": {
+    "item": "realisticores:coke",
+    "count": 9
+  }
+}

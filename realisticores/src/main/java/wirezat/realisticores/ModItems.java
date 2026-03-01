@@ -10,27 +10,34 @@ import wirezat.realisticores.item.tools.syntheticdiamondpickaxe.SyntheticDiamond
 
 public class ModItems {
 
+    // ── Coal ──────────────────────────────────────────────────────────────────
+    public static Item LIGNIT;
+    public static Item COKE;
+
+    // ── Diamonds ──────────────────────────────────────────────────────────────
     public static Item RAW_DIAMOND;
     public static Item SYNTHETIC_DIAMOND;
     public static Item SYNTHETIC_DIAMOND_PICKAXE;
+
+    // ── Registration ──────────────────────────────────────────────────────────
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(RealisticOres.MOD_ID, name), item);
     }
 
     public static void registerModItems() {
-        RAW_DIAMOND = registerItem("raw_diamond",
-                new Item(new FabricItemSettings()));
-        SYNTHETIC_DIAMOND = registerItem("synthetic_diamond",
-                new Item(new FabricItemSettings()));
 
+        // Coal
+        LIGNIT = registerItem("lignit", new Item(new FabricItemSettings()));
+        COKE   = registerItem("coke",   new Item(new FabricItemSettings()));
+
+        // Diamonds
+        RAW_DIAMOND       = registerItem("raw_diamond",       new Item(new FabricItemSettings()));
+        SYNTHETIC_DIAMOND = registerItem("synthetic_diamond", new Item(new FabricItemSettings()));
         SYNTHETIC_DIAMOND_PICKAXE = registerItem("synthetic_diamond_pickaxe",
                 new SyntheticDiamondPickaxeItem(
                         SyntheticDiamondToolMaterial.INSTANCE,
-                        1,
-                        -2.8F,
-                        new FabricItemSettings()
-                )
-        );
+                        1, -2.8F,
+                        new FabricItemSettings()));
     }
 }

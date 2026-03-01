@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "realisticores:lignit_block"
+    }
+  ],
+  "result": {
+    "item": "realisticores:lignit",
+    "count": 9
+  }
+}

@@ -3,6 +3,7 @@ package wirezat.realisticores;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -28,6 +29,7 @@ public class RealisticOres implements ModInitializer {
 				new Identifier(MOD_ID, "cubic_press"),
 				CubicPressRecipe.Serializer.INSTANCE);
 
+		ModFuels.register();
 		ModBlocks.registerModBlocks();
 		ModItems.registerModItems();
 

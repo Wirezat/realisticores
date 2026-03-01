@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "realisticores:lignit"
+    }
+  },
+  "result": {
+    "item": "realisticores:lignit_block",
+    "count": 1
+  }
+}
