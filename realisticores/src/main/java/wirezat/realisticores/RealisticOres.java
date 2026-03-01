@@ -17,10 +17,6 @@ public class RealisticOres implements ModInitializer {
 
 	public static final String MOD_ID = "realisticores";
 
-	public static final RegistryKey<PlacedFeature> KIMBERLITE_MAGMA_PLACED_KEY =
-			RegistryKey.of(RegistryKeys.PLACED_FEATURE,
-					new Identifier(MOD_ID, "kimberlite_magma_placed"));
-
 	@Override
 	public void onInitialize() {
 
@@ -34,12 +30,6 @@ public class RealisticOres implements ModInitializer {
 
 		ModBlocks.registerModBlocks();
 		ModItems.registerModItems();
-		ModFeatures.registerModFeatures();
 
-		BiomeModifications.addFeature(
-				BiomeSelectors.foundInOverworld(),
-				GenerationStep.Feature.UNDERGROUND_ORES,
-				KIMBERLITE_MAGMA_PLACED_KEY
-		);
 	}
 }

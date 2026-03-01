@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "realisticores:block/blackshale",
+    "top": "realisticores:block/blackshale",
+    "side": "realisticores:block/blackshale"
+  }
+}

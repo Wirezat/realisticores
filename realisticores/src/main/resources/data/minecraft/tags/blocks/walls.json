@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "realisticores:blackshale_wall",
+    "realisticores:kimberlite_wall",
+    "realisticores:shale_wall"
+  ]
+}

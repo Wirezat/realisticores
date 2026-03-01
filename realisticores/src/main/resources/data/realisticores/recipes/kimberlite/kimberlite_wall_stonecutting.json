@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "realisticores:kimberlite"
+  },
+  "result": "realisticores:kimberlite_wall",
+  "count": 1
+}

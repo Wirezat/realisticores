@@ -24,7 +24,17 @@ public class ModItemGroups {
                 entries.add(ModBlocks.KIMBERLITE);
                 entries.add(ModBlocks.KIMBERLITE_STAIRS);
                 entries.add(ModBlocks.KIMBERLITE_SLAB);
+                entries.add(ModBlocks.KIMBERLITE_WALL);
                 entries.add(ModBlocks.KIMBERLITE_DIAMOND_ORE);
+                entries.add(ModBlocks.SHALE);
+                entries.add(ModBlocks.SHALE_STAIRS);
+                entries.add(ModBlocks.SHALE_SLAB);
+                entries.add(ModBlocks.SHALE_WALL);
+                entries.add(ModBlocks.MUDSTONE);
+                entries.add(ModBlocks.MUDSTONE_SLAB);
+                entries.add(ModBlocks.BLACKSHALE);
+                entries.add(ModBlocks.BLACKSHALE_STAIRS);
+                entries.add(ModBlocks.BLACKSHALE_SLAB);
             })
             .build()
     );

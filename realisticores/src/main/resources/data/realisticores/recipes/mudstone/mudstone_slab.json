@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "realisticores:mudstone"
+    }
+  },
+  "result": {
+    "item": "realisticores:mudstone_slab",
+    "count": 6
+  }
+}

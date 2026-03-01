@@ -1,21 +1,28 @@
 {
-  "block.realisticores.kimberlite": "Kimberlit",
-  "block.realisticores.kimberlite_stairs": "Kimberlittreppe",
-  "block.realisticores.kimberlite_slab": "Kimberlitstufe",
-  "block.realisticores.kimberlite_diamond_ore": "Kimberlit Diamanterz",
+  "advancements.realisticores.diamonds_question.description": "Knapp drann aber fast. Von einem echten Diamanten kaum zu unterscheiden!",
+  "advancements.realisticores.diamonds_question.title": "Diamanten?",
+  "advancements.realisticores.diamonds_sad.description": "Ein echter Diamant! Aber sollte er nicht mehr gl\u00e4nzen?",
+  "advancements.realisticores.diamonds_sad.title": "Diamanten :(",
+  "advancements.realisticores.root.description": "Beginne deine Reise, um die wahren Erze zu finden.",
+  "advancements.realisticores.root.title": "Realistische Erze",
+  "block.realisticores.blackshale": "Blackshale",
+  "block.realisticores.blackshale_slab": "Blackshale Slab",
+  "block.realisticores.blackshale_stairs": "Blackshale Stairs",
+  "block.realisticores.blackshale_wall": "Blackshale Wall",
   "block.realisticores.cubic_press": "Kubuspresse",
-
+  "block.realisticores.kimberlite": "Kimberlit",
+  "block.realisticores.kimberlite_diamond_ore": "Kimberlit Diamanterz",
+  "block.realisticores.kimberlite_slab": "Kimberlitstufe",
+  "block.realisticores.kimberlite_stairs": "Kimberlittreppe",
+  "block.realisticores.kimberlite_wall": "Kimberlite Wall",
+  "block.realisticores.mudstone": "Mudstone",
+  "block.realisticores.mudstone_slab": "Mudstone Slab",
+  "block.realisticores.shale": "Schiefer",
+  "block.realisticores.shale_slab": "Schieferstufe",
+  "block.realisticores.shale_stairs": "Schiefertreppe",
+  "block.realisticores.shale_wall": "Shale Wall",
   "item.realisticores.raw_diamond": "Rohdiamant",
   "item.realisticores.synthetic_diamond": "Synthetischer Diamant",
   "item.realisticores.synthetic_diamond_pickaxe": "'Diamant' Spitzhacke",
-  "itemGroup.realisticores.realistic_ores_tab": "Realistische Erze",
-
-  "advancements.realisticores.diamonds_question.title": "Diamanten?",
-  "advancements.realisticores.diamonds_question.description": "Knapp drann aber fast. Von einem echten Diamanten kaum zu unterscheiden!",
-
-  "advancements.realisticores.diamonds_sad.title": "Diamanten :(",
-  "advancements.realisticores.diamonds_sad.description": "Ein echter Diamant! Aber sollte er nicht mehr glänzen?",
-
-  "advancements.realisticores.root.title": "Realistische Erze",
-  "advancements.realisticores.root.description": "Beginne deine Reise, um die wahren Erze zu finden."
+  "itemGroup.realisticores.realistic_ores_tab": "Realistische Erze"
 }

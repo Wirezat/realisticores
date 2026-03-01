@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "realisticores:shale"
+  },
+  "result": "realisticores:shale_wall",
+  "count": 1
+}

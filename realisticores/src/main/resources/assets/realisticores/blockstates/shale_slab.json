@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "realisticores:block/shale_slab" },
+    "type=top":    { "model": "realisticores:block/shale_slab_top" },
+    "type=double": { "model": "realisticores:block/shale_slab_double" }
+  }
+}

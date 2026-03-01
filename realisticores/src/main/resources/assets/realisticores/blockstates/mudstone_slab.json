@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "realisticores:block/mudstone_slab"
+    },
+    "type=double": {
+      "model": "realisticores:block/mudstone"
+    },
+    "type=top": {
+      "model": "realisticores:block/mudstone_slab_top"
+    }
+  }
+}

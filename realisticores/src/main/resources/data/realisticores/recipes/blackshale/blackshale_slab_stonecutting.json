@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "realisticores:blackshale"
+  },
+  "result": "realisticores:blackshale_slab",
+  "count": 2
+}

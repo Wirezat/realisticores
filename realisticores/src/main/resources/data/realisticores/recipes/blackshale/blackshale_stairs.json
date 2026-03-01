@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "realisticores:blackshale"
+    }
+  },
+  "result": {
+    "item": "realisticores:blackshale_stairs",
+    "count": 4
+  }
+}

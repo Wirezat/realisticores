@@ -1,21 +1,28 @@
 {
-  "block.realisticores.kimberlite": "Kimberlite",
-  "block.realisticores.kimberlite_stairs": "Kimberlite Stairs",
-  "block.realisticores.kimberlite_slab": "Kimberlite Slab",
-  "block.realisticores.kimberlite_diamond_ore": "Kimberlite Diamond Ore",
+  "advancements.realisticores.diamonds_question.description": "Almost there, but not quite. Hard to distinguish from a real diamond!",
+  "advancements.realisticores.diamonds_question.title": "Diamonds?",
+  "advancements.realisticores.diamonds_sad.description": "A real diamond! But shouldn't it be more shiny?",
+  "advancements.realisticores.diamonds_sad.title": "Diamonds :(",
+  "advancements.realisticores.root.description": "Begin your journey to the real ores.",
+  "advancements.realisticores.root.title": "Realistic Ores",
+  "block.realisticores.blackshale": "Blackshale",
+  "block.realisticores.blackshale_slab": "Blackshale Slab",
+  "block.realisticores.blackshale_stairs": "Blackshale Stairs",
+  "block.realisticores.blackshale_wall": "Blackshale Wall",
   "block.realisticores.cubic_press": "Cubic Press",
-
+  "block.realisticores.kimberlite": "Kimberlite",
+  "block.realisticores.kimberlite_diamond_ore": "Kimberlite Diamond Ore",
+  "block.realisticores.kimberlite_slab": "Kimberlite Slab",
+  "block.realisticores.kimberlite_stairs": "Kimberlite Stairs",
+  "block.realisticores.kimberlite_wall": "Kimberlite Wall",
+  "block.realisticores.mudstone": "Mudstone",
+  "block.realisticores.mudstone_slab": "Mudstone Slab",
+  "block.realisticores.shale": "Shale",
+  "block.realisticores.shale_slab": "Shale Slab",
+  "block.realisticores.shale_stairs": "Shale Stairs",
+  "block.realisticores.shale_wall": "Shale Wall",
   "item.realisticores.raw_diamond": "Raw Diamond",
   "item.realisticores.synthetic_diamond": "Synthetic Diamond",
   "item.realisticores.synthetic_diamond_pickaxe": "'Diamond' Pickaxe",
-  "itemGroup.realisticores.realistic_ores_tab": "Realistic Ores",
-
-  "advancements.realisticores.diamonds_question.title": "Diamonds?",
-  "advancements.realisticores.diamonds_question.description": "Almost there, but not quite. Hard to distinguish from a real diamond!",
-
-  "advancements.realisticores.diamonds_sad.title": "Diamonds :(",
-  "advancements.realisticores.diamonds_sad.description": "A real diamond! But shouldn't it be more shiny?",
-
-  "advancements.realisticores.root.title": "Realistic Ores",
-  "advancements.realisticores.root.description": "Begin your journey to the real ores."
+  "itemGroup.realisticores.realistic_ores_tab": "Realistic Ores"
 }

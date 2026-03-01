@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "realisticores:kimberlite"
+    }
+  },
+  "result": {
+    "item": "realisticores:kimberlite_stairs",
+    "count": 4
+  }
+}

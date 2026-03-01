@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "realisticores:block/shale",
+    "top":    "realisticores:block/shale",
+    "side":   "realisticores:block/shale"
+  }
+}

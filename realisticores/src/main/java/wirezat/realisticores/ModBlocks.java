@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.StairsBlock;
+import net.minecraft.block.WallBlock;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -18,9 +19,21 @@ import wirezat.realisticores.blocks.machines.cubicpress.CubicPress;
 import wirezat.realisticores.blocks.machines.cubicpress.CubicPressBlockEntity;
 import wirezat.realisticores.blocks.machines.cubicpress.CubicPressScreenHandler;
 
+import java.rmi.MarshalException;
+
 public class ModBlocks {
 
+    public static Block SHALE;
+    public static Block SHALE_WALL;
+    public static Block SHALE_STAIRS;
+    public static Block SHALE_SLAB;
+    public static Block BLACKSHALE;
+    public static Block BLACKSHALE_STAIRS;
+    public static Block BLACKSHALE_SLAB;
+    public static Block MUDSTONE;
+    public static Block MUDSTONE_SLAB;
     public static Block KIMBERLITE;
+    public static Block KIMBERLITE_WALL;
     public static Block KIMBERLITE_STAIRS;
     public static Block KIMBERLITE_SLAB;
     public static Block KIMBERLITE_DIAMOND_ORE;
@@ -40,16 +53,43 @@ public class ModBlocks {
 
     public static void registerModBlocks() {
 
+        SHALE = registerBlock("shale",
+                new Block(FabricBlockSettings.create()
+                        .strength(1.5f, 6.0f)
+                        .requiresTool()));
+        SHALE_WALL = registerBlock("shale_wall",
+                new WallBlock(FabricBlockSettings.copy(SHALE)));
+        SHALE_STAIRS = registerBlock("shale_stairs",
+                new StairsBlock(SHALE.getDefaultState(), FabricBlockSettings.copy(SHALE)));
+        SHALE_SLAB = registerBlock("shale_slab",
+                new SlabBlock(FabricBlockSettings.copy(SHALE)));
+
+        BLACKSHALE = registerBlock("blackshale",
+                new Block(FabricBlockSettings.create()
+                        .strength(1.5f, 6.0f)
+                        .requiresTool()));
+        BLACKSHALE_STAIRS = registerBlock("blackshale_stairs",
+                new StairsBlock(BLACKSHALE.getDefaultState(), FabricBlockSettings.copy(BLACKSHALE)));
+        BLACKSHALE_SLAB = registerBlock("blackshale_slab",
+                new SlabBlock(FabricBlockSettings.copy(BLACKSHALE)));
+
+        MUDSTONE = registerBlock("mudstone",
+                new Block(FabricBlockSettings.create()
+                        .strength(1.5f, 6.0f)
+                        .requiresTool()));
+        MUDSTONE_SLAB = registerBlock("mudstone_slab",
+                new SlabBlock(FabricBlockSettings.copy(MUDSTONE)));
+
         KIMBERLITE = registerBlock("kimberlite",
                 new Block(FabricBlockSettings.create()
                         .strength(2.0f, 8.0f)
                         .requiresTool()));
-
+        KIMBERLITE_WALL = registerBlock("kimberlite_wall",
+                new WallBlock(FabricBlockSettings.copy(KIMBERLITE)));
         KIMBERLITE_STAIRS = registerBlock("kimberlite_stairs",
                 new StairsBlock(KIMBERLITE.getDefaultState(), FabricBlockSettings.copy(KIMBERLITE)));
         KIMBERLITE_SLAB = registerBlock("kimberlite_slab",
                 new SlabBlock(FabricBlockSettings.copy(KIMBERLITE)));
-
         KIMBERLITE_DIAMOND_ORE = registerBlock("kimberlite_diamond_ore",
                 new Block(FabricBlockSettings.create()
                         .strength(50.0f, 1200.0f)
@@ -60,14 +100,12 @@ public class ModBlocks {
                         .strength(4.0f)
                         .requiresTool()));
 
-        // Registrierung des Block-Entity-Typs
         CUBIC_PRESS_BLOCK_ENTITY = Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
                 new Identifier(RealisticOres.MOD_ID, "cubic_press_entity"),
                 FabricBlockEntityTypeBuilder.create(CubicPressBlockEntity::new, CUBIC_PRESS_BLOCK).build()
         );
 
-        // ScreenHandler mit FABRIC API registrieren
         CUBIC_PRESS_SCREEN_HANDLER_TYPE = ScreenHandlerRegistry.registerExtended(
                 new Identifier(RealisticOres.MOD_ID, "cubic_press_screen"),
                 (syncId, inventory, buf) -> new CubicPressScreenHandler(syncId, inventory, buf)
