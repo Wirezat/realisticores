@@ -7,8 +7,10 @@ package de.wirezat.realisticores.kimberlite;
  * @param field kimberlite field settings
  * @param pipe pipe shape and size settings
  * @param facies rock type settings inside pipes
+ * @param crater crater bowl settings
  */
-public record KimberliteParams(CratonParams craton, FieldParams field, PipeParams pipe, FaciesParams facies) {
+public record KimberliteParams(CratonParams craton, FieldParams field, PipeParams pipe, FaciesParams facies,
+        CraterParams crater) {
 
     /**
      * Craton mask settings.
@@ -77,6 +79,17 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
     }
 
     /**
+     * Crater bowl settings.
+     *
+     * @param depthPerDiameter bowl depth as a fraction of the pipe diameter
+     * @param minDepth smallest bowl depth in blocks
+     * @param maxDepth largest bowl depth in blocks
+     * @param floorLayers number of volcaniclastic layers at the bowl floor
+     */
+    public record CraterParams(double depthPerDiameter, int minDepth, int maxDepth, int floorLayers) {
+    }
+
+    /**
      * Returns the default start values from docs/ores/diamond-phase1-kimberlite.md.
      *
      * @return default parameter set
@@ -86,6 +99,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
                 new CratonParams(8000.0, 0.45),
                 new FieldParams(3000, 0.5, 0.3, 300, 800, 5, 30, 80),
                 new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0),
-                new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855));
+                new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855),
+                new CraterParams(0.08, 4, 12, 3));
     }
 }

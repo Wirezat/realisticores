@@ -1,10 +1,13 @@
 package de.wirezat.realisticores.mixin;
 
 import de.wirezat.realisticores.kimberlite.KimberliteCarver;
+import de.wirezat.realisticores.kimberlite.TerrainProbe;
+import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.RandomState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NoiseBasedChunkGenerator.class)
 public abstract class NoiseBasedChunkGeneratorMixin {
     /**
-     * Carves kimberlite pipes into overworld chunks after their surface is built.
+     * Carves kimberlite pipes, crater bowls and crater lakes into overworld chunks after their surface is built.
      *
      * @param level region the chunk is generated in
      * @param structureManager structure manager of the level
@@ -27,8 +30,25 @@ public abstract class NoiseBasedChunkGeneratorMixin {
             at = @At("TAIL"))
     private void realisticores$carveKimberlite(WorldGenRegion level, StructureManager structureManager,
             RandomState random, ChunkAccess chunk, CallbackInfo ci) {
-        if (level.getLevel().dimension() == Level.OVERWORLD) {
-            KimberliteCarver.carve(chunk, level.getSeed());
+        if (level.getLevel().dimension() != Level.OVERWORLD) {
+            return;
         }
+        NoiseBasedChunkGenerator generator = (NoiseBasedChunkGenerator) (Object) this;
+        TerrainProbe probe = new TerrainProbe() {
+            @Override
+            public int terrainHeight(int x, int z) {
+                return generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, random) - 1;
+            }
+
+            @Override
+            public boolean hasPrecipitation(int x, int y, int z) {
+                return generator.getBiomeSource()
+                        .getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z),
+                                random.sampler())
+                        .value()
+                        .hasPrecipitation();
+            }
+        };
+        KimberliteCarver.carve(chunk, level.getSeed(), probe, generator.getSeaLevel());
     }
 }

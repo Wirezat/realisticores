@@ -2,6 +2,8 @@ package de.wirezat.realisticores.kimberlite;
 
 import de.wirezat.realisticores.ModBlocks;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
@@ -10,18 +12,26 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 
-/** Writes kimberlite pipes into a chunk; soil on top stays except at outcrops. */
+/** Writes kimberlite pipes, crater bowls and crater lakes into a chunk. */
 public final class KimberliteCarver {
+    private static final Map<SiteKey, CraterSite> SITES = new ConcurrentHashMap<>();
+
     private KimberliteCarver() {
     }
 
+    private record SiteKey(long seed, Pipe pipe) {
+    }
+
     /**
-     * Replaces host rock inside every pipe that touches the chunk with the rock type of its position.
+     * Writes every pipe that touches the chunk: the pipe body with its rock types, the crater bowl in the
+     * terrain and, in wet biomes, the crater lake.
      *
      * @param chunk the chunk being generated
      * @param seed world seed
+     * @param probe reader for the original terrain and climate
+     * @param seaLevel sea level of the world
      */
-    public static void carve(ChunkAccess chunk, long seed) {
+    public static void carve(ChunkAccess chunk, long seed, TerrainProbe probe, int seaLevel) {
         ChunkPos chunkPos = chunk.getPos();
         int minX = chunkPos.getMinBlockX();
         int minZ = chunkPos.getMinBlockZ();
@@ -29,13 +39,13 @@ public final class KimberliteCarver {
         if (pipes.isEmpty()) {
             return;
         }
-        KimberliteParams.PipeParams params = Kimberlite.params().pipe();
         PipeShape shape = Kimberlite.shape();
-        FaciesSelector facies = Kimberlite.facies();
-        int bottomY = Math.max(chunk.getMinBuildHeight(), params.bottomY());
-        int topY = Math.min(chunk.getMaxBuildHeight() - 1, params.craterBaseY() + params.craterHeight());
+        Crater crater = Kimberlite.crater();
+        int bottomY = Math.max(chunk.getMinBuildHeight(), Kimberlite.params().pipe().bottomY());
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Pipe pipe : pipes) {
+            CraterSite site = SITES.computeIfAbsent(new SiteKey(seed, pipe), key -> CraterSite.measure(pipe, probe));
+            int waterY = site.wet() ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
             double reach = shape.reach(pipe);
             for (int localX = 0; localX < 16; localX++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
@@ -46,24 +56,55 @@ public final class KimberliteCarver {
                     if (dx * dx + dz * dz > reach * reach) {
                         continue;
                     }
-                    int surfaceY = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, localX, localZ) - 1;
-                    boolean outcrop = shape.isOutcrop(x, z);
-                    for (int y = bottomY; y <= topY; y++) {
-                        double wallDistance = shape.normalizedDistance(pipe, x, y, z);
-                        if (wallDistance > 1.0) {
-                            continue;
-                        }
-                        pos.set(x, y, z);
-                        BlockState state = chunk.getBlockState(pos);
-                        if (!state.is(BlockTags.BASE_STONE_OVERWORLD) && !(outcrop && isSoil(state))) {
-                            continue;
-                        }
-                        Facies rock = facies.at(pipe, x, y, z, surfaceY, wallDistance);
-                        if (rock != Facies.HOST) {
-                            chunk.setBlockState(pos, blockFor(rock), false);
-                        }
+                    int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ) - 1;
+                    double surfaceWall = shape.normalizedDistance(pipe, x, surfaceY, z);
+                    int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY()) : surfaceY;
+                    boolean bowl = floorY < surfaceY;
+                    if (bowl) {
+                        fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
                     }
+                    carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape);
                 }
+            }
+        }
+    }
+
+    private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, Pipe pipe, int x, int z,
+            int bottomY, int groundY, boolean bowl, PipeShape shape) {
+        FaciesSelector facies = Kimberlite.facies();
+        int floorLayers = Kimberlite.params().crater().floorLayers();
+        boolean outcrop = shape.isOutcrop(x, z);
+        int topY = Math.min(chunk.getMaxBuildHeight() - 1, groundY);
+        for (int y = bottomY; y <= topY; y++) {
+            double wallDistance = shape.normalizedDistance(pipe, x, y, z);
+            if (wallDistance > 1.0) {
+                continue;
+            }
+            pos.set(x, y, z);
+            BlockState state = chunk.getBlockState(pos);
+            if (!state.is(BlockTags.BASE_STONE_OVERWORLD) && !((outcrop || bowl) && isSoil(state))) {
+                continue;
+            }
+            Facies rock = bowl && y > groundY - floorLayers
+                    ? Facies.VOLCANICLASTIC
+                    : facies.at(pipe, x, y, z, groundY, wallDistance);
+            if (rock != Facies.HOST) {
+                chunk.setBlockState(pos, blockFor(rock), false);
+            }
+        }
+    }
+
+    private static void fillBowl(ChunkAccess chunk, BlockPos.MutableBlockPos pos, int x, int z, int floorY,
+            int surfaceY, int waterY) {
+        int topY = Math.min(chunk.getMaxBuildHeight() - 1, Math.max(surfaceY, waterY));
+        for (int y = floorY + 1; y <= topY; y++) {
+            pos.set(x, y, z);
+            if (y <= waterY) {
+                if (y <= surfaceY || chunk.getBlockState(pos).isAir()) {
+                    chunk.setBlockState(pos, Blocks.WATER.defaultBlockState(), false);
+                }
+            } else {
+                chunk.setBlockState(pos, Blocks.AIR.defaultBlockState(), false);
             }
         }
     }

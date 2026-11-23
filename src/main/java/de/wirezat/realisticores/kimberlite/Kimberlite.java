@@ -6,6 +6,7 @@ public final class Kimberlite {
     private static final FieldGenerator GENERATOR = new FieldGenerator(PARAMS);
     private static final PipeProfile PROFILE = new PipeProfile(PARAMS.pipe());
     private static final FaciesSelector FACIES = new FaciesSelector(PARAMS);
+    private static final Crater CRATER = new Crater(PARAMS.crater());
     private static final PipeShape SHAPE = new PipeShape(PARAMS.pipe(), PROFILE);
 
     private Kimberlite() {
@@ -54,5 +55,14 @@ public final class Kimberlite {
      */
     public static FaciesSelector facies() {
         return FACIES;
+    }
+
+    /**
+     * Returns the shared crater model.
+     *
+     * @return crater model for the active parameters
+     */
+    public static Crater crater() {
+        return CRATER;
     }
 }

@@ -1,0 +1,50 @@
+package de.wirezat.realisticores.kimberlite;
+
+/** Shape of the crater bowl and the level of the crater lake. */
+public final class Crater {
+    private final KimberliteParams.CraterParams params;
+
+    /**
+     * Creates a crater model.
+     *
+     * @param params bowl settings
+     */
+    public Crater(KimberliteParams.CraterParams params) {
+        this.params = params;
+    }
+
+    /**
+     * Gives the bowl depth of a pipe.
+     *
+     * @param pipe the pipe
+     * @return depth in blocks between rim and bowl centre
+     */
+    public int depth(Pipe pipe) {
+        long depth = Math.round(pipe.diameter() * params.depthPerDiameter());
+        return (int) Math.max(params.minDepth(), Math.min(params.maxDepth(), depth));
+    }
+
+    /**
+     * Computes the bowl floor height of a column.
+     *
+     * @param pipe the pipe
+     * @param wallDistance distance from the axis relative to the wall (0 axis, 1 wall)
+     * @param rimY mean terrain height around the crater
+     * @return floor Y: rimY minus the bowl depth at the axis, rimY at the wall
+     */
+    public int floorY(Pipe pipe, double wallDistance, int rimY) {
+        double d = Math.min(1.0, Math.max(0.0, wallDistance));
+        return rimY - (int) Math.round(depth(pipe) * (1.0 - d * d));
+    }
+
+    /**
+     * Computes the lake surface height.
+     *
+     * @param lowestRimY lowest terrain height around the crater
+     * @param seaLevel sea level of the world
+     * @return one block below the lowest rim point, but at least sea level
+     */
+    public int waterLevel(int lowestRimY, int seaLevel) {
+        return Math.max(lowestRimY - 1, seaLevel);
+    }
+}
