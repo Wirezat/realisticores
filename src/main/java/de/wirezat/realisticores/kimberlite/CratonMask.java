@@ -24,28 +24,7 @@ public final class CratonMask {
      * @return true if the noise value at the position exceeds the threshold
      */
     public boolean contains(long seed, double x, double z) {
-        return noise(seed ^ SALT, x / params.wavelength(), z / params.wavelength()) > params.threshold();
-    }
-
-    private static double noise(long seed, double x, double z) {
-        int x0 = (int) Math.floor(x);
-        int z0 = (int) Math.floor(z);
-        double tx = smooth(x - x0);
-        double tz = smooth(z - z0);
-        double top = lerp(lattice(seed, x0, z0), lattice(seed, x0 + 1, z0), tx);
-        double bottom = lerp(lattice(seed, x0, z0 + 1), lattice(seed, x0 + 1, z0 + 1), tx);
-        return lerp(top, bottom, tz);
-    }
-
-    private static double lattice(long seed, int x, int z) {
-        return (SplitMix64.hash(seed, x, z) >>> 11) * 0x1.0p-52 - 1.0;
-    }
-
-    private static double smooth(double t) {
-        return t * t * (3.0 - 2.0 * t);
-    }
-
-    private static double lerp(double a, double b, double t) {
-        return a + (b - a) * t;
+        return ValueNoise.sample2(seed ^ SALT, x / params.wavelength(), z / params.wavelength())
+                > params.threshold();
     }
 }

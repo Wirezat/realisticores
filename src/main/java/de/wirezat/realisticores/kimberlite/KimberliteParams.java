@@ -48,10 +48,15 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * @param rootY Y level where the diatreme turns into the root
      * @param rootMinRadius radius in blocks reached at bottomY
      * @param bottomY lowest Y level of the pipe
+     * @param wallNoiseStrength fraction of the radius the wall may deviate by noise
+     * @param minAspect smallest ratio of short to long axis of the outline
+     * @param outcropThreshold noise value (-1..1) above which a surface column exposes kimberlite
+     * @param outcropWavelength wavelength of the outcrop noise in blocks
      */
     public record PipeParams(int medianDiameter, double diameterSigma, int minDiameter, int maxDiameter,
             int craterBaseY, int craterHeight, double craterWidening, double diatremeTaper,
-            int rootY, double rootMinRadius, int bottomY) {
+            int rootY, double rootMinRadius, int bottomY, double wallNoiseStrength, double minAspect,
+            double outcropThreshold, double outcropWavelength) {
     }
 
     /**
@@ -63,6 +68,6 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
         return new KimberliteParams(
                 new CratonParams(8000.0, 0.45),
                 new FieldParams(3000, 0.5, 0.3, 300, 800, 5, 30, 80),
-                new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64));
+                new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0));
     }
 }

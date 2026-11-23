@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
-/** Writes kimberlite pipes into a chunk. */
+/** Writes kimberlite pipes into a chunk; soil on top stays except at outcrops. */
 public final class KimberliteCarver {
     private KimberliteCarver() {
     }
@@ -29,28 +29,30 @@ public final class KimberliteCarver {
             return;
         }
         KimberliteParams.PipeParams params = Kimberlite.params().pipe();
-        PipeProfile profile = Kimberlite.profile();
+        PipeShape shape = Kimberlite.shape();
         BlockState kimberlite = ModBlocks.KIMBERLITE.get().defaultBlockState();
         int bottomY = Math.max(chunk.getMinBuildHeight(), params.bottomY());
         int topY = Math.min(chunk.getMaxBuildHeight() - 1, params.craterBaseY() + params.craterHeight());
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Pipe pipe : pipes) {
-            double maxRadius = profile.maxRadius(pipe);
+            double reach = shape.reach(pipe);
             for (int localX = 0; localX < 16; localX++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
                     double dx = minX + localX - pipe.x();
                     double dz = minZ + localZ - pipe.z();
                     double distanceSquared = dx * dx + dz * dz;
-                    if (distanceSquared > maxRadius * maxRadius) {
+                    if (distanceSquared > reach * reach) {
                         continue;
                     }
+                    boolean outcrop = shape.isOutcrop(minX + localX, minZ + localZ);
                     for (int y = bottomY; y <= topY; y++) {
-                        double radius = profile.radiusAt(pipe, y);
-                        if (distanceSquared <= radius * radius) {
-                            pos.set(minX + localX, y, minZ + localZ);
-                            if (isReplaceable(chunk.getBlockState(pos))) {
-                                chunk.setBlockState(pos, kimberlite, false);
-                            }
+                        if (!shape.contains(pipe, minX + localX, y, minZ + localZ)) {
+                            continue;
+                        }
+                        pos.set(minX + localX, y, minZ + localZ);
+                        BlockState state = chunk.getBlockState(pos);
+                        if (state.is(BlockTags.BASE_STONE_OVERWORLD) || (outcrop && isSoil(state))) {
+                            chunk.setBlockState(pos, kimberlite, false);
                         }
                     }
                 }
@@ -58,10 +60,7 @@ public final class KimberliteCarver {
         }
     }
 
-    private static boolean isReplaceable(BlockState state) {
-        return state.is(BlockTags.BASE_STONE_OVERWORLD)
-                || state.is(BlockTags.DIRT)
-                || state.is(BlockTags.SAND)
-                || state.is(Blocks.GRAVEL);
+    private static boolean isSoil(BlockState state) {
+        return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND) || state.is(Blocks.GRAVEL);
     }
 }

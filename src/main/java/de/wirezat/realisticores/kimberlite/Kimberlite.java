@@ -5,6 +5,7 @@ public final class Kimberlite {
     private static final KimberliteParams PARAMS = KimberliteParams.defaults();
     private static final FieldGenerator GENERATOR = new FieldGenerator(PARAMS);
     private static final PipeProfile PROFILE = new PipeProfile(PARAMS.pipe());
+    private static final PipeShape SHAPE = new PipeShape(PARAMS.pipe(), PROFILE);
 
     private Kimberlite() {
     }
@@ -34,5 +35,14 @@ public final class Kimberlite {
      */
     public static PipeProfile profile() {
         return PROFILE;
+    }
+
+    /**
+     * Returns the shared pipe shape model.
+     *
+     * @return shape model for the active parameters
+     */
+    public static PipeShape shape() {
+        return SHAPE;
     }
 }
