@@ -2,5 +2,10 @@
   "block.realisticores.kimberlite": "Kimberlit",
   "command.realisticores.pipes.none": "Keine Kimberlit-Pipes in der Nähe gefunden.",
   "command.realisticores.pipes.header": "%s nächste Kimberlit-Pipes (Klick zum Teleportieren):",
-  "command.realisticores.pipes.entry": "X %s Z %s, Durchmesser %s, Entfernung %s"
+  "command.realisticores.pipes.entry": "X %s Z %s, Durchmesser %s, Entfernung %s",
+  "block.realisticores.kimberlite_breccia": "Kimberlit-Brekzie",
+  "block.realisticores.volcaniclastic_kimberlite": "Vulkanoklastischer Kimberlit",
+  "block.realisticores.weathered_kimberlite": "Verwitterter Kimberlit",
+  "block.realisticores.serpentinized_kimberlite": "Serpentinisierter Kimberlit",
+  "block.realisticores.peridotite": "Peridotit"
 }

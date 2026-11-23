@@ -8,6 +8,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 /** Writes kimberlite pipes into a chunk; soil on top stays except at outcrops. */
 public final class KimberliteCarver {
@@ -15,7 +16,7 @@ public final class KimberliteCarver {
     }
 
     /**
-     * Replaces host rock inside every pipe that touches the chunk with kimberlite.
+     * Replaces host rock inside every pipe that touches the chunk with the rock type of its position.
      *
      * @param chunk the chunk being generated
      * @param seed world seed
@@ -30,7 +31,7 @@ public final class KimberliteCarver {
         }
         KimberliteParams.PipeParams params = Kimberlite.params().pipe();
         PipeShape shape = Kimberlite.shape();
-        BlockState kimberlite = ModBlocks.KIMBERLITE.get().defaultBlockState();
+        FaciesSelector facies = Kimberlite.facies();
         int bottomY = Math.max(chunk.getMinBuildHeight(), params.bottomY());
         int topY = Math.min(chunk.getMaxBuildHeight() - 1, params.craterBaseY() + params.craterHeight());
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -38,26 +39,45 @@ public final class KimberliteCarver {
             double reach = shape.reach(pipe);
             for (int localX = 0; localX < 16; localX++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
-                    double dx = minX + localX - pipe.x();
-                    double dz = minZ + localZ - pipe.z();
-                    double distanceSquared = dx * dx + dz * dz;
-                    if (distanceSquared > reach * reach) {
+                    int x = minX + localX;
+                    int z = minZ + localZ;
+                    double dx = x - pipe.x();
+                    double dz = z - pipe.z();
+                    if (dx * dx + dz * dz > reach * reach) {
                         continue;
                     }
-                    boolean outcrop = shape.isOutcrop(minX + localX, minZ + localZ);
+                    int surfaceY = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, localX, localZ) - 1;
+                    boolean outcrop = shape.isOutcrop(x, z);
                     for (int y = bottomY; y <= topY; y++) {
-                        if (!shape.contains(pipe, minX + localX, y, minZ + localZ)) {
+                        double wallDistance = shape.normalizedDistance(pipe, x, y, z);
+                        if (wallDistance > 1.0) {
                             continue;
                         }
-                        pos.set(minX + localX, y, minZ + localZ);
+                        pos.set(x, y, z);
                         BlockState state = chunk.getBlockState(pos);
-                        if (state.is(BlockTags.BASE_STONE_OVERWORLD) || (outcrop && isSoil(state))) {
-                            chunk.setBlockState(pos, kimberlite, false);
+                        if (!state.is(BlockTags.BASE_STONE_OVERWORLD) && !(outcrop && isSoil(state))) {
+                            continue;
+                        }
+                        Facies rock = facies.at(pipe, x, y, z, surfaceY, wallDistance);
+                        if (rock != Facies.HOST) {
+                            chunk.setBlockState(pos, blockFor(rock), false);
                         }
                     }
                 }
             }
         }
+    }
+
+    private static BlockState blockFor(Facies rock) {
+        return switch (rock) {
+            case KIMBERLITE -> ModBlocks.KIMBERLITE.get().defaultBlockState();
+            case BRECCIA -> ModBlocks.KIMBERLITE_BRECCIA.get().defaultBlockState();
+            case VOLCANICLASTIC -> ModBlocks.VOLCANICLASTIC_KIMBERLITE.get().defaultBlockState();
+            case WEATHERED -> ModBlocks.WEATHERED_KIMBERLITE.get().defaultBlockState();
+            case SERPENTINIZED -> ModBlocks.SERPENTINIZED_KIMBERLITE.get().defaultBlockState();
+            case PERIDOTITE -> ModBlocks.PERIDOTITE.get().defaultBlockState();
+            case HOST -> throw new IllegalArgumentException("HOST keeps the original block");
+        };
     }
 
     private static boolean isSoil(BlockState state) {

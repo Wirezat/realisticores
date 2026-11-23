@@ -1,1 +1,9 @@
-{"values":["realisticores:kimberlite"]}
+{
+  "values": [
+    "realisticores:kimberlite",
+    "realisticores:kimberlite_breccia",
+    "realisticores:volcaniclastic_kimberlite",
+    "realisticores:serpentinized_kimberlite",
+    "realisticores:peridotite"
+  ]
+}

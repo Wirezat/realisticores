@@ -6,8 +6,9 @@ package de.wirezat.realisticores.kimberlite;
  * @param craton craton mask settings
  * @param field kimberlite field settings
  * @param pipe pipe shape and size settings
+ * @param facies rock type settings inside pipes
  */
-public record KimberliteParams(CratonParams craton, FieldParams field, PipeParams pipe) {
+public record KimberliteParams(CratonParams craton, FieldParams field, PipeParams pipe, FaciesParams facies) {
 
     /**
      * Craton mask settings.
@@ -60,6 +61,22 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
     }
 
     /**
+     * Rock type settings inside pipes.
+     *
+     * @param weatheringDepth depth below the surface in blocks down to which kimberlite is weathered
+     * @param weatheringNoise variation of the weathering depth in blocks
+     * @param contactFraction outer fraction of the radius that forms the contact breccia
+     * @param serpentinizationBand depth in blocks below the weathering zone with more serpentinization
+     * @param serpentinizationThreshold noise value (-1..1) above which kimberlite is serpentinized at depth
+     * @param xenolithThreshold noise value (-1..1) above which a crustal xenolith replaces the rock
+     * @param peridotiteThreshold noise value (-1..1) above which a mantle xenolith replaces the rock
+     */
+    public record FaciesParams(double weatheringDepth, double weatheringNoise, double contactFraction,
+            double serpentinizationBand, double serpentinizationThreshold, double xenolithThreshold,
+            double peridotiteThreshold) {
+    }
+
+    /**
      * Returns the default start values from docs/ores/diamond-phase1-kimberlite.md.
      *
      * @return default parameter set
@@ -68,6 +85,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
         return new KimberliteParams(
                 new CratonParams(8000.0, 0.45),
                 new FieldParams(3000, 0.5, 0.3, 300, 800, 5, 30, 80),
-                new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0));
+                new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0),
+                new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855));
     }
 }

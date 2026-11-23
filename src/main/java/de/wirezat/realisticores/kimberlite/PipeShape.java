@@ -39,6 +39,19 @@ public final class PipeShape {
      * @return true if the position is inside the irregular outline
      */
     public boolean contains(Pipe pipe, int x, int y, int z) {
+        return normalizedDistance(pipe, x, y, z) <= 1.0;
+    }
+
+    /**
+     * Gives the distance from the pipe axis relative to the local wall.
+     *
+     * @param pipe the pipe
+     * @param x world X of the block
+     * @param y world Y of the block
+     * @param z world Z of the block
+     * @return 0 at the axis, 1 at the wall, above 1 outside the pipe
+     */
+    public double normalizedDistance(Pipe pipe, int x, int y, int z) {
         long shapeSeed = SplitMix64.hash(SHAPE_SALT, pipe.x(), pipe.z());
         SplitMix64 rng = new SplitMix64(shapeSeed);
         double angle = rng.nextDouble() * Math.PI;
@@ -53,7 +66,7 @@ public final class PipeShape {
                 + 0.35 * ValueNoise.sample3(shapeSeed + 1, x / (wavelength * 0.4), y / (wavelength * 0.8),
                         z / (wavelength * 0.4));
         double radius = profile.radiusAt(pipe, y) * (1.0 + params.wallNoiseStrength() * noise);
-        return distance <= radius;
+        return radius <= 0.0 ? Double.MAX_VALUE : distance / radius;
     }
 
     /**

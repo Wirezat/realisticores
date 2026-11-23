@@ -17,7 +17,8 @@ class KimberliteGenerationTest {
         return new KimberliteParams(
                 new KimberliteParams.CratonParams(defaults.craton().wavelength(), threshold),
                 defaults.field(),
-                defaults.pipe());
+                defaults.pipe(),
+                defaults.facies());
     }
 
     @Test
