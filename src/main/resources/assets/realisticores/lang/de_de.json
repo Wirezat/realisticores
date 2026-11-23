@@ -1,0 +1,6 @@
+{
+  "block.realisticores.kimberlite": "Kimberlit",
+  "command.realisticores.pipes.none": "Keine Kimberlit-Pipes in der Nähe gefunden.",
+  "command.realisticores.pipes.header": "%s nächste Kimberlit-Pipes (Klick zum Teleportieren):",
+  "command.realisticores.pipes.entry": "X %s Z %s, Durchmesser %s, Entfernung %s"
+}
