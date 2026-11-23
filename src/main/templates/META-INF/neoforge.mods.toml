@@ -10,6 +10,9 @@ description='''
 Ores and their processing, as realistic as the game allows.
 '''
 
+[[mixins]]
+config="${mod_id}.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
