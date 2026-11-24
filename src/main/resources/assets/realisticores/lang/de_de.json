@@ -29,5 +29,8 @@
   "item.realisticores.pan.empty": "Nur gewöhnliches Sediment",
   "item.realisticores.kimberlite_map": "Leere Kimberlit-Karte",
   "item.realisticores.kimberlite_map.none": "Nirgends eine Spur von Kimberlit",
-  "item.realisticores.kimberlite_map.filled": "Kimberlit-Karte"
+  "item.realisticores.kimberlite_map.filled": "Kimberlit-Karte",
+  "tooltip.realisticores.pan.efficiency": "Wäscht Sediment schneller.",
+  "tooltip.realisticores.pan.fortune": "Funde können mehrere Stücke ergeben.",
+  "tooltip.realisticores.pan.silk_touch": "Lässt das Sediment liegen, findet aber nur halb so oft."
 }

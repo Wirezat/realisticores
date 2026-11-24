@@ -29,5 +29,8 @@
   "item.realisticores.pan.empty": "Nothing but plain sediment",
   "item.realisticores.kimberlite_map": "Empty Kimberlite Map",
   "item.realisticores.kimberlite_map.none": "No trace of kimberlite anywhere",
-  "item.realisticores.kimberlite_map.filled": "Kimberlite Map"
+  "item.realisticores.kimberlite_map.filled": "Kimberlite Map",
+  "tooltip.realisticores.pan.efficiency": "Washes sediment faster.",
+  "tooltip.realisticores.pan.fortune": "Finds may yield extra pieces.",
+  "tooltip.realisticores.pan.silk_touch": "Leaves the sediment in place, but finds half as often."
 }

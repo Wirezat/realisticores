@@ -19,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -28,6 +29,10 @@ import net.neoforged.neoforge.common.Tags;
 /** The pan: washes sand and gravel at the water's edge and sieves out heavy indicator minerals. */
 public class PanItem extends Item {
     private static final int USE_TICKS = 60;
+    private static final int EFFICIENCY_TICKS = 10;
+    private static final int MIN_USE_TICKS = 10;
+    private static final int ENCHANTABILITY = 14;
+    private static final double SILK_CHANCE_FACTOR = 0.5;
     private static final int SPLASH_INTERVAL = 6;
 
     /**
@@ -79,7 +84,13 @@ public class PanItem extends Item {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return USE_TICKS;
+        int efficiency = PanEnchantments.level(entity.level(), Enchantments.EFFICIENCY, stack);
+        return Math.max(MIN_USE_TICKS, USE_TICKS - EFFICIENCY_TICKS * efficiency);
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return ENCHANTABILITY;
     }
 
     @Override
@@ -110,14 +121,19 @@ public class PanItem extends Item {
             return stack;
         }
         BlockHitResult hit = target(level, player);
-        if (hit.getType() != HitResult.Type.BLOCK || !canPan(level, hit.getBlockPos())
-                || !level.mayInteract(player, hit.getBlockPos())) {
+        if (hit.getType() != HitResult.Type.BLOCK || !canPan(level, hit.getBlockPos())) {
             return stack;
         }
-        List<ItemStack> found = PanYield.pan(server, hit.getBlockPos(), level.getRandom());
+        boolean keepBlock = PanEnchantments.level(level, Enchantments.SILK_TOUCH, stack) > 0;
+        if (!keepBlock && !level.mayInteract(player, hit.getBlockPos())) {
+            return stack;
+        }
+        int fortune = PanEnchantments.level(level, Enchantments.FORTUNE, stack);
+        List<ItemStack> found = PanYield.pan(server, hit.getBlockPos(), level.getRandom(),
+                keepBlock ? SILK_CHANCE_FACTOR : 1.0, fortune);
         if (found.isEmpty()) {
             player.displayClientMessage(Component.translatable("item.realisticores.pan.empty"), true);
-        } else {
+        } else if (!keepBlock) {
             level.destroyBlock(hit.getBlockPos(), false, player);
         }
         found.forEach(item -> {

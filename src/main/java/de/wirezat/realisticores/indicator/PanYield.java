@@ -29,9 +29,12 @@ public final class PanYield {
      * @param level the world
      * @param pos the sediment block being panned
      * @param random source of the rolls
+     * @param chanceFactor factor applied to every find chance, 1 for a normal pan
+     * @param fortune extra pieces per found mineral: 1 plus 0 up to this many
      * @return found minerals, empty when the pan holds none
      */
-    public static List<ItemStack> pan(ServerLevel level, BlockPos pos, RandomSource random) {
+    public static List<ItemStack> pan(ServerLevel level, BlockPos pos, RandomSource random, double chanceFactor,
+            int fortune) {
         List<ItemStack> found = new ArrayList<>();
         if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
                 || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
@@ -55,15 +58,16 @@ public final class PanYield {
             chromite *= 1.0 - Plume.density(path, pos.getX(), pos.getZ(), params, params.chromite());
             ilmenite *= 1.0 - Plume.density(path, pos.getX(), pos.getZ(), params, params.ilmenite());
         }
-        roll(found, ModItems.PYROPE, 1.0 - pyrope, random);
-        roll(found, ModItems.CHROMITE, 1.0 - chromite, random);
-        roll(found, ModItems.ILMENITE, 1.0 - ilmenite, random);
+        roll(found, ModItems.PYROPE, (1.0 - pyrope) * chanceFactor, random, fortune);
+        roll(found, ModItems.CHROMITE, (1.0 - chromite) * chanceFactor, random, fortune);
+        roll(found, ModItems.ILMENITE, (1.0 - ilmenite) * chanceFactor, random, fortune);
         return found;
     }
 
-    private static void roll(List<ItemStack> found, DeferredItem<Item> mineral, double chance, RandomSource random) {
+    private static void roll(List<ItemStack> found, DeferredItem<Item> mineral, double chance, RandomSource random,
+            int fortune) {
         if (random.nextDouble() < chance) {
-            found.add(new ItemStack(mineral.get()));
+            found.add(new ItemStack(mineral.get(), 1 + random.nextInt(fortune + 1)));
         }
     }
 }
