@@ -24,7 +24,7 @@ public abstract class PlacedFeatureMixin {
     private void realisticores$skipSuppressedOres(PlacementContext context, RandomSource random, BlockPos pos,
             CallbackInfoReturnable<Boolean> cir) {
         PlacedFeature self = (PlacedFeature) (Object) this;
-        if (OreConfig.matcher().suppresses(self.feature().value())) {
+        if (OreConfig.matcher().suppresses(context.getLevel().getLevel().dimension(), self.feature().value())) {
             cir.setReturnValue(false);
         }
     }

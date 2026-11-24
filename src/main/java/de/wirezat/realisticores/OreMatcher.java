@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -33,13 +35,15 @@ public final class OreMatcher {
     }
 
     /**
-     * Checks a configured feature against the ore list.
+     * Checks a configured feature against the ore list. Only the overworld is affected, so ores of other
+     * dimensions that share a tag with a replaced ore stay.
      *
+     * @param dimension the dimension the feature is placed in
      * @param feature the feature about to be placed
-     * @return true if it is an ore feature with at least one target block in the list
+     * @return true in the overworld if it is an ore feature with at least one target block in the list
      */
-    public boolean suppresses(ConfiguredFeature<?, ?> feature) {
-        if (!(feature.config() instanceof OreConfiguration ore)) {
+    public boolean suppresses(ResourceKey<Level> dimension, ConfiguredFeature<?, ?> feature) {
+        if (dimension != Level.OVERWORLD || !(feature.config() instanceof OreConfiguration ore)) {
             return false;
         }
         for (OreConfiguration.TargetBlockState target : ore.targetStates) {
