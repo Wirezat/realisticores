@@ -1,16 +1,33 @@
 package de.wirezat.realisticores.kimberlite;
 
-/** Shared generator instance and parameters of kimberlite generation. */
+import de.wirezat.realisticores.KimberliteConfig;
+
+/** Shared generator objects of kimberlite generation, rebuilt whenever the config changes. */
 public final class Kimberlite {
-    private static final KimberliteParams PARAMS = KimberliteParams.defaults();
-    private static final FieldGenerator GENERATOR = new FieldGenerator(PARAMS);
-    private static final PipeProfile PROFILE = new PipeProfile(PARAMS.pipe());
-    private static final FaciesSelector FACIES = new FaciesSelector(PARAMS);
-    private static final Crater CRATER = new Crater(PARAMS.crater());
-    private static final PipeGrade GRADE = new PipeGrade(PARAMS.grade());
-    private static final PipeShape SHAPE = new PipeShape(PARAMS.pipe(), PROFILE);
+    private static volatile State state;
 
     private Kimberlite() {
+    }
+
+    private record State(KimberliteParams params, FieldGenerator generator, PipeProfile profile, FaciesSelector facies,
+            Crater crater, PipeGrade grade, PipeShape shape) {
+    }
+
+    private static State state() {
+        State current = state;
+        if (current == null) {
+            KimberliteParams params = KimberliteConfig.params();
+            PipeProfile profile = new PipeProfile(params.pipe());
+            current = new State(params, new FieldGenerator(params), profile, new FaciesSelector(params),
+                    new Crater(params.crater()), new PipeGrade(params.grade()), new PipeShape(params.pipe(), profile));
+            state = current;
+        }
+        return current;
+    }
+
+    /** Drops the cached objects so the next use rebuilds them from the config. */
+    public static void invalidate() {
+        state = null;
     }
 
     /**
@@ -19,7 +36,7 @@ public final class Kimberlite {
      * @return kimberlite generation parameters
      */
     public static KimberliteParams params() {
-        return PARAMS;
+        return state().params();
     }
 
     /**
@@ -28,7 +45,7 @@ public final class Kimberlite {
      * @return generator for the active parameters
      */
     public static FieldGenerator generator() {
-        return GENERATOR;
+        return state().generator();
     }
 
     /**
@@ -37,16 +54,7 @@ public final class Kimberlite {
      * @return profile for the active parameters
      */
     public static PipeProfile profile() {
-        return PROFILE;
-    }
-
-    /**
-     * Returns the shared pipe shape model.
-     *
-     * @return shape model for the active parameters
-     */
-    public static PipeShape shape() {
-        return SHAPE;
+        return state().profile();
     }
 
     /**
@@ -55,7 +63,7 @@ public final class Kimberlite {
      * @return selector for the active parameters
      */
     public static FaciesSelector facies() {
-        return FACIES;
+        return state().facies();
     }
 
     /**
@@ -64,7 +72,7 @@ public final class Kimberlite {
      * @return crater model for the active parameters
      */
     public static Crater crater() {
-        return CRATER;
+        return state().crater();
     }
 
     /**
@@ -73,6 +81,15 @@ public final class Kimberlite {
      * @return grade model for the active parameters
      */
     public static PipeGrade grade() {
-        return GRADE;
+        return state().grade();
+    }
+
+    /**
+     * Returns the shared pipe shape model.
+     *
+     * @return shape model for the active parameters
+     */
+    public static PipeShape shape() {
+        return state().shape();
     }
 }

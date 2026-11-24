@@ -17,9 +17,6 @@ import net.minecraft.world.phys.Vec3;
 
 /** Operator command that lists the nearest kimberlite pipes. */
 public final class KimberliteCommand {
-    private static final int START_RADIUS = 5000;
-    private static final int SEARCH_LIMIT = 320000;
-    private static final int MAX_RESULTS = 10;
 
     private KimberliteCommand() {
     }
@@ -59,15 +56,17 @@ public final class KimberliteCommand {
     private static List<Pipe> nearest(long seed, Vec3 origin) {
         int originX = (int) origin.x;
         int originZ = (int) origin.z;
+        int maxResults = OreConfig.commandMaxResults();
         List<Pipe> pipes = List.of();
-        for (int radius = START_RADIUS; radius <= SEARCH_LIMIT && pipes.size() < MAX_RESULTS; radius *= 2) {
+        for (int radius = OreConfig.commandStartRadius();
+                radius <= OreConfig.commandSearchLimit() && pipes.size() < maxResults; radius *= 2) {
             int searchRadius = radius;
             pipes = Kimberlite.generator()
                     .pipesNear(seed, originX - radius, originZ - radius, originX + radius, originZ + radius)
                     .stream()
                     .filter(pipe -> distance(pipe, origin) <= searchRadius)
                     .sorted(Comparator.comparingDouble(pipe -> distance(pipe, origin)))
-                    .limit(MAX_RESULTS)
+                    .limit(maxResults)
                     .toList();
         }
         return pipes;

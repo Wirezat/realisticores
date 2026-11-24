@@ -7,7 +7,6 @@ import java.util.Optional;
 /** Derives kimberlite fields and their pipes deterministically from the world seed. */
 public final class FieldGenerator {
     private static final long SALT = 0x4649454C445F4B49L;
-    private static final int PLACEMENT_ATTEMPTS = 10;
 
     private final KimberliteParams params;
     private final CratonMask craton;
@@ -92,7 +91,7 @@ public final class FieldGenerator {
         KimberliteParams.PipeParams p = params.pipe();
         double lnDiameter = Math.log(p.medianDiameter()) + rng.nextGaussian() * p.diameterSigma();
         int diameter = (int) Math.round(Math.min(p.maxDiameter(), Math.max(p.minDiameter(), Math.exp(lnDiameter))));
-        for (int attempt = 0; attempt < PLACEMENT_ATTEMPTS; attempt++) {
+        for (int attempt = 0; attempt < f.placementAttempts(); attempt++) {
             double angle = rng.nextDouble() * 2.0 * Math.PI;
             double distance = radius * Math.sqrt(rng.nextDouble());
             int x = centerX + (int) Math.round(Math.cos(angle) * distance);

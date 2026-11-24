@@ -61,10 +61,13 @@ public final class PipeShape {
         double along = dx * Math.cos(angle) + dz * Math.sin(angle);
         double across = (-dx * Math.sin(angle) + dz * Math.cos(angle)) / aspect;
         double distance = Math.hypot(along, across);
-        double wavelength = Math.max(10.0, pipe.diameter() * 0.3);
-        double noise = 0.65 * ValueNoise.sample3(shapeSeed, x / wavelength, y / (wavelength * 2.0), z / wavelength)
-                + 0.35 * ValueNoise.sample3(shapeSeed + 1, x / (wavelength * 0.4), y / (wavelength * 0.8),
-                        z / (wavelength * 0.4));
+        double wavelength = Math.max(params.wallMinWavelength(), pipe.diameter() * params.wallWavelengthFactor());
+        double stretch = params.wallVerticalStretch();
+        double fine = wavelength * params.wallFineScale();
+        double noise = (1.0 - params.wallFineShare())
+                * ValueNoise.sample3(shapeSeed, x / wavelength, y / (wavelength * stretch), z / wavelength)
+                + params.wallFineShare()
+                * ValueNoise.sample3(shapeSeed + 1, x / fine, y / (fine * stretch), z / fine);
         double radius = profile.radiusAt(pipe, y) * (1.0 + params.wallNoiseStrength() * noise);
         return radius <= 0.0 ? Double.MAX_VALUE : distance / radius;
     }

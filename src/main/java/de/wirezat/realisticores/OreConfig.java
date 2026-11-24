@@ -21,9 +21,12 @@ public final class OreConfig {
     private static final ModConfigSpec.ConfigValue<List<? extends String>> SUPPRESSED_ORES;
     private static final ModConfigSpec.ConfigValue<List<? extends String>> ENABLED_ORES;
     private static final ModConfigSpec.ConfigValue<List<? extends String>> ORE_OVERRIDES;
+    private static final ModConfigSpec.IntValue COMMAND_MAX_RESULTS;
+    private static final ModConfigSpec.IntValue COMMAND_START_RADIUS;
+    private static final ModConfigSpec.IntValue COMMAND_SEARCH_LIMIT;
     private static final DepositRegistry REGISTRY = DepositRegistry.load();
 
-    private static volatile List<List<? extends String>> cachedKey;
+    private static volatile List<Object> cachedKey;
     private static volatile Resolved cachedResolved;
 
     /**
@@ -53,10 +56,27 @@ public final class OreConfig {
                 .comment("Replaces the block placed for an ore, as ore=block, e.g. peridot=othermod:peridot_ore.")
                 .defineListAllowEmpty("oreBlockOverrides", List.of(), () -> "peridot=othermod:peridot_ore",
                         OreConfig::isValidOverride);
+        builder.comment("Settings of the operator command /realisticores pipes.").push("command");
+        COMMAND_MAX_RESULTS = builder.comment("Number of nearest pipes listed.")
+                .defineInRange("maxResults", 10, 1, 100);
+        COMMAND_START_RADIUS = builder.comment("First search radius in blocks; it doubles until enough pipes are found.")
+                .defineInRange("startRadius", 5000, 100, 100000);
+        COMMAND_SEARCH_LIMIT = builder.comment("Largest search radius in blocks.")
+                .defineInRange("searchLimit", 320000, 1000, 2000000);
+        builder.pop();
         SPEC = builder.build();
     }
 
     private OreConfig() {
+    }
+
+    /**
+     * Gives the ores and deposits shipped with the mod.
+     *
+     * @return the registry loaded at startup
+     */
+    public static DepositRegistry registry() {
+        return REGISTRY;
     }
 
     private static boolean isValidSuppression(Object entry) {
@@ -80,16 +100,44 @@ public final class OreConfig {
     }
 
     /**
+     * Gives the number of pipes the command lists.
+     *
+     * @return maximum number of results
+     */
+    public static int commandMaxResults() {
+        return COMMAND_MAX_RESULTS.get();
+    }
+
+    /**
+     * Gives the first search radius of the command.
+     *
+     * @return radius in blocks
+     */
+    public static int commandStartRadius() {
+        return COMMAND_START_RADIUS.get();
+    }
+
+    /**
+     * Gives the largest search radius of the command.
+     *
+     * @return radius in blocks
+     */
+    public static int commandSearchLimit() {
+        return COMMAND_SEARCH_LIMIT.get();
+    }
+
+    /**
      * Resolves the current config values.
      *
      * @return the resolved setup, rebuilt whenever a config list changes
      */
     public static Resolved resolved() {
-        List<List<? extends String>> key = List.of(List.copyOf(SUPPRESSED_ORES.get()),
-                List.copyOf(ENABLED_ORES.get()), List.copyOf(ORE_OVERRIDES.get()));
+        Map<String, Double> fractions = KimberliteConfig.fractions();
+        List<Object> key = List.of(List.copyOf(SUPPRESSED_ORES.get()), List.copyOf(ENABLED_ORES.get()),
+                List.copyOf(ORE_OVERRIDES.get()), fractions);
         Resolved resolved = cachedResolved;
         if (resolved == null || !key.equals(cachedKey)) {
-            resolved = resolve(key.get(0), key.get(1), key.get(2));
+            resolved = resolve(castList(key.get(0)), castList(key.get(1)), castList(key.get(2)), fractions);
             cachedResolved = resolved;
             cachedKey = key;
         }
@@ -105,8 +153,13 @@ public final class OreConfig {
         return resolved().matcher();
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<? extends String> castList(Object value) {
+        return (List<? extends String>) value;
+    }
+
     private static Resolved resolve(List<? extends String> suppressed, List<? extends String> enabled,
-            List<? extends String> overrides) {
+            List<? extends String> overrides, Map<String, Double> fractions) {
         Set<String> enabledOres = new HashSet<>(enabled);
         Map<String, String> overrideBlocks = new HashMap<>();
         for (String entry : overrides) {
@@ -119,6 +172,6 @@ public final class OreConfig {
                 .forEach(id -> suppressedEntries.add("#" + REGISTRY.ores().get(id).tag()));
         Deposit pipe = REGISTRY.deposits().get(KIMBERLITE_PIPE);
         return new Resolved(new OreMatcher(suppressedEntries), DepositSetup.isActive(pipe, enabledOres),
-                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks));
+                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions));
     }
 }

@@ -27,10 +27,17 @@ class DepositSetupTest {
     @Test
     void onlyEnabledOresArePlacedAndOverridesReplaceTheDefaultBlock() {
         List<ActiveMineral> active = DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("peridot"),
-                Map.of("peridot", "other:peridot_ore"));
+                Map.of("peridot", "other:peridot_ore"), Map.of());
         assertEquals(1, active.size());
         assertEquals("other:peridot_ore", active.get(0).block());
         assertEquals(List.of("PERIDOTITE"), active.get(0).zones());
+    }
+
+    @Test
+    void configuredSharesReplaceTheShippedShares() {
+        List<ActiveMineral> active = DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("peridot"), Map.of(),
+                Map.of("peridot", 0.5));
+        assertEquals(0.5, active.get(0).fraction());
     }
 
     @Test

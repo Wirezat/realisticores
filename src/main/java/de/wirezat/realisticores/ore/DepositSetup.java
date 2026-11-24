@@ -28,10 +28,11 @@ public final class DepositSetup {
      * @param registry source of the default blocks
      * @param enabledOres ids of the ores switched on in the config
      * @param overrides block ids by ore id that replace the default blocks
+     * @param fractions ore shares by ore id that replace the shipped shares
      * @return enabled minerals; ores unknown to the registry are skipped
      */
     public static List<ActiveMineral> activeMinerals(Deposit deposit, DepositRegistry registry,
-            Set<String> enabledOres, Map<String, String> overrides) {
+            Set<String> enabledOres, Map<String, String> overrides, Map<String, Double> fractions) {
         List<ActiveMineral> active = new ArrayList<>();
         for (Mineral mineral : deposit.minerals()) {
             OreDefinition ore = registry.ores().get(mineral.ore());
@@ -39,7 +40,8 @@ public final class DepositSetup {
                 continue;
             }
             String block = overrides.getOrDefault(mineral.ore(), ore.block());
-            active.add(new ActiveMineral(mineral.ore(), mineral.zones(), mineral.fraction(), mineral.graded(), block));
+            double fraction = fractions.getOrDefault(mineral.ore(), mineral.fraction());
+            active.add(new ActiveMineral(mineral.ore(), mineral.zones(), fraction, mineral.graded(), block));
         }
         return List.copyOf(active);
     }

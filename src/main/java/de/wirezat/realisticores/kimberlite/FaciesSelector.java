@@ -3,14 +3,6 @@ package de.wirezat.realisticores.kimberlite;
 /** Picks the rock type at a position inside a pipe. */
 public final class FaciesSelector {
     private static final long SALT = 0x464143494553L;
-    private static final double CONTACT_WAVELENGTH = 6.0;
-    private static final double XENOLITH_WAVELENGTH = 5.0;
-    private static final double PERIDOTITE_WAVELENGTH = 3.0;
-    private static final double SERPENTINE_WAVELENGTH = 10.0;
-    private static final double WEATHERING_WAVELENGTH = 20.0;
-    private static final double BAND_BONUS = 0.4;
-    private static final double WALL_BONUS = 0.3;
-    private static final double WALL_START = 0.8;
 
     private final KimberliteParams params;
 
@@ -39,29 +31,29 @@ public final class FaciesSelector {
         long seed = SplitMix64.hash(SALT, pipe.x(), pipe.z());
         double depth = surfaceY - y;
         double weatheringDepth = f.weatheringDepth()
-                + f.weatheringNoise() * ValueNoise.sample2(seed, x / WEATHERING_WAVELENGTH, z / WEATHERING_WAVELENGTH);
+                + f.weatheringNoise() * ValueNoise.sample2(seed, x / f.weatheringWavelength(), z / f.weatheringWavelength());
         if (depth < weatheringDepth) {
             return Facies.WEATHERED;
         }
         if (wallDistance > 1.0 - f.contactFraction()
-                && ValueNoise.sample3(seed + 1, x / CONTACT_WAVELENGTH, y / CONTACT_WAVELENGTH,
-                        z / CONTACT_WAVELENGTH) > 0.0) {
+                && ValueNoise.sample3(seed + 1, x / f.contactWavelength(), y / f.contactWavelength(),
+                        z / f.contactWavelength()) > f.contactThreshold()) {
             return Facies.HOST;
         }
-        if (ValueNoise.sample3(seed + 2, x / PERIDOTITE_WAVELENGTH, y / PERIDOTITE_WAVELENGTH,
-                z / PERIDOTITE_WAVELENGTH) > f.peridotiteThreshold()) {
+        if (ValueNoise.sample3(seed + 2, x / f.peridotiteWavelength(), y / f.peridotiteWavelength(),
+                z / f.peridotiteWavelength()) > f.peridotiteThreshold()) {
             return Facies.PERIDOTITE;
         }
-        if (ValueNoise.sample3(seed + 3, x / XENOLITH_WAVELENGTH, y / XENOLITH_WAVELENGTH,
-                z / XENOLITH_WAVELENGTH) > f.xenolithThreshold()) {
+        if (ValueNoise.sample3(seed + 3, x / f.xenolithWavelength(), y / f.xenolithWavelength(),
+                z / f.xenolithWavelength()) > f.xenolithThreshold()) {
             return Facies.HOST;
         }
-        double bonus = depth < weatheringDepth + f.serpentinizationBand() ? BAND_BONUS : 0.0;
-        if (wallDistance > WALL_START) {
-            bonus += WALL_BONUS;
+        double bonus = depth < weatheringDepth + f.serpentinizationBand() ? f.serpentineBandBonus() : 0.0;
+        if (wallDistance > f.serpentineWallStart()) {
+            bonus += f.serpentineWallBonus();
         }
-        double serpentine = ValueNoise.sample3(seed + 4, x / SERPENTINE_WAVELENGTH, y / SERPENTINE_WAVELENGTH,
-                z / SERPENTINE_WAVELENGTH);
+        double serpentine = ValueNoise.sample3(seed + 4, x / f.serpentineWavelength(), y / f.serpentineWavelength(),
+                z / f.serpentineWavelength());
         if (serpentine + bonus > f.serpentinizationThreshold()) {
             return Facies.SERPENTINIZED;
         }
