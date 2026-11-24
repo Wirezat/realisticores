@@ -14,6 +14,9 @@ public final class ModItems {
     public static final DeferredItem<Item> PERIDOT = ITEMS.registerSimpleItem("peridot");
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> NATURAL_DIAMOND = ITEMS.registerSimpleItem("natural_diamond");
+    public static final DeferredItem<Item> PYROPE = ITEMS.registerSimpleItem("pyrope");
+    public static final DeferredItem<Item> CHROMITE = ITEMS.registerSimpleItem("chromite");
+    public static final DeferredItem<Item> ILMENITE = ITEMS.registerSimpleItem("ilmenite");
 
     private ModItems() {
     }

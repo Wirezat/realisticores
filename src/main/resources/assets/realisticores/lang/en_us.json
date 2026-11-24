@@ -21,5 +21,8 @@
   "block.minecraft.diamond_block": "Block of Synthetic Diamond",
   "block.realisticores.crystal_press": "Crystal Press",
   "gui.realisticores.crystal_press.time": "%s s",
-  "emi.category.realisticores.crystal_press": "Crystal Press"
+  "emi.category.realisticores.crystal_press": "Crystal Press",
+  "item.realisticores.pyrope": "Pyrope Garnet",
+  "item.realisticores.chromite": "Chromite",
+  "item.realisticores.ilmenite": "Ilmenite"
 }
