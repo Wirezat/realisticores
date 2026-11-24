@@ -30,11 +30,15 @@ public final class Crater {
      * @param pipe the pipe
      * @param wallDistance distance from the axis relative to the wall (0 axis, 1 wall)
      * @param rimY mean terrain height around the crater
-     * @return floor Y: rimY minus the bowl depth at the axis, rimY at the wall
+     * @param surfaceY terrain height of the column
+     * @return floor Y: rimY minus the bowl depth at the axis, rimY at the wall; never deeper than the allowed
+     *         wall height below the terrain and never above the terrain
      */
-    public int floorY(Pipe pipe, double wallDistance, int rimY) {
+    public int floorY(Pipe pipe, double wallDistance, int rimY, int surfaceY) {
         double d = Math.min(1.0, Math.max(0.0, wallDistance));
-        return rimY - (int) Math.round(depth(pipe) * (1.0 - d * d));
+        int bowl = rimY - (int) Math.round(depth(pipe) * (1.0 - d * d));
+        int deepestAllowed = surfaceY - Math.max(params.maxWallHeight(), depth(pipe));
+        return Math.min(surfaceY, Math.max(bowl, deepestAllowed));
     }
 
     /**

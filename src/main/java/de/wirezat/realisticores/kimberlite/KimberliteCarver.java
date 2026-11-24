@@ -67,19 +67,31 @@ public final class KimberliteCarver {
                     }
                     int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
                     double surfaceWall = shape.normalizedDistance(pipe, x, surfaceY, z);
-                    int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY()) : surfaceY;
+                    int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY(), surfaceY) : surfaceY;
                     boolean bowl = floorY < surfaceY;
+                    BlockState topSoil = null;
+                    BlockState subSoil = null;
                     if (bowl) {
+                        BlockState top = chunk.getBlockState(pos.set(x, surfaceY, z));
+                        BlockState below = chunk.getBlockState(pos.set(x, surfaceY - 1, z));
+                        if (isSoil(top)) {
+                            boolean underWater = waterY > floorY;
+                            subSoil = isSoil(below) ? below : Blocks.DIRT.defaultBlockState();
+                            topSoil = underWater ? subSoil : top;
+                        }
                         fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
                     }
-                    carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape, config.kimberliteMinerals());
+                    boolean overgrown = topSoil != null && !shape.isOutcrop(x, z);
+                    carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
+                            config.kimberliteMinerals(), overgrown ? topSoil : null, subSoil);
                 }
             }
         }
     }
 
     private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, Pipe pipe, int x, int z,
-            int bottomY, int groundY, boolean bowl, PipeShape shape, List<ActiveMineral> minerals) {
+            int bottomY, int groundY, boolean bowl, PipeShape shape, List<ActiveMineral> minerals,
+            BlockState topSoil, BlockState subSoil) {
         FaciesSelector facies = Kimberlite.facies();
         int floorLayers = Kimberlite.params().crater().floorLayers();
         boolean outcrop = shape.isOutcrop(x, z);
@@ -91,6 +103,10 @@ public final class KimberliteCarver {
             }
             pos.set(x, y, z);
             BlockState state = chunk.getBlockState(pos);
+            if (topSoil != null && y > groundY - Kimberlite.params().crater().soilLayers()) {
+                chunk.setBlockState(pos, y == groundY ? topSoil : subSoil, false);
+                continue;
+            }
             if (!state.is(BlockTags.BASE_STONE_OVERWORLD) && !((outcrop || bowl) && isSoil(state))) {
                 continue;
             }

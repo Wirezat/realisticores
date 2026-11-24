@@ -64,6 +64,8 @@ public final class KimberliteConfig {
     private static final Supplier<Integer> CRATER_MAX_DEPTH;
     private static final Supplier<Integer> CRATER_FLOOR_LAYERS;
     private static final Supplier<Integer> CRATER_RING_POINTS;
+    private static final Supplier<Integer> CRATER_MAX_WALL_HEIGHT;
+    private static final Supplier<Integer> CRATER_SOIL_LAYERS;
     private static final Supplier<Double> GRADE_BARREN_SHARE;
     private static final Supplier<Double> GRADE_POOR_SHARE;
     private static final Supplier<Double> GRADE_POOR_FACTOR;
@@ -182,6 +184,10 @@ public final class KimberliteConfig {
                 "Volcaniclastic layers at the bowl floor.");
         CRATER_RING_POINTS = integer(b, "ringPoints", d.crater().ringPoints(), 3, 64,
                 "Terrain samples on the ring around a crater that set the rim height and lake level.");
+        CRATER_MAX_WALL_HEIGHT = integer(b, "maxWallHeight", d.crater().maxWallHeight(), 0, 64,
+                "Tallest wall the bowl may cut into sloping terrain; never less than the bowl depth. Lower values give gentler rims.");
+        CRATER_SOIL_LAYERS = integer(b, "soilLayers", d.crater().soilLayers(), 0, 16,
+                "Soil blocks laid on the bowl floor so the crater is overgrown; 0 leaves bare volcaniclastic rock.");
         b.pop();
 
         b.comment("Ore grade of pipes: barren, poor and rich pipes, with varying rock phases.").push("grade");
@@ -249,7 +255,8 @@ public final class KimberliteConfig {
                         FACIES_SERPENTINE_BAND_BONUS.get(), FACIES_SERPENTINE_WALL_BONUS.get(),
                         FACIES_SERPENTINE_WALL_START.get(), FACIES_CONTACT_THRESHOLD.get()),
                 new KimberliteParams.CraterParams(CRATER_DEPTH_PER_DIAMETER.get(), CRATER_MIN_DEPTH.get(),
-                        CRATER_MAX_DEPTH.get(), CRATER_FLOOR_LAYERS.get(), CRATER_RING_POINTS.get()),
+                        CRATER_MAX_DEPTH.get(), CRATER_FLOOR_LAYERS.get(), CRATER_RING_POINTS.get(),
+                        CRATER_MAX_WALL_HEIGHT.get(), CRATER_SOIL_LAYERS.get()),
                 new KimberliteParams.GradeParams(GRADE_BARREN_SHARE.get(), GRADE_POOR_SHARE.get(),
                         GRADE_POOR_FACTOR.get(), GRADE_PHASE_WAVELENGTH.get(), GRADE_PHASE_AMPLITUDE.get()))
                 .sanitized();
