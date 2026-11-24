@@ -52,6 +52,7 @@ public final class ModPress {
         RECIPE_TYPES.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, PRESS_BLOCK_ENTITY.get(), (entity, side) -> entity.inventory()));
+                Capabilities.ItemHandler.BLOCK, PRESS_BLOCK_ENTITY.get(), (entity, side) -> PressSides.handlerFor(entity.inventory(), side,
+                        entity.getBlockState().getValue(CrystalPressBlock.FACING))));
     }
 }
