@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.mixin;
 
 import de.wirezat.realisticores.kimberlite.KimberliteCarver;
+import de.wirezat.realisticores.kimberlite.Climate;
 import de.wirezat.realisticores.kimberlite.TerrainProbe;
 import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.WorldGenRegion;
@@ -38,6 +39,13 @@ public abstract class NoiseBasedChunkGeneratorMixin {
             @Override
             public int terrainHeight(int x, int z) {
                 return generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, random) - 1;
+            }
+
+            @Override
+            public Climate climate(int x, int z) {
+                int y = terrainHeight(x, z);
+                return Climate.of(generator.getBiomeSource().getNoiseBiome(QuartPos.fromBlock(x),
+                        QuartPos.fromBlock(y), QuartPos.fromBlock(z), random.sampler()));
             }
 
             @Override

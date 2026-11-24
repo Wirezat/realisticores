@@ -9,9 +9,10 @@ package de.wirezat.realisticores.kimberlite;
  * @param facies rock type settings inside pipes
  * @param crater crater bowl settings
  * @param grade ore grade settings of pipes
+ * @param plume indicator mineral trail settings
  */
 public record KimberliteParams(CratonParams craton, FieldParams field, PipeParams pipe, FaciesParams facies,
-        CraterParams crater, GradeParams grade) {
+        CraterParams crater, GradeParams grade, PlumeParams plume) {
 
     /**
      * Craton mask settings.
@@ -128,6 +129,39 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
     }
 
     /**
+     * Indicator mineral trail settings.
+     *
+     * @param stepLength distance in blocks between two points of the trail path
+     * @param maxLength longest trail in blocks
+     * @param inertia share of the previous heading kept at each step, 0 to 1
+     * @param flatSlope terrain slope in blocks per block at which the trail follows the downhill direction fully
+     * @param startWidth half width of the trail at the pipe in blocks
+     * @param widthGrowth growth of the half width per block of trail length
+     * @param coldFactor trail length factor for pipes in cold biomes
+     * @param dryFactor trail length factor for pipes in dry biomes
+     * @param oceanFactor trail length factor for pipes in oceans
+     * @param maxSeaDepth depth in blocks below the sea surface at which a trail ends
+     * @param pyrope settings of pyrope garnet
+     * @param chromite settings of chromite
+     * @param ilmenite settings of ilmenite
+     */
+    public record PlumeParams(double stepLength, double maxLength, double inertia, double flatSlope,
+            double startWidth, double widthGrowth, double coldFactor, double dryFactor, double oceanFactor,
+            double maxSeaDepth,
+            IndicatorParams pyrope, IndicatorParams chromite,
+            IndicatorParams ilmenite) {
+    }
+
+    /**
+     * Spread of one indicator mineral.
+     *
+     * @param length trail length in blocks over which the grains fall to 1/e
+     * @param peak chance per pan of finding the mineral next to the pipe, 0 to 1
+     */
+    public record IndicatorParams(double length, double peak) {
+    }
+
+    /**
      * Repairs values that contradict each other: upper bounds below their lower bounds, a root above the crater
      * base, a bottom above the root, and grade shares that exceed 100 %.
      *
@@ -154,7 +188,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
         double poorShare = Math.min(g.poorShare(), 1.0 - Math.min(1.0, g.barrenShare()));
         GradeParams grade = new GradeParams(g.barrenShare(), poorShare, g.poorFactor(), g.phaseWavelength(),
                 g.phaseAmplitude());
-        return new KimberliteParams(craton, field, pipe, facies, crater, grade);
+        return new KimberliteParams(craton, field, pipe, facies, crater, grade, plume);
     }
 
     /**
@@ -169,6 +203,9 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
                 new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0, 0.3, 10.0, 0.35, 0.4, 2.0),
                 new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855, 6.0, 5.0, 3.0, 10.0, 20.0, 0.4, 0.3, 0.8, 0.0),
                 new CraterParams(0.08, 4, 12, 3, 12, 8, 3, false),
-                new GradeParams(0.5, 0.35, 0.15, 40.0, 0.9));
+                new GradeParams(0.5, 0.35, 0.15, 40.0, 0.9),
+                new PlumeParams(32.0, 1800.0, 0.6, 0.05, 10.0, 0.08, 2.5, 0.6, 0.5, 30.0,
+                        new IndicatorParams(400.0, 0.6), new IndicatorParams(300.0, 0.4),
+                        new IndicatorParams(120.0, 0.5)));
     }
 }

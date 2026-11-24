@@ -53,6 +53,7 @@ public final class KimberliteCarver {
         int bottomY = Math.max(chunk.getMinBuildHeight(), Kimberlite.params().pipe().bottomY());
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Pipe pipe : pipes) {
+            Kimberlite.plume(seed, pipe, probe, seaLevel);
             CraterSite site = SITES.computeIfAbsent(new SiteKey(seed, pipe), key -> CraterSite.measure(pipe, probe, Kimberlite.params().crater().ringPoints()));
             int waterY = crater.hasLake(site.wet()) ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
             double reach = shape.reach(pipe);

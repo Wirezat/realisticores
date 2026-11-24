@@ -72,6 +72,22 @@ public final class KimberliteConfig {
     private static final Supplier<Double> GRADE_POOR_FACTOR;
     private static final Supplier<Double> GRADE_PHASE_WAVELENGTH;
     private static final Supplier<Double> GRADE_PHASE_AMPLITUDE;
+    private static final Supplier<Double> PLUME_STEP_LENGTH;
+    private static final Supplier<Double> PLUME_MAX_LENGTH;
+    private static final Supplier<Double> PLUME_INERTIA;
+    private static final Supplier<Double> PLUME_FLAT_SLOPE;
+    private static final Supplier<Double> PLUME_START_WIDTH;
+    private static final Supplier<Double> PLUME_WIDTH_GROWTH;
+    private static final Supplier<Double> PLUME_COLD_FACTOR;
+    private static final Supplier<Double> PLUME_DRY_FACTOR;
+    private static final Supplier<Double> PLUME_OCEAN_FACTOR;
+    private static final Supplier<Double> PLUME_MAX_SEA_DEPTH;
+    private static final Supplier<Double> PYROPE_LENGTH;
+    private static final Supplier<Double> PYROPE_PEAK;
+    private static final Supplier<Double> CHROMITE_LENGTH;
+    private static final Supplier<Double> CHROMITE_PEAK;
+    private static final Supplier<Double> ILMENITE_LENGTH;
+    private static final Supplier<Double> ILMENITE_PEAK;
     private static final Map<String, Supplier<Double>> MINERAL_FRACTIONS = new HashMap<>();
 
     static {
@@ -206,6 +222,41 @@ public final class KimberliteConfig {
                 "How far the grade of a phase may deviate from the pipe grade.");
         b.pop();
 
+        b.comment("Indicator mineral trails: grains washed downhill from a pipe, found by panning.").push("plume");
+        PLUME_STEP_LENGTH = decimal(b, "stepLength", d.plume().stepLength(), 8.0, 128.0,
+                "Distance in blocks between two points of the trail path.");
+        PLUME_MAX_LENGTH = decimal(b, "maxLength", d.plume().maxLength(), 100.0, 5000.0,
+                "Longest trail in blocks.");
+        PLUME_INERTIA = decimal(b, "inertia", d.plume().inertia(), 0.0, 0.95,
+                "Share of the previous heading kept at each step; higher values give straighter trails.");
+        PLUME_FLAT_SLOPE = decimal(b, "flatSlope", d.plume().flatSlope(), 0.001, 1.0,
+                "Terrain slope in blocks per block at which the trail follows the downhill direction fully.");
+        PLUME_START_WIDTH = decimal(b, "startWidth", d.plume().startWidth(), 1.0, 200.0,
+                "Half width of the trail at the pipe in blocks.");
+        PLUME_WIDTH_GROWTH = decimal(b, "widthGrowth", d.plume().widthGrowth(), 0.0, 1.0,
+                "Growth of the half width per block of trail length.");
+        PLUME_COLD_FACTOR = decimal(b, "coldFactor", d.plume().coldFactor(), 0.0, 10.0,
+                "Trail length factor for pipes in cold biomes; glaciers carry grains far.");
+        PLUME_DRY_FACTOR = decimal(b, "dryFactor", d.plume().dryFactor(), 0.0, 10.0,
+                "Trail length factor for pipes in dry biomes.");
+        PLUME_OCEAN_FACTOR = decimal(b, "oceanFactor", d.plume().oceanFactor(), 0.0, 10.0,
+                "Trail length factor for pipes in oceans; 0 leaves grains only at the pipe.");
+        PLUME_MAX_SEA_DEPTH = decimal(b, "maxSeaDepth", d.plume().maxSeaDepth(), 0.0, 200.0,
+                "Depth in blocks below the sea surface at which a trail ends; trails run on over shallow sea floor.");
+        PYROPE_LENGTH = decimal(b, "pyropeLength", d.plume().pyrope().length(), 10.0, 5000.0,
+                "Length in blocks over which pyrope garnet falls to 1/e.");
+        PYROPE_PEAK = decimal(b, "pyropePeak", d.plume().pyrope().peak(), 0.0, 1.0,
+                "Chance per pan of finding pyrope garnet next to the pipe.");
+        CHROMITE_LENGTH = decimal(b, "chromiteLength", d.plume().chromite().length(), 10.0, 5000.0,
+                "Length in blocks over which chromite falls to 1/e.");
+        CHROMITE_PEAK = decimal(b, "chromitePeak", d.plume().chromite().peak(), 0.0, 1.0,
+                "Chance per pan of finding chromite next to the pipe.");
+        ILMENITE_LENGTH = decimal(b, "ilmeniteLength", d.plume().ilmenite().length(), 10.0, 5000.0,
+                "Length in blocks over which ilmenite falls to 1/e; it is heavy and stops early.");
+        ILMENITE_PEAK = decimal(b, "ilmenitePeak", d.plume().ilmenite().peak(), 0.0, 1.0,
+                "Chance per pan of finding ilmenite next to the pipe.");
+        b.pop();
+
         b.comment("Share of the blocks in the ore's rock zones that become ore.").push("minerals");
         Deposit pipe = OreConfig.registry().deposits().get(OreConfig.KIMBERLITE_PIPE);
         for (Mineral mineral : pipe.minerals()) {
@@ -267,7 +318,14 @@ public final class KimberliteConfig {
                         CRATER_MAX_WALL_HEIGHT.get(), CRATER_SOIL_LAYERS.get(),
                         CRATER_LAKE_IN_DRY_BIOMES.get()),
                 new KimberliteParams.GradeParams(GRADE_BARREN_SHARE.get(), GRADE_POOR_SHARE.get(),
-                        GRADE_POOR_FACTOR.get(), GRADE_PHASE_WAVELENGTH.get(), GRADE_PHASE_AMPLITUDE.get()))
+                        GRADE_POOR_FACTOR.get(), GRADE_PHASE_WAVELENGTH.get(), GRADE_PHASE_AMPLITUDE.get()),
+                new KimberliteParams.PlumeParams(PLUME_STEP_LENGTH.get(), PLUME_MAX_LENGTH.get(),
+                        PLUME_INERTIA.get(), PLUME_FLAT_SLOPE.get(), PLUME_START_WIDTH.get(),
+                        PLUME_WIDTH_GROWTH.get(), PLUME_COLD_FACTOR.get(), PLUME_DRY_FACTOR.get(),
+                        PLUME_OCEAN_FACTOR.get(), PLUME_MAX_SEA_DEPTH.get(),
+                        new KimberliteParams.IndicatorParams(PYROPE_LENGTH.get(), PYROPE_PEAK.get()),
+                        new KimberliteParams.IndicatorParams(CHROMITE_LENGTH.get(), CHROMITE_PEAK.get()),
+                        new KimberliteParams.IndicatorParams(ILMENITE_LENGTH.get(), ILMENITE_PEAK.get())))
                 .sanitized();
     }
 

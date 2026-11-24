@@ -12,6 +12,15 @@ public interface TerrainProbe {
     int terrainHeight(int x, int z);
 
     /**
+     * Classifies the climate at a position.
+     *
+     * @param x world X
+     * @param z world Z
+     * @return climate class of the biome at the terrain surface
+     */
+    Climate climate(int x, int z);
+
+    /**
      * Tells whether the biome at a position has precipitation.
      *
      * @param x world X
