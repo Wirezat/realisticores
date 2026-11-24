@@ -1,36 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "realisticores:block/weathered_kimberlite"
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite",
-        "y": 270
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite_mirrored"
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/weathered_kimberlite_mirrored",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "realisticores:block/weathered_kimberlite"
+    }
   }
 }

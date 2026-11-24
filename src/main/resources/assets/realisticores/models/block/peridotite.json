@@ -1,1 +1,6 @@
-{"parent": "minecraft:block/cube_all", "textures": {"all": "realisticores:block/peridotite"}}
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "realisticores:block/peridotite"
+  }
+}

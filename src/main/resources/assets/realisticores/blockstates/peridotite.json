@@ -1,36 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "realisticores:block/peridotite"
-      },
-      {
-        "model": "realisticores:block/peridotite",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/peridotite",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/peridotite",
-        "y": 270
-      },
-      {
-        "model": "realisticores:block/peridotite_mirrored"
-      },
-      {
-        "model": "realisticores:block/peridotite_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/peridotite_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/peridotite_mirrored",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "realisticores:block/peridotite"
+    }
   }
 }

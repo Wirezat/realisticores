@@ -1,1 +1,7 @@
-{"variants": {"": {"model": "realisticores:block/graphite_block"}}}
+{
+  "variants": {
+    "": {
+      "model": "realisticores:block/graphite_block"
+    }
+  }
+}

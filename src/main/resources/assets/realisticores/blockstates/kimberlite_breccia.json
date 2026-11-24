@@ -1,36 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "realisticores:block/kimberlite_breccia"
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia",
-        "y": 270
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia_mirrored"
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/kimberlite_breccia_mirrored",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "realisticores:block/kimberlite_breccia"
+    }
   }
 }

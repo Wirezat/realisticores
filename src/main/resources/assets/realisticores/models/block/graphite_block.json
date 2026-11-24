@@ -1,1 +1,8 @@
-{"parent": "minecraft:block/cube_all", "textures": {"all": "realisticores:block/graphite_block"}}
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "realisticores:block/graphite_block_top",
+    "bottom": "realisticores:block/graphite_block_top",
+    "side": "realisticores:block/graphite_block"
+  }
+}

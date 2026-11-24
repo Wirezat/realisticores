@@ -1,36 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "realisticores:block/peridot_ore"
-      },
-      {
-        "model": "realisticores:block/peridot_ore",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/peridot_ore",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/peridot_ore",
-        "y": 270
-      },
-      {
-        "model": "realisticores:block/peridot_ore_mirrored"
-      },
-      {
-        "model": "realisticores:block/peridot_ore_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/peridot_ore_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/peridot_ore_mirrored",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "realisticores:block/peridot_ore"
+    }
   }
 }
