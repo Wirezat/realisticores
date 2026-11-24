@@ -1,6 +1,5 @@
 package de.wirezat.realisticores.indicator;
 
-import com.mojang.logging.LogUtils;
 import de.wirezat.realisticores.kimberlite.Plume;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,11 +10,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import org.slf4j.Logger;
 
 /** Plays the ghostly trails that lead from a panned spot toward the source of the grains, one step at a time. */
 public final class TrailEffects {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private static final int STEP_TICKS = 10;
     private static final int LINGER_TICKS = 100;
     private static final int REPEAT_TICKS = 6;
@@ -32,8 +29,6 @@ public final class TrailEffects {
         private final ServerLevel level;
         private final List<Plume.GuidePoint> points;
         private int age;
-        private int emitted;
-        private int skipped;
 
         Trail(ServerPlayer player, ServerLevel level, List<Plume.GuidePoint> points) {
             this.player = player;
@@ -51,8 +46,6 @@ public final class TrailEffects {
      * @param points guide points ordered from the panned spot toward the pipe
      */
     public static void start(ServerPlayer player, ServerLevel level, List<Plume.GuidePoint> points) {
-        LOGGER.info("TRAIL start player={} at {},{},{} points={}", player.getGameProfile().getName(),
-                (int) player.getX(), (int) player.getY(), (int) player.getZ(), points.size());
         ACTIVE.removeIf(trail -> trail.player == player);
         if (!points.isEmpty()) {
             ACTIVE.add(new Trail(player, level, points));
@@ -71,7 +64,6 @@ public final class TrailEffects {
             int lastStep = (trail.points.size() - 1) * STEP_TICKS;
             if (trail.player.isRemoved() || trail.player.serverLevel() != trail.level
                     || trail.age > lastStep + LINGER_TICKS) {
-                LOGGER.info("TRAIL end age={} emitted={} skipped={}", trail.age, trail.emitted, trail.skipped);
                 iterator.remove();
                 continue;
             }
@@ -90,16 +82,11 @@ public final class TrailEffects {
     private static void emit(Trail trail, Plume.GuidePoint point) {
         BlockPos column = BlockPos.containing(point.x(), 0, point.z());
         if (!trail.level.hasChunkAt(column)) {
-            trail.skipped++;
             return;
         }
         double y = trail.level.getHeight(Heightmap.Types.MOTION_BLOCKING, column.getX(), column.getZ())
                 + HEIGHT_ABOVE_GROUND;
-        if (trail.level.sendParticles(trail.player, ParticleTypes.SOUL_FIRE_FLAME, true, point.x(), y, point.z(), 0,
-                0.0, 1.0, 0.0, RISE_SPEED)) {
-            trail.emitted++;
-        } else {
-            trail.skipped++;
-        }
+        trail.level.sendParticles(trail.player, ParticleTypes.SOUL_FIRE_FLAME, true, point.x(), y, point.z(), 0,
+                0.0, 1.0, 0.0, RISE_SPEED);
     }
 }
