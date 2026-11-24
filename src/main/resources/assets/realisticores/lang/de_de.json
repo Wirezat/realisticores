@@ -34,5 +34,7 @@
   "enchantment.realisticores.trail_sense.desc": "Führt eine Spur aus Geisterflammen vom Wasch-Ort zur Quelle der Körner.",
   "tooltip.realisticores.pan.efficiency": "Wäscht Sediment schneller.",
   "tooltip.realisticores.pan.fortune": "Funde können mehrere Stücke ergeben.",
-  "tooltip.realisticores.pan.silk_touch": "Lässt das Sediment liegen, findet aber nur halb so oft."
+  "tooltip.realisticores.pan.silk_touch": "Lässt das Sediment liegen, findet aber nur halb so oft.",
+  "block.realisticores.kimberlite_bort_ore": "Borterz im Kimberlit",
+  "item.realisticores.bort": "Bort"
 }

@@ -34,5 +34,7 @@
   "enchantment.realisticores.trail_sense.desc": "Leads a trail of ghostly flames from the panning spot to the source of the grains.",
   "tooltip.realisticores.pan.efficiency": "Washes sediment faster.",
   "tooltip.realisticores.pan.fortune": "Finds may yield extra pieces.",
-  "tooltip.realisticores.pan.silk_touch": "Leaves the sediment in place, but finds half as often."
+  "tooltip.realisticores.pan.silk_touch": "Leaves the sediment in place, but finds half as often.",
+  "block.realisticores.kimberlite_bort_ore": "Kimberlite Bort Ore",
+  "item.realisticores.bort": "Bort"
 }

@@ -44,6 +44,9 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> KIMBERLITE_GRAPHITE_ORE = registerOre("kimberlite_graphite_ore", "graphite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
 
+    public static final DeferredBlock<Block> KIMBERLITE_BORT_ORE = registerOre("kimberlite_bort_ore", "bort",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
+
     public static final DeferredBlock<Block> GRAPHITE_BLOCK =
             register("graphite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
     public static final DeferredBlock<Block> NATURAL_DIAMOND_BLOCK =

@@ -2,6 +2,7 @@
   "minerals": [
     {"ore": "peridot", "zones": ["PERIDOTITE"], "fraction": 0.15},
     {"ore": "diamond", "zones": ["BRECCIA", "KIMBERLITE", "SERPENTINIZED", "VOLCANICLASTIC", "WEATHERED"], "fraction": 0.0015, "graded": true},
+    {"ore": "bort", "zones": ["BRECCIA", "KIMBERLITE", "SERPENTINIZED", "VOLCANICLASTIC", "WEATHERED"], "fraction": 0.004, "graded": true},
     {"ore": "graphite", "zones": ["BRECCIA", "KIMBERLITE", "SERPENTINIZED", "PERIDOTITE"], "fraction": 0.004}
   ]
 }

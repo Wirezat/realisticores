@@ -6,12 +6,14 @@ import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.MineralRoll;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -145,9 +147,10 @@ public final class KimberliteCarver {
                     ? mineral.fraction() * Kimberlite.grade().factor(pipe, x, y, z)
                     : mineral.fraction();
             if (MineralRoll.roll(mineral.ore(), x, y, z) < fraction) {
-                return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block()))
-                        .map(block -> block.defaultBlockState())
-                        .orElse(rockBlock);
+                Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block()));
+                if (block.isPresent()) {
+                    return block.get().defaultBlockState();
+                }
             }
         }
         return rockBlock;
