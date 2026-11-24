@@ -31,7 +31,10 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
             int flame = menu.litProgress();
             graphics.blit(TEXTURE, leftPos + 57, topPos + 36 + 12 - flame, 176, 12 - flame, 14, flame + 1);
         }
-        graphics.blit(TEXTURE, leftPos + 79, topPos + 34, 176, 14, menu.arrowProgress() + 1, 16);
+        int arrow = menu.arrowProgress();
+        if (arrow > 0) {
+            graphics.blit(TEXTURE, leftPos + 79, topPos + 34, 176, 14, arrow, 16);
+        }
     }
 
     @Override
