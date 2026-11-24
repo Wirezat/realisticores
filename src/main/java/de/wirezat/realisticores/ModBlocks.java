@@ -1,11 +1,15 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.ore.DepositRegistry;
+import de.wirezat.realisticores.ore.OreDefinition;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -32,11 +36,22 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PERIDOTITE =
             register("peridotite", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(3.5F, 9.0F));
 
+    public static final DeferredBlock<Block> PERIDOT_ORE = registerOre("peridot_ore", "peridot",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(3.5F, 9.0F));
+
     private ModBlocks() {
     }
 
     private static DeferredBlock<Block> register(String name, BlockBehaviour.Properties properties) {
         DeferredBlock<Block> block = BLOCKS.registerSimpleBlock(name, properties);
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
+        return block;
+    }
+
+    private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
+        OreDefinition ore = DepositRegistry.load().ores().get(oreId);
+        DeferredBlock<Block> block = BLOCKS.registerBlock(name,
+                props -> new DropExperienceBlock(UniformInt.of(ore.xpMin(), ore.xpMax()), props), properties);
         BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
         return block;
     }

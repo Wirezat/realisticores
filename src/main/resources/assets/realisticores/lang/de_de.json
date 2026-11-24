@@ -7,5 +7,7 @@
   "block.realisticores.volcaniclastic_kimberlite": "Vulkanoklastischer Kimberlit",
   "block.realisticores.weathered_kimberlite": "Verwitterter Kimberlit",
   "block.realisticores.serpentinized_kimberlite": "Serpentinisierter Kimberlit",
-  "block.realisticores.peridotite": "Peridotit"
+  "block.realisticores.peridotite": "Peridotit",
+  "block.realisticores.peridot_ore": "Peridot-Erz",
+  "item.realisticores.peridot": "Peridot"
 }

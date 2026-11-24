@@ -14,6 +14,7 @@ public class RealisticOres {
     public RealisticOres(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.COMMON, OreConfig.SPEC);
         ModBlocks.register(modBus);
+        ModItems.register(modBus);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 KimberliteCommand.register(event.getDispatcher()));
     }

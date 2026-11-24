@@ -1,1 +1,7 @@
-{"values":["realisticores:kimberlite","realisticores:peridotite"]}
+{
+  "values": [
+    "realisticores:kimberlite",
+    "realisticores:peridotite",
+    "realisticores:peridot_ore"
+  ]
+}

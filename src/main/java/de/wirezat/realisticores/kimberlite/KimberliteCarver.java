@@ -1,9 +1,13 @@
 package de.wirezat.realisticores.kimberlite;
 
 import de.wirezat.realisticores.ModBlocks;
+import de.wirezat.realisticores.OreConfig;
+import de.wirezat.realisticores.ore.ActiveMineral;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
@@ -14,6 +18,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 /** Writes kimberlite pipes, crater bowls and crater lakes into a chunk. */
 public final class KimberliteCarver {
+    private static final long MINERAL_SALT = 0x4D494E4552414C53L;
     private static final Map<SiteKey, CraterSite> SITES = new ConcurrentHashMap<>();
 
     private KimberliteCarver() {
@@ -32,6 +37,10 @@ public final class KimberliteCarver {
      * @param seaLevel sea level of the world
      */
     public static void carve(ChunkAccess chunk, long seed, TerrainProbe probe, int seaLevel) {
+        OreConfig.Resolved config = OreConfig.resolved();
+        if (!config.kimberlitePipeActive()) {
+            return;
+        }
         ChunkPos chunkPos = chunk.getPos();
         int minX = chunkPos.getMinBlockX();
         int minZ = chunkPos.getMinBlockZ();
@@ -63,14 +72,14 @@ public final class KimberliteCarver {
                     if (bowl) {
                         fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
                     }
-                    carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape);
+                    carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape, config.kimberliteMinerals());
                 }
             }
         }
     }
 
     private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, Pipe pipe, int x, int z,
-            int bottomY, int groundY, boolean bowl, PipeShape shape) {
+            int bottomY, int groundY, boolean bowl, PipeShape shape, List<ActiveMineral> minerals) {
         FaciesSelector facies = Kimberlite.facies();
         int floorLayers = Kimberlite.params().crater().floorLayers();
         boolean outcrop = shape.isOutcrop(x, z);
@@ -89,7 +98,7 @@ public final class KimberliteCarver {
                     ? Facies.VOLCANICLASTIC
                     : facies.at(pipe, x, y, z, groundY, wallDistance);
             if (rock != Facies.HOST) {
-                chunk.setBlockState(pos, blockFor(rock), false);
+                chunk.setBlockState(pos, mineralBlock(minerals, rock, x, y, z, blockFor(rock)), false);
             }
         }
     }
@@ -107,6 +116,22 @@ public final class KimberliteCarver {
                 chunk.setBlockState(pos, Blocks.AIR.defaultBlockState(), false);
             }
         }
+    }
+
+    private static BlockState mineralBlock(List<ActiveMineral> minerals, Facies rock, int x, int y, int z,
+            BlockState rockBlock) {
+        for (ActiveMineral mineral : minerals) {
+            if (!mineral.zone().equals(rock.name())) {
+                continue;
+            }
+            double roll = (SplitMix64.hash(MINERAL_SALT ^ y, x, z) >>> 11) * 0x1.0p-53;
+            if (roll < mineral.fraction()) {
+                return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block()))
+                        .map(block -> block.defaultBlockState())
+                        .orElse(rockBlock);
+            }
+        }
+        return rockBlock;
     }
 
     private static BlockState blockFor(Facies rock) {
