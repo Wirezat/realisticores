@@ -79,4 +79,13 @@ class PlumeTest {
         assertTrue(end > 200.0);
         assertTrue(end < 1000.0);
     }
+
+    @Test
+    void widthFloorKeepsANarrowTrailVisibleOnACoarseGrid() {
+        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PlumePath path = Plume.trace(new Pipe(0, 0, 10), 0.0, slopeEast(Climate.TEMPERATE), 0, params);
+        double sharp = Plume.density(path, 60, 40, params, params.pyrope());
+        double floored = Plume.lineDensity(path, 60, 40, params, params.pyrope(), 24.0);
+        assertTrue(floored > sharp * 3.0);
+    }
 }

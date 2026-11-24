@@ -129,6 +129,27 @@ public final class Plume {
         return indicator.peak() * decay * Math.exp(-outside * outside / (2.0 * width * width));
     }
 
+    /**
+     * Gives the find chance for a map line: like the pan chance, but with a fixed half width so that every trail
+     * draws as a line of the same thickness whatever the map scale.
+     *
+     * @param path trail of the pipe
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param params trail settings
+     * @param indicator spread of the mineral
+     * @param halfWidth half width of the line in blocks
+     * @return chance from 0 to 1; it falls with the distance along the trail and from its centre line
+     */
+    public static double lineDensity(PlumePath path, double x, double z, KimberliteParams.PlumeParams params,
+            KimberliteParams.IndicatorParams indicator, double halfWidth) {
+        Nearest nearest = nearest(path, x, z);
+        double outside = Math.max(0.0, nearest.distance() - path.pipe().diameter() / 2.0);
+        double decay = nearest.length() == 0.0 ? 1.0
+                : Math.exp(-nearest.length() / (indicator.length() * path.factor()));
+        return indicator.peak() * decay * Math.exp(-outside * outside / (2.0 * halfWidth * halfWidth));
+    }
+
     private record Nearest(double distance, double length) {
     }
 

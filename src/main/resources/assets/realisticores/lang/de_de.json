@@ -26,5 +26,8 @@
   "item.realisticores.chromite": "Chromit",
   "item.realisticores.ilmenite": "Ilmenit",
   "item.realisticores.iron_pan": "Eisenpfanne",
-  "item.realisticores.pan.empty": "Nur gewöhnliches Sediment"
+  "item.realisticores.pan.empty": "Nur gewöhnliches Sediment",
+  "item.realisticores.kimberlite_map": "Leere Kimberlit-Karte",
+  "item.realisticores.kimberlite_map.none": "Nirgends eine Spur von Kimberlit",
+  "item.realisticores.kimberlite_map.filled": "Kimberlit-Karte"
 }

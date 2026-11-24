@@ -26,5 +26,8 @@
   "item.realisticores.chromite": "Chromite",
   "item.realisticores.ilmenite": "Ilmenite",
   "item.realisticores.iron_pan": "Iron Pan",
-  "item.realisticores.pan.empty": "Nothing but plain sediment"
+  "item.realisticores.pan.empty": "Nothing but plain sediment",
+  "item.realisticores.kimberlite_map": "Empty Kimberlite Map",
+  "item.realisticores.kimberlite_map.none": "No trace of kimberlite anywhere",
+  "item.realisticores.kimberlite_map.filled": "Kimberlite Map"
 }

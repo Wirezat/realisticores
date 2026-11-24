@@ -102,4 +102,43 @@ public final class FieldGenerator {
             }
         }
     }
+
+    /**
+     * Finds the kimberlite field whose centre is nearest to a position.
+     *
+     * @param seed world seed
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param maxRadius search limit in blocks
+     * @return the nearest field with at least one pipe, empty if none lies within the limit
+     */
+    public Optional<Field> nearestField(long seed, int x, int z, int maxRadius) {
+        int cell = params.field().cellSize();
+        int originX = Math.floorDiv(x, cell);
+        int originZ = Math.floorDiv(z, cell);
+        int lastRing = maxRadius / cell + 1;
+        Field best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (int ring = 0; ring <= lastRing; ring++) {
+            if (best != null && bestDistance <= (ring - 1) * (double) cell) {
+                break;
+            }
+            for (int cellX = originX - ring; cellX <= originX + ring; cellX++) {
+                for (int cellZ = originZ - ring; cellZ <= originZ + ring; cellZ++) {
+                    if (Math.max(Math.abs(cellX - originX), Math.abs(cellZ - originZ)) != ring) {
+                        continue;
+                    }
+                    Optional<Field> field = fieldAt(seed, cellX, cellZ).filter(f -> !f.pipes().isEmpty());
+                    if (field.isPresent()) {
+                        double distance = Math.hypot(field.get().centerX() - x, field.get().centerZ() - z);
+                        if (distance < bestDistance) {
+                            bestDistance = distance;
+                            best = field.get();
+                        }
+                    }
+                }
+            }
+        }
+        return bestDistance <= maxRadius ? Optional.ofNullable(best) : Optional.empty();
+    }
 }
