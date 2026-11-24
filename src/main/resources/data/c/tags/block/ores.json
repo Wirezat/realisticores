@@ -1,5 +1,7 @@
 {
   "values": [
-    "#c:ores/peridot"
+    "#c:ores/peridot",
+    "#c:ores/bort",
+    "#c:ores/graphite"
   ]
 }
