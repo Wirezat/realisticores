@@ -24,5 +24,7 @@
   "emi.category.realisticores.crystal_press": "Kristallpresse",
   "item.realisticores.pyrope": "Pyrop-Granat",
   "item.realisticores.chromite": "Chromit",
-  "item.realisticores.ilmenite": "Ilmenit"
+  "item.realisticores.ilmenite": "Ilmenit",
+  "item.realisticores.iron_pan": "Eisenpfanne",
+  "item.realisticores.pan.empty": "Nur gewöhnliches Sediment"
 }

@@ -24,5 +24,7 @@
   "emi.category.realisticores.crystal_press": "Crystal Press",
   "item.realisticores.pyrope": "Pyrope Garnet",
   "item.realisticores.chromite": "Chromite",
-  "item.realisticores.ilmenite": "Ilmenite"
+  "item.realisticores.ilmenite": "Ilmenite",
+  "item.realisticores.iron_pan": "Iron Pan",
+  "item.realisticores.pan.empty": "Nothing but plain sediment"
 }

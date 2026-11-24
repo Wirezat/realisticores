@@ -1,5 +1,6 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.indicator.PanItem;
 import java.util.Collection;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
@@ -17,6 +18,8 @@ public final class ModItems {
     public static final DeferredItem<Item> PYROPE = ITEMS.registerSimpleItem("pyrope");
     public static final DeferredItem<Item> CHROMITE = ITEMS.registerSimpleItem("chromite");
     public static final DeferredItem<Item> ILMENITE = ITEMS.registerSimpleItem("ilmenite");
+    public static final DeferredItem<Item> IRON_PAN = ITEMS.register("iron_pan",
+            () -> new PanItem(new Item.Properties().durability(128)));
 
     private ModItems() {
     }
