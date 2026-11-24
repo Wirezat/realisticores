@@ -42,9 +42,9 @@ public final class Crater {
      *
      * @param lowestRimY lowest terrain height around the crater
      * @param seaLevel sea level of the world
-     * @return one block below the lowest rim point, but at least sea level
+     * @return Y of the top water block: one block below the lowest rim point, but at least the top water block of the sea (one below sea level)
      */
     public int waterLevel(int lowestRimY, int seaLevel) {
-        return Math.max(lowestRimY - 1, seaLevel);
+        return Math.max(lowestRimY - 1, seaLevel - 1);
     }
 }

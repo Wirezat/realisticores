@@ -20,8 +20,8 @@ class CraterTest {
     }
 
     @Test
-    void lakeStaysBelowTheLowestRimButNotBelowSeaLevel() {
+    void lakeStaysBelowTheLowestRimButNotBelowTheSeaSurface() {
         assertEquals(79, CRATER.waterLevel(80, 63));
-        assertEquals(63, CRATER.waterLevel(60, 63));
+        assertEquals(62, CRATER.waterLevel(60, 63));
     }
 }
