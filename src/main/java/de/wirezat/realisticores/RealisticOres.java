@@ -1,5 +1,6 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.indicator.ModPan;
 import de.wirezat.realisticores.indicator.TrailEffects;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.press.ModPress;
@@ -27,6 +28,7 @@ public class RealisticOres {
         ModItems.register(modBus);
         ModTabs.register(modBus);
         ModPress.register(modBus);
+        ModPan.register(modBus);
         NeoForge.EVENT_BUS.addListener(TrailEffects::tick);
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Kimberlite.invalidate());
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onTrades);
