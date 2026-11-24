@@ -15,5 +15,9 @@
   "item.minecraft.diamond": "Synthetischer Diamant",
   "block.realisticores.kimberlite_graphite_ore": "Graphiterz im Kimberlit",
   "item.realisticores.graphite": "Graphit",
-  "itemGroup.realisticores": "RealisticOres"
+  "itemGroup.realisticores": "RealisticOres",
+  "block.realisticores.graphite_block": "Graphitblock",
+  "block.realisticores.natural_diamond_block": "Diamantblock",
+  "block.minecraft.diamond_block": "Block aus synthetischem Diamant",
+  "block.realisticores.crystal_press": "Kristallpresse"
 }

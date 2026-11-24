@@ -1,6 +1,7 @@
 package de.wirezat.realisticores;
 
 import de.wirezat.realisticores.kimberlite.Kimberlite;
+import de.wirezat.realisticores.press.ModPress;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -22,6 +23,7 @@ public class RealisticOres {
         ModBlocks.register(modBus);
         ModItems.register(modBus);
         ModTabs.register(modBus);
+        ModPress.register(modBus);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 KimberliteCommand.register(event.getDispatcher()));
     }

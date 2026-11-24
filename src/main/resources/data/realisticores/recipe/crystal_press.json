@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "B": {
+      "item": "minecraft:blast_furnace"
+    }
+  },
+  "pattern": [
+    "OPO",
+    "IBI",
+    "OOO"
+  ],
+  "result": {
+    "id": "realisticores:crystal_press",
+    "count": 1
+  }
+}

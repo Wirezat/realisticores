@@ -2,6 +2,7 @@ package de.wirezat.realisticores;
 
 import de.wirezat.realisticores.ore.DepositRegistry;
 import de.wirezat.realisticores.ore.OreDefinition;
+import de.wirezat.realisticores.press.CrystalPressBlock;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -43,6 +44,12 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> KIMBERLITE_GRAPHITE_ORE = registerOre("kimberlite_graphite_ore", "graphite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
 
+    public static final DeferredBlock<Block> GRAPHITE_BLOCK =
+            register("graphite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
+    public static final DeferredBlock<Block> NATURAL_DIAMOND_BLOCK =
+            register("natural_diamond_block", BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_BLOCK));
+
+    public static final DeferredBlock<CrystalPressBlock> CRYSTAL_PRESS = registerPress();
 
     private ModBlocks() {
     }
@@ -50,6 +57,14 @@ public final class ModBlocks {
     private static DeferredBlock<Block> register(String name, BlockBehaviour.Properties properties) {
         DeferredBlock<Block> block = BLOCKS.registerSimpleBlock(name, properties);
         BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
+        return block;
+    }
+
+    private static DeferredBlock<CrystalPressBlock> registerPress() {
+        DeferredBlock<CrystalPressBlock> block = BLOCKS.registerBlock("crystal_press", CrystalPressBlock::new,
+                BlockBehaviour.Properties.ofFullCopy(Blocks.BLAST_FURNACE)
+                        .lightLevel(state -> state.getValue(CrystalPressBlock.LIT) ? 13 : 0));
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem("crystal_press", block));
         return block;
     }
 

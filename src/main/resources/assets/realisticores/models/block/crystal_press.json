@@ -1,0 +1,1 @@
+{"parent": "minecraft:block/orientable", "textures": {"top": "realisticores:block/crystal_press_top", "front": "realisticores:block/crystal_press_front", "side": "realisticores:block/crystal_press_side"}}

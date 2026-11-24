@@ -3,6 +3,8 @@
     "realisticores:kimberlite",
     "realisticores:peridotite",
     "realisticores:peridot_ore",
-    "realisticores:kimberlite_graphite_ore"
+    "realisticores:kimberlite_graphite_ore",
+    "realisticores:graphite_block",
+    "realisticores:crystal_press"
   ]
 }

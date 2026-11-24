@@ -3,7 +3,7 @@
   "category": "building",
   "key": {
     "#": {
-      "tag": "c:gems/diamond"
+      "item": "realisticores:natural_diamond"
     }
   },
   "pattern": [
@@ -12,7 +12,7 @@
     "###"
   ],
   "result": {
-    "count": 1,
-    "id": "minecraft:diamond_block"
+    "id": "realisticores:natural_diamond_block",
+    "count": 1
   }
 }
