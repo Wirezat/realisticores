@@ -12,5 +12,7 @@
   "item.realisticores.peridot": "Peridot",
   "block.realisticores.kimberlite_diamond_ore": "Diamanterz im Kimberlit",
   "item.realisticores.natural_diamond": "Diamant",
-  "item.minecraft.diamond": "Synthetischer Diamant"
+  "item.minecraft.diamond": "Synthetischer Diamant",
+  "block.realisticores.kimberlite_graphite_ore": "Graphiterz im Kimberlit",
+  "item.realisticores.graphite": "Graphit"
 }

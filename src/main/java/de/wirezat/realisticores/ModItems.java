@@ -12,6 +12,7 @@ public final class ModItems {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RealisticOres.MOD_ID);
 
     public static final DeferredItem<Item> PERIDOT = ITEMS.registerSimpleItem("peridot");
+    public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
     public static final DeferredItem<Item> NATURAL_DIAMOND = ITEMS.registerSimpleItem("natural_diamond");
 
     private ModItems() {
@@ -31,6 +32,7 @@ public final class ModItems {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(PERIDOT.get());
             event.accept(NATURAL_DIAMOND.get());
+            event.accept(GRAPHITE.get());
         }
     }
 }

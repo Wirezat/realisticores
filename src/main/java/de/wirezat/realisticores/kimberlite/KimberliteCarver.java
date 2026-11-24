@@ -3,6 +3,7 @@ package de.wirezat.realisticores.kimberlite;
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
+import de.wirezat.realisticores.ore.MineralRoll;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 /** Writes kimberlite pipes, crater bowls and crater lakes into a chunk. */
 public final class KimberliteCarver {
-    private static final long MINERAL_SALT = 0x4D494E4552414C53L;
     private static final Map<SiteKey, CraterSite> SITES = new ConcurrentHashMap<>();
 
     private KimberliteCarver() {
@@ -127,8 +127,7 @@ public final class KimberliteCarver {
             double fraction = mineral.graded()
                     ? mineral.fraction() * Kimberlite.grade().factor(pipe, x, y, z)
                     : mineral.fraction();
-            double roll = (SplitMix64.hash(MINERAL_SALT ^ y, x, z) >>> 11) * 0x1.0p-53;
-            if (roll < fraction) {
+            if (MineralRoll.roll(mineral.ore(), x, y, z) < fraction) {
                 return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block()))
                         .map(block -> block.defaultBlockState())
                         .orElse(rockBlock);
