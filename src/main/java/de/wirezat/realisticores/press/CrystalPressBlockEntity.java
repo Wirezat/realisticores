@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -45,6 +46,8 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
     };
 
     private final PressCycle cycle = new PressCycle();
+    private final RecipeManager.CachedCheck<PressInput, PressRecipe> recipeCheck =
+            RecipeManager.createCheck(ModPress.PRESS_TYPE.get());
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -99,7 +102,7 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
     private Optional<RecipeHolder<PressRecipe>> currentRecipe(Level level) {
         PressInput input = new PressInput(inventory.getStackInSlot(MATERIAL_SLOT),
                 inventory.getStackInSlot(CATALYST_SLOT));
-        return level.getRecipeManager().getRecipeFor(ModPress.PRESS_TYPE.get(), input, level);
+        return recipeCheck.getRecipeFor(input, level);
     }
 
     private boolean outputFits(PressRecipe recipe) {
@@ -128,6 +131,7 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         ItemStack fuel = press.inventory.getStackInSlot(FUEL_SLOT);
         int burnTime = fuel.isEmpty() ? 0 : fuel.getBurnTime(RecipeType.SMELTING);
         boolean wasLit = press.cycle.isLit();
+        int oldProgress = press.cycle.progress();
         PressCycle.Result result = press.cycle.tick(canWork, burnTime, recipe.map(r -> r.value().time()).orElse(1));
         if (result.burnFuel()) {
             ItemStack remainder = fuel.getCraftingRemainingItem();
@@ -142,7 +146,11 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         if (wasLit != press.cycle.isLit()) {
             level.setBlock(pos, state.setValue(CrystalPressBlock.LIT, press.cycle.isLit()), 3);
         }
-        press.setChanged();
+        if (result.burnFuel() || result.craft()) {
+            press.setChanged();
+        } else if (wasLit || press.cycle.progress() != oldProgress) {
+            level.blockEntityChanged(pos);
+        }
     }
 
     private void craft(PressRecipe recipe) {

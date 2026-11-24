@@ -44,7 +44,8 @@ public final class PressSides {
     }
 
     /**
-     * Wraps the press inventory so a face only reaches its own slot.
+     * Wraps the press inventory so a face only reaches its own slot; the bottom also yields fuel slot items that
+     * do not burn, such as empty buckets.
      *
      * @param inventory the full press inventory
      * @param side the face being accessed, or null for unrestricted access
@@ -56,7 +57,8 @@ public final class PressSides {
             return inventory;
         }
         Access access = forSide(side, facing);
-        return new RangedWrapper(inventory, access.slot(), access.slot() + 1) {
+        int first = side == Direction.DOWN ? CrystalPressBlockEntity.FUEL_SLOT : access.slot();
+        return new RangedWrapper(inventory, first, access.slot() + 1) {
             @Override
             public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
                 return access.insert() ? super.insertItem(slot, stack, simulate) : stack;
@@ -64,8 +66,8 @@ public final class PressSides {
 
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                return access.extract() ? super.extractItem(slot, amount, simulate)
-                        : ItemStack.EMPTY;
+                return access.extract() && !isItemValid(slot, getStackInSlot(slot))
+                        ? super.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
             }
         };
     }
