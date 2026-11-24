@@ -19,5 +19,7 @@
   "block.realisticores.graphite_block": "Graphitblock",
   "block.realisticores.natural_diamond_block": "Diamantblock",
   "block.minecraft.diamond_block": "Block aus synthetischem Diamant",
-  "block.realisticores.crystal_press": "Kristallpresse"
+  "block.realisticores.crystal_press": "Kristallpresse",
+  "gui.realisticores.crystal_press.time": "%s s",
+  "emi.category.realisticores.crystal_press": "Kristallpresse"
 }
