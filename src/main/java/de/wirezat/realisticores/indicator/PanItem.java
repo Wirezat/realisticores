@@ -1,18 +1,19 @@
 package de.wirezat.realisticores.indicator;
 
+import de.wirezat.realisticores.kimberlite.Kimberlite;
+import de.wirezat.realisticores.kimberlite.Plume;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import de.wirezat.realisticores.kimberlite.Plume;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -78,6 +79,9 @@ public class PanItem extends Item {
         if (player == null || !canPan(context.getLevel(), context.getClickedPos())) {
             return InteractionResult.PASS;
         }
+        if (context.getLevel() instanceof ServerLevel server) {
+            PanYield.odds(server, context.getClickedPos()).whenComplete(Kimberlite::logFailure);
+        }
         player.startUsingItem(context.getHand());
         return InteractionResult.CONSUME;
     }
@@ -129,24 +133,35 @@ public class PanItem extends Item {
             return stack;
         }
         int fortune = PanEnchantments.level(level, Enchantments.FORTUNE, stack);
-        PanYield.Result result = PanYield.pan(server, hit.getBlockPos(), level.getRandom(),
-                keepBlock ? SILK_CHANCE_FACTOR : 1.0, fortune);
-        if (result.found().isEmpty()) {
+        double reach = PanEnchantments.trailReach(PanEnchantments.level(level, PanEnchantments.TRAIL_SENSE, stack));
+        BlockPos pos = hit.getBlockPos();
+        PanYield.odds(server, pos)
+                .thenAcceptAsync(odds -> collect(server, player, pos, odds, keepBlock, fortune, reach),
+                        server.getServer())
+                .whenComplete(Kimberlite::logFailure);
+        stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(player.getUsedItemHand()));
+        return stack;
+    }
+
+    private static void collect(ServerLevel level, ServerPlayer player, BlockPos pos, PanYield.Odds odds,
+            boolean keepBlock, int fortune, double reach) {
+        if (player.isRemoved() || player.serverLevel() != level || !level.isLoaded(pos) || !canPan(level, pos)) {
+            return;
+        }
+        List<ItemStack> found = PanYield.roll(odds, level.getRandom(), keepBlock ? SILK_CHANCE_FACTOR : 1.0, fortune);
+        if (found.isEmpty()) {
             player.displayClientMessage(Component.translatable("item.realisticores.pan.empty"), true);
         } else if (!keepBlock) {
-            level.destroyBlock(hit.getBlockPos(), false, player);
+            level.destroyBlock(pos, false, player);
         }
-        result.found().forEach(item -> {
+        found.forEach(item -> {
             if (!player.getInventory().add(item)) {
                 player.drop(item, false);
             }
         });
-        double reach = PanEnchantments.trailReach(PanEnchantments.level(level, PanEnchantments.TRAIL_SENSE, stack));
-        if (reach > 0.0 && result.source() != null) {
-            TrailEffects.start(player, server, Plume.guide(result.source(), hit.getBlockPos().getX() + 0.5,
-                    hit.getBlockPos().getZ() + 0.5, reach, TRAIL_SPACING));
+        if (reach > 0.0 && odds.source() != null) {
+            TrailEffects.start(player, level, Plume.guide(odds.source(), pos.getX() + 0.5, pos.getZ() + 0.5, reach,
+                    TRAIL_SPACING));
         }
-        stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-        return stack;
     }
 }

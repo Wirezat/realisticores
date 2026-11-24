@@ -11,6 +11,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
 @Mod(RealisticOres.MOD_ID)
 public class RealisticOres {
@@ -27,6 +28,7 @@ public class RealisticOres {
         ModTabs.register(modBus);
         ModPress.register(modBus);
         NeoForge.EVENT_BUS.addListener(TrailEffects::tick);
+        NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Kimberlite.invalidate());
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onTrades);
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onLoot);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->

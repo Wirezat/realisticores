@@ -1,21 +1,31 @@
 package de.wirezat.realisticores.kimberlite;
 
 import de.wirezat.realisticores.KimberliteConfig;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ForkJoinPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Shared generator objects of kimberlite generation, rebuilt whenever the config changes. */
 public final class Kimberlite {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Kimberlite.class);
+    private static final ForkJoinPool TRACERS =
+            new ForkJoinPool(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
+
     private static volatile State state;
 
     private Kimberlite() {
     }
 
-    private record PlumeKey(long seed, Pipe pipe) {
+    private record PipeKey(long seed, Pipe pipe) {
     }
 
     private record State(KimberliteParams params, FieldGenerator generator, PipeProfile profile, FaciesSelector facies,
-            Crater crater, PipeGrade grade, PipeShape shape, ConcurrentMap<PlumeKey, PlumePath> plumes, ConcurrentMap<PlumeKey, Double> factors) {
+            Crater crater, PipeGrade grade, PipeShape shape, ConcurrentMap<PipeKey, PlumePath> plumes,
+            ConcurrentMap<PipeKey, Double> factors, ConcurrentMap<PipeKey, CraterSite> sites) {
     }
 
     private static State state() {
@@ -24,13 +34,14 @@ public final class Kimberlite {
             KimberliteParams params = KimberliteConfig.params();
             PipeProfile profile = new PipeProfile(params.pipe());
             current = new State(params, new FieldGenerator(params), profile, new FaciesSelector(params),
-                    new Crater(params.crater()), new PipeGrade(params.grade()), new PipeShape(params.pipe(), profile), new ConcurrentHashMap<>(), new ConcurrentHashMap<>());
+                    new Crater(params.crater()), new PipeGrade(params.grade()), new PipeShape(params.pipe(), profile),
+                    new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), new ConcurrentHashMap<>());
             state = current;
         }
         return current;
     }
 
-    /** Drops the cached objects so the next use rebuilds them from the config. */
+    /** Drops the cached objects and traced trails so the next use rebuilds them. */
     public static void invalidate() {
         state = null;
     }
@@ -99,32 +110,70 @@ public final class Kimberlite {
     }
 
     /**
-     * Gives the indicator trail of a pipe, tracing it on first use.
-     *
-     * @param seed world seed
-     * @param pipe the pipe
-     * @param probe terrain height source
-     * @param seaLevel Y of the sea surface
-     * @return the downhill trail of the pipe
-     */
-    public static PlumePath plume(long seed, Pipe pipe, TerrainProbe probe, int seaLevel) {
-        State current = state();
-        return current.plumes().computeIfAbsent(new PlumeKey(seed, pipe), key -> Plume.trace(pipe,
-                Plume.fallbackAngle(seed, pipe, current.params().field().cellSize()), probe, seaLevel,
-                current.params().plume()));
-    }
-
-    /**
-     * Gives the climate length factor of a pipe, reading the biome on first use.
+     * Gives the terrain facts around a pipe's crater, measuring them on first use.
      *
      * @param seed world seed
      * @param pipe the pipe
      * @param probe terrain and climate source
-     * @return factor applied to the trail length of the pipe
+     * @return the site of the crater
      */
-    public static double plumeFactor(long seed, Pipe pipe, TerrainProbe probe) {
+    public static CraterSite craterSite(long seed, Pipe pipe, TerrainProbe probe) {
         State current = state();
-        return current.factors().computeIfAbsent(new PlumeKey(seed, pipe),
+        return current.sites().computeIfAbsent(new PipeKey(seed, pipe),
+                key -> CraterSite.measure(pipe, probe, current.params().crater().ringPoints()));
+    }
+
+    /**
+     * Collects the indicator trails that can reach an area, tracing missing ones on a thread pool of their own.
+     *
+     * @param seed world seed
+     * @param probe terrain and climate source, read from the pool's threads
+     * @param seaLevel Y of the sea surface
+     * @param minX west edge of the area in blocks
+     * @param minZ north edge of the area in blocks
+     * @param maxX east edge of the area in blocks
+     * @param maxZ south edge of the area in blocks
+     * @return future of the trails of all pipes close enough to the area
+     */
+    public static CompletableFuture<List<PlumePath>> plumesReaching(long seed, TerrainProbe probe, int seaLevel,
+            int minX, int minZ, int maxX, int maxZ) {
+        State current = state();
+        KimberliteParams.PlumeParams params = current.params().plume();
+        int reach = (int) Math.ceil(params.maxLength() * Plume.maxFactor(params));
+        return CompletableFuture.supplyAsync(() -> current.generator()
+                .pipesNear(seed, minX - reach, minZ - reach, maxX + reach, maxZ + reach).parallelStream()
+                .filter(pipe -> distanceToArea(pipe, minX, minZ, maxX, maxZ)
+                        <= params.maxLength() * plumeFactor(current, seed, pipe, probe) + pipe.diameter())
+                .map(pipe -> plume(current, seed, pipe, probe, seaLevel))
+                .toList(), TRACERS);
+    }
+
+    /**
+     * Logs the failure of a background task; meant for {@link CompletableFuture#whenComplete}.
+     *
+     * @param result result of the task, ignored
+     * @param failure what went wrong, or null if the task succeeded
+     */
+    public static void logFailure(Object result, Throwable failure) {
+        if (failure != null) {
+            LOGGER.error("Indicator trail task failed", failure);
+        }
+    }
+
+    private static double distanceToArea(Pipe pipe, int minX, int minZ, int maxX, int maxZ) {
+        double dx = Math.max(0, Math.max(minX - pipe.x(), pipe.x() - maxX));
+        double dz = Math.max(0, Math.max(minZ - pipe.z(), pipe.z() - maxZ));
+        return Math.hypot(dx, dz);
+    }
+
+    private static PlumePath plume(State current, long seed, Pipe pipe, TerrainProbe probe, int seaLevel) {
+        return current.plumes().computeIfAbsent(new PipeKey(seed, pipe), key -> Plume.trace(pipe,
+                Plume.fallbackAngle(seed, pipe, current.params().field().cellSize()), probe, seaLevel,
+                current.params().plume()));
+    }
+
+    private static double plumeFactor(State current, long seed, Pipe pipe, TerrainProbe probe) {
+        return current.factors().computeIfAbsent(new PipeKey(seed, pipe),
                 key -> Plume.lengthFactor(pipe, probe, current.params().plume()));
     }
 }

@@ -1,14 +1,12 @@
 package de.wirezat.realisticores.mixin;
 
+import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.KimberliteCarver;
-import de.wirezat.realisticores.kimberlite.Climate;
 import de.wirezat.realisticores.kimberlite.TerrainProbe;
-import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.RandomState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,28 +33,7 @@ public abstract class NoiseBasedChunkGeneratorMixin {
             return;
         }
         NoiseBasedChunkGenerator generator = (NoiseBasedChunkGenerator) (Object) this;
-        TerrainProbe probe = new TerrainProbe() {
-            @Override
-            public int terrainHeight(int x, int z) {
-                return generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, random) - 1;
-            }
-
-            @Override
-            public Climate climate(int x, int z) {
-                int y = terrainHeight(x, z);
-                return Climate.of(generator.getBiomeSource().getNoiseBiome(QuartPos.fromBlock(x),
-                        QuartPos.fromBlock(y), QuartPos.fromBlock(z), random.sampler()));
-            }
-
-            @Override
-            public boolean hasPrecipitation(int x, int y, int z) {
-                return generator.getBiomeSource()
-                        .getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z),
-                                random.sampler())
-                        .value()
-                        .hasPrecipitation();
-            }
-        };
+        TerrainProbe probe = new LevelTerrainProbe(level.getLevel(), generator);
         KimberliteCarver.carve(chunk, level.getSeed(), probe, generator.getSeaLevel());
     }
 }

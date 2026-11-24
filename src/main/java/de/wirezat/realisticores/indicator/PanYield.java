@@ -4,11 +4,11 @@ import de.wirezat.realisticores.ModItems;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.KimberliteParams;
-import de.wirezat.realisticores.kimberlite.Pipe;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -27,47 +27,41 @@ public final class PanYield {
     }
 
     /**
-     * Result of one pan.
+     * Find chances at one position.
      *
-     * @param found the minerals found, empty when the pan holds none
+     * @param pyrope chance of pyrope per pan
+     * @param chromite chance of chromite per pan
+     * @param ilmenite chance of ilmenite per pan
      * @param source trail of the pipe that contributes most at the position, or null when no trail is strong enough
      */
-    public record Result(List<ItemStack> found, @Nullable PlumePath source) {
+    public record Odds(double pyrope, double chromite, double ilmenite, @Nullable PlumePath source) {
     }
 
     /**
-     * Rolls the minerals of one pan.
+     * Works out the find chances at a position in the background; trails not traced yet can take seconds.
      *
      * @param level the world
      * @param pos the sediment block being panned
-     * @param random source of the rolls
-     * @param chanceFactor factor applied to every find chance, 1 for a normal pan
-     * @param fortune extra pieces per found mineral: 1 plus 0 up to this many
-     * @return the minerals found and the strongest trail at the position
+     * @return future of the chances
      */
-    public static Result pan(ServerLevel level, BlockPos pos, RandomSource random, double chanceFactor,
-            int fortune) {
-        List<ItemStack> found = new ArrayList<>();
+    public static CompletableFuture<Odds> odds(ServerLevel level, BlockPos pos) {
         if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
                 || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
-            return new Result(found, null);
+            return CompletableFuture.completedFuture(new Odds(0.0, 0.0, 0.0, null));
         }
         KimberliteParams.PlumeParams params = Kimberlite.params().plume();
-        int reach = (int) Math.ceil(params.maxLength() * Plume.maxFactor(params));
-        List<Pipe> pipes = Kimberlite.generator().pipesNear(level.getSeed(), pos.getX() - reach, pos.getZ() - reach,
-                pos.getX() + reach, pos.getZ() + reach);
-        LevelTerrainProbe probe = new LevelTerrainProbe(level, generator);
+        return Kimberlite.plumesReaching(level.getSeed(), new LevelTerrainProbe(level, generator),
+                level.getSeaLevel(), pos.getX(), pos.getZ(), pos.getX(), pos.getZ())
+                .thenApply(paths -> combine(paths, pos, params));
+    }
+
+    private static Odds combine(List<PlumePath> paths, BlockPos pos, KimberliteParams.PlumeParams params) {
         double pyrope = 1.0;
         double chromite = 1.0;
         double ilmenite = 1.0;
         double strongest = 0.0;
         PlumePath source = null;
-        for (Pipe pipe : pipes) {
-            double range = params.maxLength() * Kimberlite.plumeFactor(level.getSeed(), pipe, probe) + pipe.diameter();
-            if (Math.hypot(pipe.x() - pos.getX(), pipe.z() - pos.getZ()) > range) {
-                continue;
-            }
-            PlumePath path = Kimberlite.plume(level.getSeed(), pipe, probe, level.getSeaLevel());
+        for (PlumePath path : paths) {
             double p = Plume.density(path, pos.getX(), pos.getZ(), params, params.pyrope());
             double c = Plume.density(path, pos.getX(), pos.getZ(), params, params.chromite());
             double i = Plume.density(path, pos.getX(), pos.getZ(), params, params.ilmenite());
@@ -80,10 +74,24 @@ public final class PanYield {
                 source = path;
             }
         }
-        roll(found, ModItems.PYROPE, (1.0 - pyrope) * chanceFactor, random, fortune);
-        roll(found, ModItems.CHROMITE, (1.0 - chromite) * chanceFactor, random, fortune);
-        roll(found, ModItems.ILMENITE, (1.0 - ilmenite) * chanceFactor, random, fortune);
-        return new Result(found, strongest >= TRAIL_MIN_CHANCE ? source : null);
+        return new Odds(1.0 - pyrope, 1.0 - chromite, 1.0 - ilmenite, strongest >= TRAIL_MIN_CHANCE ? source : null);
+    }
+
+    /**
+     * Rolls the minerals of one pan.
+     *
+     * @param odds find chances at the position
+     * @param random source of the rolls
+     * @param chanceFactor factor applied to every find chance, 1 for a normal pan
+     * @param fortune extra pieces per found mineral: 1 plus 0 up to this many
+     * @return the minerals found, empty when the pan holds none
+     */
+    public static List<ItemStack> roll(Odds odds, RandomSource random, double chanceFactor, int fortune) {
+        List<ItemStack> found = new ArrayList<>();
+        roll(found, ModItems.PYROPE, odds.pyrope() * chanceFactor, random, fortune);
+        roll(found, ModItems.CHROMITE, odds.chromite() * chanceFactor, random, fortune);
+        roll(found, ModItems.ILMENITE, odds.ilmenite() * chanceFactor, random, fortune);
+        return found;
     }
 
     private static void roll(List<ItemStack> found, DeferredItem<Item> mineral, double chance, RandomSource random,

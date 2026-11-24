@@ -5,9 +5,7 @@ import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.MineralRoll;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
@@ -21,12 +19,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 /** Writes kimberlite pipes, crater bowls and crater lakes into a chunk. */
 public final class KimberliteCarver {
-    private static final Map<SiteKey, CraterSite> SITES = new ConcurrentHashMap<>();
-
     private KimberliteCarver() {
-    }
-
-    private record SiteKey(long seed, Pipe pipe) {
     }
 
     /**
@@ -55,8 +48,7 @@ public final class KimberliteCarver {
         int bottomY = Math.max(chunk.getMinBuildHeight(), Kimberlite.params().pipe().bottomY());
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Pipe pipe : pipes) {
-            Kimberlite.plume(seed, pipe, probe, seaLevel);
-            CraterSite site = SITES.computeIfAbsent(new SiteKey(seed, pipe), key -> CraterSite.measure(pipe, probe, Kimberlite.params().crater().ringPoints()));
+            CraterSite site = Kimberlite.craterSite(seed, pipe, probe);
             int waterY = crater.hasLake(site.wet()) ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
             double reach = shape.reach(pipe);
             for (int localX = 0; localX < 16; localX++) {

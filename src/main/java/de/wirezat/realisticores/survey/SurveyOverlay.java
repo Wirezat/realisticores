@@ -4,12 +4,9 @@ import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.KimberliteParams;
-import de.wirezat.realisticores.kimberlite.Pipe;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import net.minecraft.Util;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.Level;
@@ -51,19 +48,18 @@ final class SurveyOverlay {
         int west = data.centerX - MAP_SIZE / 2 * blocksPerPixel;
         int north = data.centerZ - MAP_SIZE / 2 * blocksPerPixel;
         double halfWidth = blocksPerPixel * LINE_HALF_WIDTH_PIXELS;
-        CompletableFuture.supplyAsync(
-                () -> trailsReaching(level, generator, params, west, north, MAP_SIZE * blocksPerPixel, halfWidth),
-                Util.backgroundExecutor())
-                .thenAcceptAsync(trails -> paint(level, mapId, trails, params, west, north, blocksPerPixel, halfWidth),
-                        level.getServer());
+        Kimberlite.plumesReaching(level.getSeed(), new LevelTerrainProbe(level, generator), level.getSeaLevel(),
+                west, north, west + MAP_SIZE * blocksPerPixel, north + MAP_SIZE * blocksPerPixel)
+                .thenApply(paths -> colors(paths, params, west, north, blocksPerPixel, halfWidth))
+                .thenAcceptAsync(colors -> paint(level, mapId, colors), level.getServer())
+                .whenComplete(Kimberlite::logFailure);
     }
 
-    private static void paint(ServerLevel level, MapId mapId, List<Trail> trails, KimberliteParams.PlumeParams params,
-            int west, int north, int blocksPerPixel, double halfWidth) {
-        MapItemSavedData data = level.getMapData(mapId);
-        if (data == null) {
-            return;
-        }
+    private static byte[] colors(List<PlumePath> paths, KimberliteParams.PlumeParams params, int west, int north,
+            int blocksPerPixel, double halfWidth) {
+        List<Trail> trails = paths.stream()
+                .map(path -> boxOf(path, WIDTH_SIGMAS * halfWidth + path.pipe().diameter() / 2.0)).toList();
+        byte[] colors = new byte[MAP_SIZE * MAP_SIZE];
         for (int py = 0; py < MAP_SIZE; py++) {
             for (int px = 0; px < MAP_SIZE; px++) {
                 double x = west + (px + 0.5) * blocksPerPixel;
@@ -76,29 +72,23 @@ final class SurveyOverlay {
                     }
                 }
                 if (strongest >= MIN_CHANCE) {
-                    data.setColor(px, py, color(strongest));
+                    colors[py * MAP_SIZE + px] = color(strongest);
                 }
             }
         }
+        return colors;
     }
 
-    private static List<Trail> trailsReaching(ServerLevel level, NoiseBasedChunkGenerator generator,
-            KimberliteParams.PlumeParams params, int west, int north, int size, double halfWidth) {
-        LevelTerrainProbe probe = new LevelTerrainProbe(level, generator);
-        int reach = (int) Math.ceil(params.maxLength() * Plume.maxFactor(params));
-        return Kimberlite.generator().pipesNear(level.getSeed(), west - reach, north - reach, west + size + reach,
-                north + size + reach).parallelStream()
-                .filter(pipe -> distanceToArea(pipe, west, north, size)
-                        <= params.maxLength() * Kimberlite.plumeFactor(level.getSeed(), pipe, probe) + pipe.diameter())
-                .map(pipe -> boxOf(Kimberlite.plume(level.getSeed(), pipe, probe, level.getSeaLevel()),
-                        WIDTH_SIGMAS * halfWidth + pipe.diameter() / 2.0))
-                .toList();
-    }
-
-    private static double distanceToArea(Pipe pipe, int west, int north, int size) {
-        double dx = Math.max(0, Math.max(west - pipe.x(), pipe.x() - (west + size)));
-        double dz = Math.max(0, Math.max(north - pipe.z(), pipe.z() - (north + size)));
-        return Math.hypot(dx, dz);
+    private static void paint(ServerLevel level, MapId mapId, byte[] colors) {
+        MapItemSavedData data = level.getMapData(mapId);
+        if (data == null) {
+            return;
+        }
+        for (int i = 0; i < colors.length; i++) {
+            if (colors[i] != 0) {
+                data.setColor(i % MAP_SIZE, i / MAP_SIZE, colors[i]);
+            }
+        }
     }
 
     private static Trail boxOf(PlumePath path, double margin) {
