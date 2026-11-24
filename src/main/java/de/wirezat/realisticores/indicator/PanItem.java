@@ -10,7 +10,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -20,13 +22,19 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 /** The pan: washes sediment, measures its indicator grains and collects them. */
 public class PanItem extends Item {
+    static final int CAPACITY = 1000;
+    static final int WASH_COST = 100;
+
     private static final int USE_TICKS = 60;
     private static final int EFFICIENCY_TICKS = 10;
     private static final int MIN_USE_TICKS = 10;
@@ -54,6 +62,38 @@ public class PanItem extends Item {
         return level.getBlockState(pos).is(ModPan.PANNABLE);
     }
 
+    /**
+     * Gives how much water a pan holds.
+     *
+     * @param pan the pan
+     * @return water in millibuckets, at most one bucket
+     */
+    static int water(ItemStack pan) {
+        return pan.getOrDefault(ModPan.WATER, SimpleFluidContent.EMPTY).getAmount();
+    }
+
+    private static void setWater(ItemStack pan, int amount) {
+        pan.set(ModPan.WATER, SimpleFluidContent.copyOf(new FluidStack(Fluids.WATER, amount)));
+    }
+
+    private static boolean hasWater(Player player, ItemStack pan) {
+        return player.hasInfiniteMaterials() || water(pan) >= WASH_COST;
+    }
+
+    private static boolean dip(Level level, Player player, ItemStack pan) {
+        if (water(pan) >= CAPACITY) {
+            return false;
+        }
+        BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hit.getType() != HitResult.Type.BLOCK || !level.getFluidState(hit.getBlockPos()).isSourceOfType(Fluids.WATER)
+                || !level.mayInteract(player, hit.getBlockPos())) {
+            return false;
+        }
+        setWater(pan, CAPACITY);
+        level.playSound(player, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
+        return true;
+    }
+
     private BlockHitResult target(Level level, Player player) {
         return getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
     }
@@ -61,14 +101,32 @@ public class PanItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null || !canPan(context.getLevel(), context.getClickedPos())) {
+        if (player == null) {
             return InteractionResult.PASS;
+        }
+        if (dip(context.getLevel(), player, context.getItemInHand())) {
+            return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
+        }
+        if (!canPan(context.getLevel(), context.getClickedPos())) {
+            return InteractionResult.PASS;
+        }
+        if (!hasWater(player, context.getItemInHand())) {
+            context.getLevel().playSound(player, player.blockPosition(), SoundEvents.COPPER_HIT, SoundSource.PLAYERS,
+                    0.7F, 0.6F);
+            return InteractionResult.FAIL;
         }
         if (context.getLevel() instanceof ServerLevel server) {
             PanYield.measure(server, context.getClickedPos()).whenComplete(Kimberlite::logFailure);
         }
         player.startUsingItem(context.getHand());
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack pan = player.getItemInHand(hand);
+        return dip(level, player, pan) ? InteractionResultHolder.sidedSuccess(pan, level.isClientSide)
+                : InteractionResultHolder.pass(pan);
     }
 
     @Override
@@ -116,6 +174,9 @@ public class PanItem extends Item {
         if (hit.getType() != HitResult.Type.BLOCK || !canPan(level, hit.getBlockPos())) {
             return stack;
         }
+        if (!hasWater(player, stack)) {
+            return stack;
+        }
         boolean keepBlock = PanEnchantments.level(level, Enchantments.SILK_TOUCH, stack) > 0;
         if (!keepBlock && !level.mayInteract(player, hit.getBlockPos())) {
             return stack;
@@ -126,6 +187,9 @@ public class PanItem extends Item {
         UUID id = stack.getOrDefault(ModPan.ID, UUID.randomUUID());
         stack.set(ModPan.ID, id);
         stack.remove(ModPan.LAST);
+        if (!player.hasInfiniteMaterials()) {
+            setWater(stack, water(stack) - WASH_COST);
+        }
         PanYield.measure(server, pos)
                 .thenAcceptAsync(result -> collect(server, player, pos, id, result, keepBlock, fortune, reach),
                         server.getServer())
