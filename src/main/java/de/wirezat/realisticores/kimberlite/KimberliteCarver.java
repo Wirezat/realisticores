@@ -65,7 +65,7 @@ public final class KimberliteCarver {
                     if (dx * dx + dz * dz > reach * reach) {
                         continue;
                     }
-                    int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ) - 1;
+                    int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
                     double surfaceWall = shape.normalizedDistance(pipe, x, surfaceY, z);
                     int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY()) : surfaceY;
                     boolean bowl = floorY < surfaceY;
