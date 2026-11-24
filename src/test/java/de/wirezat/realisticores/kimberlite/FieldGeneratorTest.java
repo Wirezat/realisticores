@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.kimberlite;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -22,5 +23,26 @@ class FieldGeneratorTest {
             }
         }
         assertEquals(expected, Math.hypot(nearest.orElseThrow().centerX() - 1234, nearest.get().centerZ() + 5678), 1e-9);
+    }
+
+    @Test
+    void pipesNearFindsEveryPipeWhoseNoisyWallReachesTheChunk() {
+        KimberliteParams params = KimberliteParams.defaults();
+        FieldGenerator generator = new FieldGenerator(params);
+        PipeShape shape = new PipeShape(params.pipe(), new PipeProfile(params.pipe()));
+        long seed = 99L;
+        Field field = generator.nearestField(seed, 1234, -5678, 40000).orElseThrow();
+        for (Pipe pipe : field.pipes()) {
+            int reach = (int) Math.ceil(shape.reach(pipe));
+            for (int x = pipe.x() - reach; x <= pipe.x() + reach; x++) {
+                for (int z = pipe.z() - reach; z <= pipe.z() + reach; z++) {
+                    if (shape.contains(pipe, x, 75, z)) {
+                        int chunkX = x & ~15;
+                        int chunkZ = z & ~15;
+                        assertTrue(generator.pipesNear(seed, chunkX, chunkZ, chunkX + 15, chunkZ + 15).contains(pipe));
+                    }
+                }
+            }
+        }
     }
 }

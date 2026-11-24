@@ -10,7 +10,7 @@ public final class FieldGenerator {
 
     private final KimberliteParams params;
     private final CratonMask craton;
-    private final PipeProfile profile;
+    private final PipeShape shape;
 
     /**
      * Creates a generator.
@@ -20,7 +20,7 @@ public final class FieldGenerator {
     public FieldGenerator(KimberliteParams params) {
         this.params = params;
         this.craton = new CratonMask(params.craton());
-        this.profile = new PipeProfile(params.pipe());
+        this.shape = new PipeShape(params.pipe(), new PipeProfile(params.pipe()));
     }
 
     /**
@@ -63,8 +63,7 @@ public final class FieldGenerator {
      */
     public List<Pipe> pipesNear(long seed, int minX, int minZ, int maxX, int maxZ) {
         KimberliteParams.FieldParams f = params.field();
-        double pipeReach = params.pipe().maxDiameter() / 2.0 * Math.max(1.0, params.pipe().craterWidening());
-        double reach = f.maxRadius() + pipeReach;
+        double reach = f.maxRadius() + shape.reach(new Pipe(0, 0, params.pipe().maxDiameter()));
         int firstX = Math.floorDiv((int) (minX - reach), f.cellSize());
         int lastX = Math.floorDiv((int) (maxX + reach), f.cellSize());
         int firstZ = Math.floorDiv((int) (minZ - reach), f.cellSize());
@@ -74,7 +73,7 @@ public final class FieldGenerator {
             for (int cellZ = firstZ; cellZ <= lastZ; cellZ++) {
                 fieldAt(seed, cellX, cellZ).ifPresent(field -> {
                     for (Pipe pipe : field.pipes()) {
-                        double r = profile.maxRadius(pipe);
+                        double r = shape.reach(pipe);
                         if (pipe.x() + r >= minX && pipe.x() - r <= maxX
                                 && pipe.z() + r >= minZ && pipe.z() - r <= maxZ) {
                             result.add(pipe);
