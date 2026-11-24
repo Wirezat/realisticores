@@ -29,14 +29,14 @@
   "enchantment.realisticores.trail_sense": "Spurensinn",
   "item.realisticores.kimberlite_map": "Leere Kimberlit-Karte",
   "item.realisticores.kimberlite_map.filled": "Kimberlit-Karte",
-  "enchantment.realisticores.trail_sense.desc": "Führt eine Spur aus Geisterflammen vom Wasch-Ort zur Quelle der Körner.",
+  "enchantment.realisticores.trail_sense.desc": "Führt eine Spur aus Geisterflammen vom Wasch-Ort zur Quelle der Indikatorminerale.",
   "tooltip.realisticores.pan.last": "%s g",
   "tooltip.realisticores.pan.content": "%s / %s g",
   "jei.realisticores.pan": "Am Wasser füllen und Sand, Kies oder Erde waschen. Die obere Zeile zeigt die Indikatorminerale der letzten Wäsche, die untere, was sich in der Pfanne gesammelt hat. Höhere Werte liegen näher an der Quelle. Ilmenit findet sich nur in ihrer Nähe.",
   "jei.realisticores.kimberlite_map": "Das Kreuz liegt auf einer Spur aus Indikatormineralen, die aus einem Kimberlit ausgewaschen wurden. Von dort führt die Pfanne weiter.",
-  "tooltip.realisticores.pan.efficiency": "Wäscht Sediment schneller.",
-  "tooltip.realisticores.pan.fortune": "Sammelt aus jeder Wäsche mehr Körner.",
-  "tooltip.realisticores.pan.silk_touch": "Lässt das Sediment liegen, sammelt aber nur halb so viele Körner.",
+  "tooltip.realisticores.pan.efficiency": "Wäscht Material schneller.",
+  "tooltip.realisticores.pan.fortune": "Sammelt aus jeder Wäsche mehr Indikatorminerale.",
+  "tooltip.realisticores.pan.silk_touch": "Lässt das Material liegen, sammelt aber nur die halbe Menge an Indikatormineralen.",
   "block.realisticores.kimberlite_bort_ore": "Borterz im Kimberlit",
   "item.realisticores.bort": "Bort"
 }
