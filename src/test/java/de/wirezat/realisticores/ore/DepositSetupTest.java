@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Test;
 
 class DepositSetupTest {
     private static final Deposit DEPOSIT = new Deposit("pipe",
-            List.of(new Mineral("diamond", "BRECCIA", 0.01), new Mineral("peridot", "PERIDOTITE", 0.1)));
+            List.of(new Mineral("diamond", List.of("BRECCIA"), 0.01, true),
+                    new Mineral("peridot", List.of("PERIDOTITE"), 0.1, false)));
     private static final DepositRegistry REGISTRY = new DepositRegistry(
             Map.of("diamond", new OreDefinition("diamond", "mod:diamond_ore", "c:ores/diamond", 3, 7),
                     "peridot", new OreDefinition("peridot", "mod:peridot_ore", "c:ores/peridot", 2, 5)),
@@ -29,7 +30,7 @@ class DepositSetupTest {
                 Map.of("peridot", "other:peridot_ore"));
         assertEquals(1, active.size());
         assertEquals("other:peridot_ore", active.get(0).block());
-        assertEquals("PERIDOTITE", active.get(0).zone());
+        assertEquals(List.of("PERIDOTITE"), active.get(0).zones());
     }
 
     @Test

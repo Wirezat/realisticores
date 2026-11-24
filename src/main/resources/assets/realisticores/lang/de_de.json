@@ -9,5 +9,8 @@
   "block.realisticores.serpentinized_kimberlite": "Serpentinisierter Kimberlit",
   "block.realisticores.peridotite": "Peridotit",
   "block.realisticores.peridot_ore": "Peridot-Erz",
-  "item.realisticores.peridot": "Peridot"
+  "item.realisticores.peridot": "Peridot",
+  "block.realisticores.kimberlite_diamond_ore": "Diamanterz im Kimberlit",
+  "item.realisticores.natural_diamond": "Diamant",
+  "item.minecraft.diamond": "Synthetischer Diamant"
 }

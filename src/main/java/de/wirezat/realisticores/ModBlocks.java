@@ -39,6 +39,9 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PERIDOT_ORE = registerOre("peridot_ore", "peridot",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(3.5F, 9.0F));
 
+    public static final DeferredBlock<Block> KIMBERLITE_DIAMOND_ORE = registerOre("kimberlite_diamond_ore", "diamond",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE).strength(4.0F, 9.0F));
+
     private ModBlocks() {
     }
 

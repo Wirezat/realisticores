@@ -19,7 +19,8 @@ class KimberliteGenerationTest {
                 defaults.field(),
                 defaults.pipe(),
                 defaults.facies(),
-                defaults.crater());
+                defaults.crater(),
+                defaults.grade());
     }
 
     @Test

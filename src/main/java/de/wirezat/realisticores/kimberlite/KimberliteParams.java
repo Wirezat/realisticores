@@ -8,9 +8,10 @@ package de.wirezat.realisticores.kimberlite;
  * @param pipe pipe shape and size settings
  * @param facies rock type settings inside pipes
  * @param crater crater bowl settings
+ * @param grade ore grade settings of pipes
  */
 public record KimberliteParams(CratonParams craton, FieldParams field, PipeParams pipe, FaciesParams facies,
-        CraterParams crater) {
+        CraterParams crater, GradeParams grade) {
 
     /**
      * Craton mask settings.
@@ -90,6 +91,19 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
     }
 
     /**
+     * Ore grade settings of pipes.
+     *
+     * @param barrenShare share of pipes without any graded ore
+     * @param poorShare share of pipes with a reduced ore share
+     * @param poorFactor factor applied to the ore share of poor pipes
+     * @param phaseWavelength size of the rock phases in blocks, each with its own grade
+     * @param phaseAmplitude how far the grade of a phase may deviate from the pipe grade, as a fraction
+     */
+    public record GradeParams(double barrenShare, double poorShare, double poorFactor, double phaseWavelength,
+            double phaseAmplitude) {
+    }
+
+    /**
      * Returns the default start values from docs/ores/diamond-phase1-kimberlite.md.
      *
      * @return default parameter set
@@ -100,6 +114,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
                 new FieldParams(3000, 0.5, 0.3, 300, 800, 5, 30, 80),
                 new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0),
                 new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855),
-                new CraterParams(0.08, 4, 12, 3));
+                new CraterParams(0.08, 4, 12, 3),
+                new GradeParams(0.5, 0.35, 0.15, 40.0, 0.9));
     }
 }

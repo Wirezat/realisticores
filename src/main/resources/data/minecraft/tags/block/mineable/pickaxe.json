@@ -5,6 +5,7 @@
     "realisticores:volcaniclastic_kimberlite",
     "realisticores:serpentinized_kimberlite",
     "realisticores:peridotite",
-    "realisticores:peridot_ore"
+    "realisticores:peridot_ore",
+    "realisticores:kimberlite_diamond_ore"
   ]
 }

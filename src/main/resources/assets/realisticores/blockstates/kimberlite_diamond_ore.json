@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore"
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore_mirrored"
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore_mirrored",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore_mirrored",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/kimberlite_diamond_ore_mirrored",
+        "y": 270
+      }
+    ]
+  }
+}

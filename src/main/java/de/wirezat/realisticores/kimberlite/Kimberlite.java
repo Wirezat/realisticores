@@ -7,6 +7,7 @@ public final class Kimberlite {
     private static final PipeProfile PROFILE = new PipeProfile(PARAMS.pipe());
     private static final FaciesSelector FACIES = new FaciesSelector(PARAMS);
     private static final Crater CRATER = new Crater(PARAMS.crater());
+    private static final PipeGrade GRADE = new PipeGrade(PARAMS.grade());
     private static final PipeShape SHAPE = new PipeShape(PARAMS.pipe(), PROFILE);
 
     private Kimberlite() {
@@ -64,5 +65,14 @@ public final class Kimberlite {
      */
     public static Crater crater() {
         return CRATER;
+    }
+
+    /**
+     * Returns the shared ore grade model.
+     *
+     * @return grade model for the active parameters
+     */
+    public static PipeGrade grade() {
+        return GRADE;
     }
 }

@@ -39,7 +39,7 @@ public final class DepositSetup {
                 continue;
             }
             String block = overrides.getOrDefault(mineral.ore(), ore.block());
-            active.add(new ActiveMineral(mineral.ore(), mineral.zone(), mineral.fraction(), block));
+            active.add(new ActiveMineral(mineral.ore(), mineral.zones(), mineral.fraction(), mineral.graded(), block));
         }
         return List.copyOf(active);
     }

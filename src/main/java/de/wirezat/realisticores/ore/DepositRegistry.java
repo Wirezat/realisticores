@@ -51,8 +51,11 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
         List<Mineral> minerals = new ArrayList<>();
         for (JsonElement element : array) {
             JsonObject mineral = element.getAsJsonObject();
-            minerals.add(new Mineral(mineral.get("ore").getAsString(), mineral.get("zone").getAsString(),
-                    mineral.get("fraction").getAsDouble()));
+            List<String> zones = new ArrayList<>();
+            mineral.getAsJsonArray("zones").forEach(zone -> zones.add(zone.getAsString()));
+            minerals.add(new Mineral(mineral.get("ore").getAsString(), List.copyOf(zones),
+                    mineral.get("fraction").getAsDouble(),
+                    mineral.has("graded") && mineral.get("graded").getAsBoolean()));
         }
         return List.copyOf(minerals);
     }

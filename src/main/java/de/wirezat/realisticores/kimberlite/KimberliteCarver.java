@@ -98,7 +98,7 @@ public final class KimberliteCarver {
                     ? Facies.VOLCANICLASTIC
                     : facies.at(pipe, x, y, z, groundY, wallDistance);
             if (rock != Facies.HOST) {
-                chunk.setBlockState(pos, mineralBlock(minerals, rock, x, y, z, blockFor(rock)), false);
+                chunk.setBlockState(pos, mineralBlock(minerals, pipe, rock, x, y, z, blockFor(rock)), false);
             }
         }
     }
@@ -118,14 +118,17 @@ public final class KimberliteCarver {
         }
     }
 
-    private static BlockState mineralBlock(List<ActiveMineral> minerals, Facies rock, int x, int y, int z,
-            BlockState rockBlock) {
+    private static BlockState mineralBlock(List<ActiveMineral> minerals, Pipe pipe, Facies rock, int x, int y,
+            int z, BlockState rockBlock) {
         for (ActiveMineral mineral : minerals) {
-            if (!mineral.zone().equals(rock.name())) {
+            if (!mineral.zones().contains(rock.name())) {
                 continue;
             }
+            double fraction = mineral.graded()
+                    ? mineral.fraction() * Kimberlite.grade().factor(pipe, x, y, z)
+                    : mineral.fraction();
             double roll = (SplitMix64.hash(MINERAL_SALT ^ y, x, z) >>> 11) * 0x1.0p-53;
-            if (roll < mineral.fraction()) {
+            if (roll < fraction) {
                 return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block()))
                         .map(block -> block.defaultBlockState())
                         .orElse(rockBlock);
