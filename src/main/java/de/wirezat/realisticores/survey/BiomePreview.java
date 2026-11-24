@@ -11,7 +11,7 @@ import net.minecraft.world.level.material.MapColor;
 
 /** Draws the water outlines of an explorer map like the vanilla biome preview, safe on any thread. */
 final class BiomePreview {
-    private static final int SIZE = SurveyOverlay.MAP_SIZE;
+    static final int SIZE = 128;
 
     private BiomePreview() {
     }

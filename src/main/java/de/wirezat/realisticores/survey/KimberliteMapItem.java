@@ -1,28 +1,41 @@
 package de.wirezat.realisticores.survey;
 
+import de.wirezat.realisticores.OreConfig;
+import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.Field;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
+import de.wirezat.realisticores.kimberlite.Pipe;
+import de.wirezat.realisticores.kimberlite.Plume;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
-/** The empty kimberlite map: when used it turns into a map of the nearest kimberlite field. */
+/** The empty kimberlite map: when used it turns into a map to a trail of the nearest kimberlite field. */
 public class KimberliteMapItem extends Item {
     private static final int MAX_SEARCH = 40000;
+    private static final int MAX_WAIT_TICKS = 1200;
     private static final byte MAP_SCALE = 4;
 
     /**
@@ -37,19 +50,74 @@ public class KimberliteMapItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!(level instanceof ServerLevel server)) {
+        if (!(level instanceof ServerLevel server) || !(player instanceof ServerPlayer reader)) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
-        Optional<Field> field = level.dimension() == Level.OVERWORLD
+        Optional<Field> field = level.dimension() == Level.OVERWORLD && OreConfig.resolved().kimberlitePipeActive()
                 ? Kimberlite.generator().nearestField(server.getSeed(), player.getBlockX(), player.getBlockZ(),
                         MAX_SEARCH)
                 : Optional.empty();
-        if (field.isEmpty()) {
-            player.displayClientMessage(Component.translatable("item.realisticores.kimberlite_map.none"), true);
+        if (field.isEmpty()
+                || !(server.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
+            playNothingFound(reader);
             return InteractionResultHolder.fail(stack);
         }
-        return InteractionResultHolder.sidedSuccess(
-                ItemUtils.createFilledResult(stack, player, surveyMap(server, field.get())), false);
+        player.getCooldowns().addCooldown(this, MAX_WAIT_TICKS);
+        List<Pipe> pipes = new ArrayList<>(field.get().pipes());
+        Util.shuffle(pipes, level.getRandom());
+        Kimberlite.mapSpot(server.getSeed(), new LevelTerrainProbe(server, generator), server.getSeaLevel(), pipes,
+                level.getRandom().nextInt())
+                .thenApplyAsync(spot -> spot.map(found -> survey(server, found)), Util.backgroundExecutor())
+                .whenCompleteAsync((survey, failure) -> {
+                    player.getCooldowns().removeCooldown(this);
+                    if (failure == null) {
+                        survey.ifPresentOrElse(found -> hand(server, reader, found), () -> playNothingFound(reader));
+                    }
+                }, server.getServer())
+                .whenComplete(Kimberlite::logFailure);
+        return InteractionResultHolder.consume(stack);
+    }
+
+    private record Survey(int x, int z, byte[] outlines) {
+    }
+
+    private static Survey survey(ServerLevel level, Plume.Spot spot) {
+        int x = (int) Math.round(spot.x());
+        int z = (int) Math.round(spot.z());
+        int blocksPerPixel = 1 << MAP_SCALE;
+        int halfSize = BiomePreview.SIZE / 2 * blocksPerPixel;
+        return new Survey(x, z,
+                BiomePreview.colors(level, snap(x) - halfSize, snap(z) - halfSize, blocksPerPixel));
+    }
+
+    private static int snap(int block) {
+        int blocksPerPixel = 1 << MAP_SCALE;
+        return Math.floorDiv(block, blocksPerPixel) * blocksPerPixel;
+    }
+
+    private static void playNothingFound(ServerPlayer player) {
+        player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN,
+                SoundSource.PLAYERS, 1.0F, 0.6F);
+    }
+
+    private void hand(ServerLevel level, ServerPlayer player, Survey survey) {
+        if (player.isRemoved()) {
+            return;
+        }
+        Inventory inventory = player.getInventory();
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            ItemStack empty = inventory.getItem(slot);
+            if (empty.is(this)) {
+                empty.consume(1, player);
+                ItemStack map = surveyMap(level, survey);
+                if (empty.isEmpty()) {
+                    inventory.setItem(slot, map);
+                } else if (!inventory.add(map)) {
+                    player.drop(map, false);
+                }
+                return;
+            }
+        }
     }
 
     /**
@@ -63,28 +131,31 @@ public class KimberliteMapItem extends Item {
     static MapItemSavedData mapData(int x, int z, HolderLookup.Provider registries) {
         CompoundTag tag = MapItemSavedData.createFresh(x, z, MAP_SCALE, true, true, Level.OVERWORLD)
                 .save(new CompoundTag(), registries);
-        int blocksPerPixel = 1 << MAP_SCALE;
-        tag.putInt("xCenter", Math.floorDiv(x, blocksPerPixel) * blocksPerPixel);
-        tag.putInt("zCenter", Math.floorDiv(z, blocksPerPixel) * blocksPerPixel);
+        tag.putInt("xCenter", snap(x));
+        tag.putInt("zCenter", snap(z));
         return MapItemSavedData.load(tag, registries);
     }
 
     /**
-     * Builds a map of a kimberlite field. The map shows the indicator trails of the pipes in its area, brighter
-     * where grains are more common, and follows the player at any distance, so the player marker on the map edge
-     * shows the direction to the field.
+     * Builds a map whose cross marks a point on an indicator trail. The map follows the player at any distance, so
+     * the player marker on the map edge shows the direction to the cross.
      *
      * @param level the world
-     * @param field the field to map
-     * @return a locked filled map; water outlines and trails are painted on as soon as they are computed
+     * @param survey the marked point and the water outlines around it
+     * @return a locked filled map
      */
-    static ItemStack surveyMap(ServerLevel level, Field field) {
+    private static ItemStack surveyMap(ServerLevel level, Survey survey) {
+        MapItemSavedData data = mapData(survey.x(), survey.z(), level.registryAccess());
+        for (int i = 0; i < survey.outlines().length; i++) {
+            if (survey.outlines()[i] != 0) {
+                data.setColor(i % BiomePreview.SIZE, i / BiomePreview.SIZE, survey.outlines()[i]);
+            }
+        }
         MapId mapId = level.getFreeMapId();
-        level.setMapData(mapId, mapData(field.centerX(), field.centerZ(), level.registryAccess()));
+        level.setMapData(mapId, data.locked());
         ItemStack map = new ItemStack(Items.FILLED_MAP);
         map.set(DataComponents.MAP_ID, mapId);
-        MapItem.lockMap(level, map);
-        SurveyOverlay.paintAsync(level, map.get(DataComponents.MAP_ID));
+        MapItemSavedData.addTargetDecoration(map, new BlockPos(survey.x(), 0, survey.z()), "+", MapDecorationTypes.RED_X);
         map.set(DataComponents.ITEM_NAME, Component.translatable("item.realisticores.kimberlite_map.filled"));
         return map;
     }

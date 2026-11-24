@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class KimberliteMapItemTest {
     @Test
-    void mapIsCentredOnTheFieldAndKeepsItsScaleAcrossASave() {
+    void mapIsCentredOnTheCrossAndKeepsItsScaleAcrossASave() {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
         MapItemSavedData data = KimberliteMapItem.mapData(-5003, 12345, RegistryAccess.EMPTY);

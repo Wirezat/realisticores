@@ -7,6 +7,8 @@ import java.util.List;
 /** Traces the downhill trail of indicator grains from a pipe and tells how dense the grains are at a position. */
 public final class Plume {
     private static final long SALT = 0x504C554D455F4B49L;
+    private static final double SPOT_MIN_PYROPE = 0.02;
+    private static final double SPOT_MIN_DISTANCE = 250.0;
 
     private Plume() {
     }
@@ -132,24 +134,38 @@ public final class Plume {
     }
 
     /**
-     * Gives the find chance for a map line: like the pan chance, but with a fixed half width so that every trail
-     * draws as a line of the same thickness whatever the map scale.
+     * A point a map can mark.
      *
-     * @param path trail of the pipe
      * @param x world X in blocks
      * @param z world Z in blocks
-     * @param params trail settings
-     * @param indicator spread of the mineral
-     * @param halfWidth half width of the line in blocks
-     * @return chance from 0 to 1; it falls with the distance along the trail and from its centre line
      */
-    public static double lineDensity(PlumePath path, double x, double z, KimberliteParams.PlumeParams params,
-            KimberliteParams.IndicatorParams indicator, double halfWidth) {
-        Nearest nearest = nearest(path, x, z);
-        double outside = Math.max(0.0, nearest.distance() - path.pipe().diameter() / 2.0);
-        double decay = nearest.length() == 0.0 ? 1.0
-                : Math.exp(-nearest.length() / (indicator.length() * path.factor()));
-        return indicator.peak() * decay * Math.exp(-outside * outside / (2.0 * halfWidth * halfWidth));
+    public record Spot(double x, double z) {
+    }
+
+    /**
+     * Lists the trail points a map may mark: on land, rich enough in pyrope and away from every pipe.
+     *
+     * @param path trail of the pipe
+     * @param pipes all pipes near the trail
+     * @param probe terrain height source
+     * @param seaLevel Y of the sea surface
+     * @param params trail settings
+     * @return the points from the pipe to the end of the trail, possibly none
+     */
+    public static List<Spot> mapSpots(PlumePath path, List<Pipe> pipes, TerrainProbe probe, int seaLevel,
+            KimberliteParams.PlumeParams params) {
+        List<Spot> spots = new ArrayList<>();
+        for (int i = 0; i < path.xs().length; i++) {
+            double x = path.xs()[i];
+            double z = path.zs()[i];
+            if (density(path, x, z, params, params.pyrope()) >= SPOT_MIN_PYROPE
+                    && pipes.stream().allMatch(pipe -> Math.hypot(x - pipe.x(), z - pipe.z())
+                            >= SPOT_MIN_DISTANCE + pipe.diameter() / 2.0)
+                    && height(probe, x, z) >= seaLevel - 1) {
+                spots.add(new Spot(x, z));
+            }
+        }
+        return spots;
     }
 
     /**
