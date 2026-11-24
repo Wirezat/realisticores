@@ -21,8 +21,8 @@ public class RealisticOres {
         container.registerConfig(ModConfig.Type.COMMON, OreConfig.SPEC, "realisticores/main.toml");
         container.registerConfig(ModConfig.Type.COMMON, KimberliteConfig.SPEC,
                 "realisticores/kimberlite_pipe/kimberlite_pipe.toml");
-        modBus.addListener((ModConfigEvent.Loading event) -> Kimberlite.invalidate());
-        modBus.addListener((ModConfigEvent.Reloading event) -> Kimberlite.invalidate());
+        modBus.addListener((ModConfigEvent.Loading event) -> invalidateConfig());
+        modBus.addListener((ModConfigEvent.Reloading event) -> invalidateConfig());
         ModBlocks.register(modBus);
         ModItems.register(modBus);
         ModTabs.register(modBus);
@@ -33,5 +33,10 @@ public class RealisticOres {
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onLoot);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 KimberliteCommand.register(event.getDispatcher()));
+    }
+
+    private static void invalidateConfig() {
+        OreConfig.invalidate();
+        Kimberlite.invalidate();
     }
 }

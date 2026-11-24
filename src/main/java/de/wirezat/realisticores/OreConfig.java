@@ -26,7 +26,6 @@ public final class OreConfig {
     private static final ModConfigSpec.IntValue COMMAND_SEARCH_LIMIT;
     private static final DepositRegistry REGISTRY = DepositRegistry.load();
 
-    private static volatile List<Object> cachedKey;
     private static volatile Resolved cachedResolved;
 
     /**
@@ -127,21 +126,23 @@ public final class OreConfig {
     }
 
     /**
-     * Resolves the current config values.
+     * Gives the config values resolved against the shipped ore data.
      *
-     * @return the resolved setup, rebuilt whenever a config list changes
+     * @return the resolved setup, rebuilt after the config changed
      */
     public static Resolved resolved() {
-        Map<String, Double> fractions = KimberliteConfig.fractions();
-        List<Object> key = List.of(List.copyOf(SUPPRESSED_ORES.get()), List.copyOf(ENABLED_ORES.get()),
-                List.copyOf(ORE_OVERRIDES.get()), fractions);
         Resolved resolved = cachedResolved;
-        if (resolved == null || !key.equals(cachedKey)) {
-            resolved = resolve(castList(key.get(0)), castList(key.get(1)), castList(key.get(2)), fractions);
+        if (resolved == null) {
+            resolved = resolve(SUPPRESSED_ORES.get(), ENABLED_ORES.get(), ORE_OVERRIDES.get(),
+                    KimberliteConfig.fractions());
             cachedResolved = resolved;
-            cachedKey = key;
         }
         return resolved;
+    }
+
+    /** Drops the resolved values so the next use rebuilds them from the config. */
+    public static void invalidate() {
+        cachedResolved = null;
     }
 
     /**
@@ -151,11 +152,6 @@ public final class OreConfig {
      */
     public static OreMatcher matcher() {
         return resolved().matcher();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static List<? extends String> castList(Object value) {
-        return (List<? extends String>) value;
     }
 
     private static Resolved resolve(List<? extends String> suppressed, List<? extends String> enabled,
