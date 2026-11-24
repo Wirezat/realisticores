@@ -76,14 +76,13 @@ public class KimberliteMapItem extends Item {
      *
      * @param level the world
      * @param field the field to map
-     * @return a locked filled map with a biome preview; the trails are painted on as soon as they are computed
+     * @return a locked filled map; water outlines and trails are painted on as soon as they are computed
      */
     static ItemStack surveyMap(ServerLevel level, Field field) {
         MapId mapId = level.getFreeMapId();
         level.setMapData(mapId, mapData(field.centerX(), field.centerZ(), level.registryAccess()));
         ItemStack map = new ItemStack(Items.FILLED_MAP);
         map.set(DataComponents.MAP_ID, mapId);
-        MapItem.renderBiomePreviewMap(level, map);
         MapItem.lockMap(level, map);
         SurveyOverlay.paintAsync(level, map.get(DataComponents.MAP_ID));
         map.set(DataComponents.ITEM_NAME, Component.translatable("item.realisticores.kimberlite_map.filled"));

@@ -156,7 +156,7 @@ public final class Kimberlite {
      */
     public static void logFailure(Object result, Throwable failure) {
         if (failure != null) {
-            LOGGER.error("Indicator trail task failed", failure);
+            LOGGER.error("Background survey task failed", failure);
         }
     }
 

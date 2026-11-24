@@ -7,6 +7,8 @@ import de.wirezat.realisticores.kimberlite.KimberliteParams;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.Util;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.Level;
@@ -16,7 +18,7 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 /** Paints the indicator trails of the pipes in a map's area onto the map. */
 final class SurveyOverlay {
-    private static final int MAP_SIZE = 128;
+    static final int MAP_SIZE = 128;
     private static final double MIN_CHANCE = 0.01;
     private static final double LOW_CHANCE = 0.04;
     private static final double MEDIUM_CHANCE = 0.12;
@@ -31,27 +33,35 @@ final class SurveyOverlay {
     }
 
     /**
-     * Computes the trails of all pipes whose grains reach the map area on a background thread and then paints
-     * them onto the map on the server thread; brighter means a higher find chance.
+     * Computes the water outlines of a map and the trails of all pipes whose grains reach it in the background and
+     * paints them on the server thread, the outlines first; brighter trails mean a higher find chance.
      *
      * @param level the world
      * @param mapId id of the map to paint on
      */
     static void paintAsync(ServerLevel level, MapId mapId) {
         MapItemSavedData data = level.getMapData(mapId);
-        if (data == null || level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
+        if (data == null) {
+            return;
+        }
+        int blocksPerPixel = 1 << data.scale;
+        int west = data.centerX - MAP_SIZE / 2 * blocksPerPixel;
+        int north = data.centerZ - MAP_SIZE / 2 * blocksPerPixel;
+        CompletableFuture<Void> outlines = CompletableFuture
+                .supplyAsync(() -> BiomePreview.colors(level, west, north, blocksPerPixel), Util.backgroundExecutor())
+                .thenAcceptAsync(colors -> paint(level, mapId, colors), level.getServer());
+        outlines.whenComplete(Kimberlite::logFailure);
+        if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
                 || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
             return;
         }
         KimberliteParams.PlumeParams params = Kimberlite.params().plume();
-        int blocksPerPixel = 1 << data.scale;
-        int west = data.centerX - MAP_SIZE / 2 * blocksPerPixel;
-        int north = data.centerZ - MAP_SIZE / 2 * blocksPerPixel;
         double halfWidth = blocksPerPixel * LINE_HALF_WIDTH_PIXELS;
         Kimberlite.plumesReaching(level.getSeed(), new LevelTerrainProbe(level, generator), level.getSeaLevel(),
                 west, north, west + MAP_SIZE * blocksPerPixel, north + MAP_SIZE * blocksPerPixel)
                 .thenApply(paths -> colors(paths, params, west, north, blocksPerPixel, halfWidth))
-                .thenAcceptAsync(colors -> paint(level, mapId, colors), level.getServer())
+                .thenAcceptBothAsync(outlines.exceptionally(failure -> null),
+                        (colors, painted) -> paint(level, mapId, colors), level.getServer())
                 .whenComplete(Kimberlite::logFailure);
     }
 
