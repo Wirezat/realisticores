@@ -54,7 +54,7 @@ public final class KimberliteCarver {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Pipe pipe : pipes) {
             CraterSite site = SITES.computeIfAbsent(new SiteKey(seed, pipe), key -> CraterSite.measure(pipe, probe, Kimberlite.params().crater().ringPoints()));
-            int waterY = site.wet() ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
+            int waterY = crater.hasLake(site.wet()) ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
             double reach = shape.reach(pipe);
             for (int localX = 0; localX < 16; localX++) {
                 for (int localZ = 0; localZ < 16; localZ++) {

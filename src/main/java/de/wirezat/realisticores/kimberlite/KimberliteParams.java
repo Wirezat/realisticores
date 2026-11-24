@@ -108,9 +108,10 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * @param ringPoints number of terrain samples on the ring around a crater
      * @param maxWallHeight tallest wall the bowl may cut into sloping terrain; never less than the bowl depth
      * @param soilLayers number of soil blocks laid on the bowl floor so the crater is overgrown
+     * @param lakeInDryBiomes true if craters fill with water even in biomes without precipitation
      */
     public record CraterParams(double depthPerDiameter, int minDepth, int maxDepth, int floorLayers,
-            int ringPoints, int maxWallHeight, int soilLayers) {
+            int ringPoints, int maxWallHeight, int soilLayers, boolean lakeInDryBiomes) {
     }
 
     /**
@@ -148,7 +149,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
         CraterParams c = crater;
         CraterParams crater = new CraterParams(c.depthPerDiameter(), c.minDepth(),
                 Math.max(c.minDepth(), c.maxDepth()), c.floorLayers(), c.ringPoints(), c.maxWallHeight(),
-                c.soilLayers());
+                c.soilLayers(), c.lakeInDryBiomes());
         GradeParams g = grade;
         double poorShare = Math.min(g.poorShare(), 1.0 - Math.min(1.0, g.barrenShare()));
         GradeParams grade = new GradeParams(g.barrenShare(), poorShare, g.poorFactor(), g.phaseWavelength(),
@@ -167,7 +168,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
                 new FieldParams(3000, 0.5, 0.3, 300, 800, 5, 30, 80, 10),
                 new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0, 0.3, 10.0, 0.35, 0.4, 2.0),
                 new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855, 6.0, 5.0, 3.0, 10.0, 20.0, 0.4, 0.3, 0.8, 0.0),
-                new CraterParams(0.08, 4, 12, 3, 12, 8, 3),
+                new CraterParams(0.08, 4, 12, 3, 12, 8, 3, false),
                 new GradeParams(0.5, 0.35, 0.15, 40.0, 0.9));
     }
 }

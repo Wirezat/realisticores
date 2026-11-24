@@ -1,9 +1,9 @@
 package de.wirezat.realisticores;
 
-import net.minecraft.world.item.CreativeModeTabs;
+import java.util.Collection;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -25,14 +25,14 @@ public final class ModItems {
      */
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);
-        modBus.addListener(ModItems::addToCreativeTab);
     }
 
-    private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(PERIDOT.get());
-            event.accept(NATURAL_DIAMOND.get());
-            event.accept(GRAPHITE.get());
-        }
+    /**
+     * Gives all plain items of the mod in registration order.
+     *
+     * @return items for the creative tab
+     */
+    public static Collection<DeferredHolder<Item, ? extends Item>> items() {
+        return ITEMS.getEntries();
     }
 }

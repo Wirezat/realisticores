@@ -14,5 +14,6 @@
   "item.realisticores.natural_diamond": "Diamond",
   "item.minecraft.diamond": "Synthetic Diamond",
   "block.realisticores.kimberlite_graphite_ore": "Kimberlite Graphite Ore",
-  "item.realisticores.graphite": "Graphite"
+  "item.realisticores.graphite": "Graphite",
+  "itemGroup.realisticores": "RealisticOres"
 }

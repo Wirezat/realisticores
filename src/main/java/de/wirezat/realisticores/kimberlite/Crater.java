@@ -51,4 +51,14 @@ public final class Crater {
     public int waterLevel(int lowestRimY, int seaLevel) {
         return Math.max(lowestRimY - 1, seaLevel - 1);
     }
+
+    /**
+     * Decides whether a crater holds a lake.
+     *
+     * @param wetBiome true if the biome at the crater has precipitation
+     * @return true if the crater fills with water
+     */
+    public boolean hasLake(boolean wetBiome) {
+        return wetBiome || params.lakeInDryBiomes();
+    }
 }

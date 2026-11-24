@@ -29,6 +29,17 @@ class CraterTest {
     }
 
     @Test
+    void dryBiomesHoldNoLakeUnlessEnabled() {
+        KimberliteParams.CraterParams d = KimberliteParams.defaults().crater();
+        Crater dryOff = new Crater(d);
+        Crater dryOn = new Crater(new KimberliteParams.CraterParams(d.depthPerDiameter(), d.minDepth(), d.maxDepth(),
+                d.floorLayers(), d.ringPoints(), d.maxWallHeight(), d.soilLayers(), true));
+        assertTrue(dryOff.hasLake(true));
+        assertTrue(!dryOff.hasLake(false));
+        assertTrue(dryOn.hasLake(false));
+    }
+
+    @Test
     void lakeStaysBelowTheLowestRimButNotBelowTheSeaSurface() {
         assertEquals(79, CRATER.waterLevel(80, 63));
         assertEquals(62, CRATER.waterLevel(60, 63));

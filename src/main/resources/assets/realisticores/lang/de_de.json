@@ -14,5 +14,6 @@
   "item.realisticores.natural_diamond": "Diamant",
   "item.minecraft.diamond": "Synthetischer Diamant",
   "block.realisticores.kimberlite_graphite_ore": "Graphiterz im Kimberlit",
-  "item.realisticores.graphite": "Graphit"
+  "item.realisticores.graphite": "Graphit",
+  "itemGroup.realisticores": "RealisticOres"
 }

@@ -5,14 +5,12 @@ import de.wirezat.realisticores.ore.OreDefinition;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -45,6 +43,7 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> KIMBERLITE_GRAPHITE_ORE = registerOre("kimberlite_graphite_ore", "graphite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
 
+
     private ModBlocks() {
     }
 
@@ -70,12 +69,14 @@ public final class ModBlocks {
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
-        modBus.addListener(ModBlocks::addToCreativeTab);
     }
 
-    private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            BLOCK_ITEMS.forEach(item -> event.accept(item.get()));
-        }
+    /**
+     * Gives all block items of the mod in registration order.
+     *
+     * @return block items for the creative tab
+     */
+    public static List<DeferredItem<? extends Item>> blockItems() {
+        return BLOCK_ITEMS;
     }
 }

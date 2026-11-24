@@ -21,6 +21,7 @@ public class RealisticOres {
         modBus.addListener((ModConfigEvent.Reloading event) -> Kimberlite.invalidate());
         ModBlocks.register(modBus);
         ModItems.register(modBus);
+        ModTabs.register(modBus);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 KimberliteCommand.register(event.getDispatcher()));
     }

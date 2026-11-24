@@ -15,21 +15,6 @@
       {
         "model": "realisticores:block/volcaniclastic_kimberlite",
         "y": 270
-      },
-      {
-        "model": "realisticores:block/volcaniclastic_kimberlite_mirrored"
-      },
-      {
-        "model": "realisticores:block/volcaniclastic_kimberlite_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/volcaniclastic_kimberlite_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/volcaniclastic_kimberlite_mirrored",
-        "y": 270
       }
     ]
   }

@@ -66,6 +66,7 @@ public final class KimberliteConfig {
     private static final Supplier<Integer> CRATER_RING_POINTS;
     private static final Supplier<Integer> CRATER_MAX_WALL_HEIGHT;
     private static final Supplier<Integer> CRATER_SOIL_LAYERS;
+    private static final Supplier<Boolean> CRATER_LAKE_IN_DRY_BIOMES;
     private static final Supplier<Double> GRADE_BARREN_SHARE;
     private static final Supplier<Double> GRADE_POOR_SHARE;
     private static final Supplier<Double> GRADE_POOR_FACTOR;
@@ -188,6 +189,8 @@ public final class KimberliteConfig {
                 "Tallest wall the bowl may cut into sloping terrain; never less than the bowl depth. Lower values give gentler rims.");
         CRATER_SOIL_LAYERS = integer(b, "soilLayers", d.crater().soilLayers(), 0, 16,
                 "Soil blocks laid on the bowl floor so the crater is overgrown; 0 leaves bare volcaniclastic rock.");
+        CRATER_LAKE_IN_DRY_BIOMES = flag(b, "lakeInDryBiomes", d.crater().lakeInDryBiomes(),
+                "Fill craters with water even in biomes without precipitation (desert, savanna, badlands).");
         b.pop();
 
         b.comment("Ore grade of pipes: barren, poor and rich pipes, with varying rock phases.").push("grade");
@@ -219,6 +222,11 @@ public final class KimberliteConfig {
     private static Supplier<Integer> integer(ModConfigSpec.Builder builder, String name, int value, int min, int max,
             String comment) {
         ModConfigSpec.IntValue config = builder.comment(comment).defineInRange(name, value, min, max);
+        return config::get;
+    }
+
+    private static Supplier<Boolean> flag(ModConfigSpec.Builder builder, String name, boolean value, String comment) {
+        ModConfigSpec.BooleanValue config = builder.comment(comment).define(name, value);
         return config::get;
     }
 
@@ -256,7 +264,8 @@ public final class KimberliteConfig {
                         FACIES_SERPENTINE_WALL_START.get(), FACIES_CONTACT_THRESHOLD.get()),
                 new KimberliteParams.CraterParams(CRATER_DEPTH_PER_DIAMETER.get(), CRATER_MIN_DEPTH.get(),
                         CRATER_MAX_DEPTH.get(), CRATER_FLOOR_LAYERS.get(), CRATER_RING_POINTS.get(),
-                        CRATER_MAX_WALL_HEIGHT.get(), CRATER_SOIL_LAYERS.get()),
+                        CRATER_MAX_WALL_HEIGHT.get(), CRATER_SOIL_LAYERS.get(),
+                        CRATER_LAKE_IN_DRY_BIOMES.get()),
                 new KimberliteParams.GradeParams(GRADE_BARREN_SHARE.get(), GRADE_POOR_SHARE.get(),
                         GRADE_POOR_FACTOR.get(), GRADE_PHASE_WAVELENGTH.get(), GRADE_PHASE_AMPLITUDE.get()))
                 .sanitized();

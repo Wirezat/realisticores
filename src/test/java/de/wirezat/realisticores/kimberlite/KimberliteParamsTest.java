@@ -17,7 +17,7 @@ class KimberliteParamsTest {
                         p.wallWavelengthFactor(), p.wallMinWavelength(), p.wallFineShare(), p.wallFineScale(),
                         p.wallVerticalStretch()),
                 d.facies(),
-                new KimberliteParams.CraterParams(0.08, 12, 4, 3, 12, 8, 3),
+                new KimberliteParams.CraterParams(0.08, 12, 4, 3, 12, 8, 3, false),
                 new KimberliteParams.GradeParams(0.8, 0.5, 0.15, 40.0, 0.9));
         KimberliteParams fixed = broken.sanitized();
         assertTrue(fixed.field().maxRadius() >= fixed.field().minRadius());
