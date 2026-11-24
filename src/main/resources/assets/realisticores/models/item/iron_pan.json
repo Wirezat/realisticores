@@ -1,1 +1,1 @@
-{"parent": "minecraft:item/generated", "textures": {"layer0": "realisticores:item/pan"}}
+{"parent": "minecraft:item/generated", "textures": {"layer0": "realisticores:item/pan"}, "overrides": [{"predicate": {"realisticores:water": 1}, "model": "realisticores:item/iron_pan_water"}]}

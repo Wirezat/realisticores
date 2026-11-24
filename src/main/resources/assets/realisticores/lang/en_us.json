@@ -31,6 +31,8 @@
   "item.realisticores.kimberlite_map.none": "No trace of kimberlite anywhere",
   "item.realisticores.kimberlite_map.filled": "Kimberlite Map",
   "enchantment.realisticores.trail_sense.desc": "Leads a trail of ghostly flames from the panning spot to the source of the grains.",
+  "tooltip.realisticores.pan.last": "%s g",
+  "tooltip.realisticores.pan.content": "%s / %s g",
   "tooltip.realisticores.pan.efficiency": "Washes sediment faster.",
   "tooltip.realisticores.pan.fortune": "Collects more grains from every wash.",
   "tooltip.realisticores.pan.silk_touch": "Leaves the sediment in place, but collects half as many grains.",

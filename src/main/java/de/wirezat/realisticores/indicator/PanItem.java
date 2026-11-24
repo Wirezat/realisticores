@@ -3,6 +3,7 @@ package de.wirezat.realisticores.indicator;
 import de.wirezat.realisticores.ModItems;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.Plume;
+import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -32,7 +34,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 
 /** The pan: washes sediment, measures its indicator grains and collects them. */
 public class PanItem extends Item {
-    static final int CAPACITY = 1000;
+    public static final int CAPACITY = 1000;
     static final int WASH_COST = 100;
 
     private static final int USE_TICKS = 60;
@@ -68,7 +70,7 @@ public class PanItem extends Item {
      * @param pan the pan
      * @return water in millibuckets, at most one bucket
      */
-    static int water(ItemStack pan) {
+    public static int water(ItemStack pan) {
         return pan.getOrDefault(ModPan.WATER, SimpleFluidContent.EMPTY).getAmount();
     }
 
@@ -127,6 +129,12 @@ public class PanItem extends Item {
         ItemStack pan = player.getItemInHand(hand);
         return dip(level, player, pan) ? InteractionResultHolder.sidedSuccess(pan, level.isClientSide)
                 : InteractionResultHolder.pass(pan);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        return Optional.of(new PanTooltip(water(stack), Optional.ofNullable(stack.get(ModPan.LAST)),
+                stack.getOrDefault(ModPan.CONTENT, Grains.NONE)));
     }
 
     @Override
