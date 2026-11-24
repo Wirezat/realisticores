@@ -25,8 +25,6 @@ class PlumeTest {
         };
     }
 
-
-
     @Test
     void trailRunsDownhillAndIlmeniteStopsBeforePyrope() {
         KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
@@ -53,6 +51,21 @@ class PlumeTest {
         assertTrue(cold > temperate * 2.0);
         assertTrue(Plume.density(ocean, 600, 0, params, params.pyrope()) < temperate);
         assertEquals(params.pyrope().peak(), Plume.density(ocean, 0, 0, params, params.pyrope()), 1e-12);
+    }
+
+    @Test
+    void guideLeadsFromThePannedSpotBackToThePipe() {
+        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PlumePath path = Plume.trace(new Pipe(0, 0, 70), 0.0, slopeEast(Climate.TEMPERATE), 0, params);
+        java.util.List<Plume.GuidePoint> guide = Plume.guide(path, 300, 0, 400, 10);
+        assertTrue(guide.size() > 20);
+        assertTrue(guide.get(0).x() > 250.0);
+        assertTrue(guide.get(guide.size() - 1).x() < 20.0);
+        assertTrue(guide.get(5).dirX() < -0.9);
+        java.util.List<Plume.GuidePoint> offTrail = Plume.guide(path, 300, 40, 400, 10);
+        assertEquals(40.0, offTrail.get(0).z(), 1.0);
+        assertEquals(300.0, offTrail.get(0).x(), 1.0);
+        assertTrue(offTrail.get(offTrail.size() - 1).x() < 20.0);
     }
 
     @Test

@@ -17,10 +17,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
+import org.jetbrains.annotations.Nullable;
 
 /** Works out which indicator minerals one pan of sediment yields at a position. */
 public final class PanYield {
+    private static final double TRAIL_MIN_CHANCE = 0.02;
+
     private PanYield() {
+    }
+
+    /**
+     * Result of one pan.
+     *
+     * @param found the minerals found, empty when the pan holds none
+     * @param source trail of the pipe that contributes most at the position, or null when no trail is strong enough
+     */
+    public record Result(List<ItemStack> found, @Nullable PlumePath source) {
     }
 
     /**
@@ -31,14 +43,14 @@ public final class PanYield {
      * @param random source of the rolls
      * @param chanceFactor factor applied to every find chance, 1 for a normal pan
      * @param fortune extra pieces per found mineral: 1 plus 0 up to this many
-     * @return found minerals, empty when the pan holds none
+     * @return the minerals found and the strongest trail at the position
      */
-    public static List<ItemStack> pan(ServerLevel level, BlockPos pos, RandomSource random, double chanceFactor,
+    public static Result pan(ServerLevel level, BlockPos pos, RandomSource random, double chanceFactor,
             int fortune) {
         List<ItemStack> found = new ArrayList<>();
         if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
                 || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
-            return found;
+            return new Result(found, null);
         }
         KimberliteParams.PlumeParams params = Kimberlite.params().plume();
         int reach = (int) Math.ceil(params.maxLength() * Plume.maxFactor(params));
@@ -48,20 +60,30 @@ public final class PanYield {
         double pyrope = 1.0;
         double chromite = 1.0;
         double ilmenite = 1.0;
+        double strongest = 0.0;
+        PlumePath source = null;
         for (Pipe pipe : pipes) {
             double range = params.maxLength() * Kimberlite.plumeFactor(level.getSeed(), pipe, probe) + pipe.diameter();
             if (Math.hypot(pipe.x() - pos.getX(), pipe.z() - pos.getZ()) > range) {
                 continue;
             }
             PlumePath path = Kimberlite.plume(level.getSeed(), pipe, probe, level.getSeaLevel());
-            pyrope *= 1.0 - Plume.density(path, pos.getX(), pos.getZ(), params, params.pyrope());
-            chromite *= 1.0 - Plume.density(path, pos.getX(), pos.getZ(), params, params.chromite());
-            ilmenite *= 1.0 - Plume.density(path, pos.getX(), pos.getZ(), params, params.ilmenite());
+            double p = Plume.density(path, pos.getX(), pos.getZ(), params, params.pyrope());
+            double c = Plume.density(path, pos.getX(), pos.getZ(), params, params.chromite());
+            double i = Plume.density(path, pos.getX(), pos.getZ(), params, params.ilmenite());
+            pyrope *= 1.0 - p;
+            chromite *= 1.0 - c;
+            ilmenite *= 1.0 - i;
+            double score = Math.max(p, Math.max(c, i));
+            if (score > strongest) {
+                strongest = score;
+                source = path;
+            }
         }
         roll(found, ModItems.PYROPE, (1.0 - pyrope) * chanceFactor, random, fortune);
         roll(found, ModItems.CHROMITE, (1.0 - chromite) * chanceFactor, random, fortune);
         roll(found, ModItems.ILMENITE, (1.0 - ilmenite) * chanceFactor, random, fortune);
-        return found;
+        return new Result(found, strongest >= TRAIL_MIN_CHANCE ? source : null);
     }
 
     private static void roll(List<ItemStack> found, DeferredItem<Item> mineral, double chance, RandomSource random,

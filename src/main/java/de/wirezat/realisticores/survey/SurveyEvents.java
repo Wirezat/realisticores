@@ -17,7 +17,7 @@ import net.neoforged.neoforge.common.BasicItemListing;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 
-/** Adds the kimberlite map to the cartographer's trades and to structure chests. */
+/** Adds the kimberlite map to the cartographer's trades and to structure chests, and books to other chests. */
 public final class SurveyEvents {
     private static final int TRADE_LEVEL = 3;
     private static final int TRADE_EMERALDS = 16;
@@ -28,8 +28,12 @@ public final class SurveyEvents {
     private static final Set<ResourceLocation> MAP_CHESTS = Set.of(
             ResourceLocation.withDefaultNamespace("chests/abandoned_mineshaft"),
             ResourceLocation.withDefaultNamespace("chests/desert_pyramid"));
+    private static final Set<ResourceLocation> BOOK_CHESTS = Set.of(
+            ResourceLocation.withDefaultNamespace("chests/shipwreck_treasure"),
+            ResourceLocation.withDefaultNamespace("chests/buried_treasure"));
 
     private static final ResourceKey<LootTable> MAP_INJECTION = injection("kimberlite_map");
+    private static final ResourceKey<LootTable> BOOK_INJECTION = injection("trail_sense_book");
 
     private SurveyEvents() {
     }
@@ -53,13 +57,15 @@ public final class SurveyEvents {
     }
 
     /**
-     * Adds the map pool to the matching vanilla chests.
+     * Adds the map and book pools to the matching vanilla chests.
      *
      * @param event the loot table load event
      */
     public static void onLoot(LootTableLoadEvent event) {
         if (MAP_CHESTS.contains(event.getName())) {
             event.getTable().addPool(pool(MAP_INJECTION));
+        } else if (BOOK_CHESTS.contains(event.getName())) {
+            event.getTable().addPool(pool(BOOK_INJECTION));
         }
     }
 

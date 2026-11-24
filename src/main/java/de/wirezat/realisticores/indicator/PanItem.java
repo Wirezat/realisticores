@@ -1,12 +1,13 @@
 package de.wirezat.realisticores.indicator;
 
-import java.util.List;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import de.wirezat.realisticores.kimberlite.Plume;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -24,14 +25,16 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.common.Tags;
+import org.slf4j.Logger;
 
 /** The pan: washes sand and gravel at the water's edge and sieves out heavy indicator minerals. */
 public class PanItem extends Item {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final int USE_TICKS = 60;
     private static final int EFFICIENCY_TICKS = 10;
     private static final int MIN_USE_TICKS = 10;
     private static final int ENCHANTABILITY = 14;
+    private static final double TRAIL_SPACING = 2.5;
     private static final double SILK_CHANCE_FACTOR = 0.5;
     private static final int SPLASH_INTERVAL = 6;
 
@@ -52,7 +55,7 @@ public class PanItem extends Item {
      * @return true for sand or gravel touching water
      */
     static boolean canPan(Level level, BlockPos pos) {
-        if (!level.getBlockState(pos).is(BlockTags.SAND) && !level.getBlockState(pos).is(Tags.Blocks.GRAVELS)) {
+        if (!level.getBlockState(pos).is(BlockTags.SAND) && !level.getBlockState(pos).is(net.neoforged.neoforge.common.Tags.Blocks.GRAVELS)) {
             return false;
         }
         BlockPos above = pos.above();
@@ -129,18 +132,25 @@ public class PanItem extends Item {
             return stack;
         }
         int fortune = PanEnchantments.level(level, Enchantments.FORTUNE, stack);
-        List<ItemStack> found = PanYield.pan(server, hit.getBlockPos(), level.getRandom(),
+        PanYield.Result result = PanYield.pan(server, hit.getBlockPos(), level.getRandom(),
                 keepBlock ? SILK_CHANCE_FACTOR : 1.0, fortune);
-        if (found.isEmpty()) {
+        if (result.found().isEmpty()) {
             player.displayClientMessage(Component.translatable("item.realisticores.pan.empty"), true);
         } else if (!keepBlock) {
             level.destroyBlock(hit.getBlockPos(), false, player);
         }
-        found.forEach(item -> {
+        result.found().forEach(item -> {
             if (!player.getInventory().add(item)) {
                 player.drop(item, false);
             }
         });
+        double reach = PanEnchantments.trailReach(PanEnchantments.level(level, PanEnchantments.TRAIL_SENSE, stack));
+        if (reach > 0.0 && result.source() != null) {
+            TrailEffects.start(player, server, Plume.guide(result.source(), hit.getBlockPos().getX() + 0.5,
+                    hit.getBlockPos().getZ() + 0.5, reach, TRAIL_SPACING));
+        }
+        LOGGER.debug("pan at {} found={} source={} trailReach={}", hit.getBlockPos(), result.found().size(),
+                result.source() != null, reach);
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         return stack;
     }

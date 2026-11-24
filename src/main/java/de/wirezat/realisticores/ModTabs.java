@@ -1,9 +1,12 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.indicator.PanEnchantments;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -20,6 +23,13 @@ public final class ModTabs {
                     .displayItems((parameters, output) -> {
                         ModBlocks.blockItems().forEach(item -> output.accept(item.get()));
                         ModItems.items().forEach(item -> output.accept(item.get()));
+                        parameters.holders().lookupOrThrow(Registries.ENCHANTMENT).get(PanEnchantments.TRAIL_SENSE)
+                                .ifPresent(enchantment -> {
+                                    for (int level = 1; level <= enchantment.value().getMaxLevel(); level++) {
+                                        output.accept(EnchantedBookItem.createForEnchantment(
+                                                new EnchantmentInstance(enchantment, level)));
+                                    }
+                                });
                     })
                     .build());
 

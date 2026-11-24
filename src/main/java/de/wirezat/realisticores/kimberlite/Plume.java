@@ -1,6 +1,8 @@
 package de.wirezat.realisticores.kimberlite;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /** Traces the downhill trail of indicator grains from a pipe and tells how dense the grains are at a position. */
 public final class Plume {
@@ -150,10 +152,23 @@ public final class Plume {
         return indicator.peak() * decay * Math.exp(-outside * outside / (2.0 * halfWidth * halfWidth));
     }
 
-    private record Nearest(double distance, double length) {
+    /**
+     * One point of the guide line toward a pipe.
+     *
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param dirX X part of the unit direction toward the pipe
+     * @param dirZ Z part of the unit direction toward the pipe
+     */
+    public record GuidePoint(double x, double z, double dirX, double dirZ) {
+    }
+
+    private record Nearest(int segment, double fraction, double distance, double length) {
     }
 
     private static Nearest nearest(PlumePath path, double x, double z) {
+        int segment = -1;
+        double fraction = 0.0;
         double bestDistance = Math.hypot(x - path.xs()[0], z - path.zs()[0]);
         double bestLength = 0.0;
         for (int i = 0; i < path.xs().length - 1; i++) {
@@ -164,9 +179,57 @@ public final class Plume {
             double distance = Math.hypot(x - (path.xs()[i] + dx * clamped), z - (path.zs()[i] + dz * clamped));
             if (distance < bestDistance) {
                 bestDistance = distance;
+                segment = i;
+                fraction = clamped;
                 bestLength = path.lengths()[i] + clamped * (path.lengths()[i + 1] - path.lengths()[i]);
             }
         }
-        return new Nearest(bestDistance, bestLength);
+        return new Nearest(segment, fraction, bestDistance, bestLength);
+    }
+
+    /**
+     * Lists evenly spaced points from a position to the nearest trail point and on along the trail back toward the
+     * pipe.
+     *
+     * @param path trail of the pipe
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param reach distance in blocks to cover, counted from the position
+     * @param spacing distance in blocks between two points
+     * @return points ordered from the position toward the pipe, empty if the trail has no segment
+     */
+    public static List<GuidePoint> guide(PlumePath path, double x, double z, double reach, double spacing) {
+        List<GuidePoint> points = new ArrayList<>();
+        if (path.xs().length < 2) {
+            return points;
+        }
+        Nearest nearest = nearest(path, x, z);
+        int segment = Math.max(0, nearest.segment());
+        List<double[]> waypoints = new ArrayList<>();
+        waypoints.add(new double[] {x, z});
+        waypoints.add(new double[] {
+            path.xs()[segment] + (path.xs()[segment + 1] - path.xs()[segment]) * nearest.fraction(),
+            path.zs()[segment] + (path.zs()[segment + 1] - path.zs()[segment]) * nearest.fraction()});
+        for (int i = segment; i >= 0; i--) {
+            waypoints.add(new double[] {path.xs()[i], path.zs()[i]});
+        }
+        double carry = 0.0;
+        double covered = 0.0;
+        for (int i = 1; i < waypoints.size() && covered <= reach; i++) {
+            double[] from = waypoints.get(i - 1);
+            double dx = waypoints.get(i)[0] - from[0];
+            double dz = waypoints.get(i)[1] - from[1];
+            double length = Math.hypot(dx, dz);
+            if (length > 0.0) {
+                while (carry <= length && covered + carry <= reach) {
+                    points.add(new GuidePoint(from[0] + dx / length * carry, from[1] + dz / length * carry,
+                            dx / length, dz / length));
+                    carry += spacing;
+                }
+                carry -= length;
+                covered += length;
+            }
+        }
+        return points;
     }
 }

@@ -27,9 +27,11 @@
   "item.realisticores.ilmenite": "Ilmenite",
   "item.realisticores.iron_pan": "Iron Pan",
   "item.realisticores.pan.empty": "Nothing but plain sediment",
+  "enchantment.realisticores.trail_sense": "Trail Sense",
   "item.realisticores.kimberlite_map": "Empty Kimberlite Map",
   "item.realisticores.kimberlite_map.none": "No trace of kimberlite anywhere",
   "item.realisticores.kimberlite_map.filled": "Kimberlite Map",
+  "enchantment.realisticores.trail_sense.desc": "Leads a trail of ghostly flames from the panning spot to the source of the grains.",
   "tooltip.realisticores.pan.efficiency": "Washes sediment faster.",
   "tooltip.realisticores.pan.fortune": "Finds may yield extra pieces.",
   "tooltip.realisticores.pan.silk_touch": "Leaves the sediment in place, but finds half as often."
