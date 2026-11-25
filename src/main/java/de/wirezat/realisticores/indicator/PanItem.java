@@ -78,8 +78,8 @@ public class PanItem extends Item {
         pan.set(ModPan.WATER, SimpleFluidContent.copyOf(new FluidStack(Fluids.WATER, amount)));
     }
 
-    private static boolean hasWater(Player player, ItemStack pan) {
-        return player.hasInfiniteMaterials() || water(pan) >= WASH_COST;
+    private static boolean hasWater(ItemStack pan) {
+        return water(pan) >= WASH_COST;
     }
 
     private static boolean dip(Level level, Player player, ItemStack pan) {
@@ -112,7 +112,7 @@ public class PanItem extends Item {
         if (!canPan(context.getLevel(), context.getClickedPos())) {
             return InteractionResult.PASS;
         }
-        if (!hasWater(player, context.getItemInHand())) {
+        if (!hasWater(context.getItemInHand())) {
             context.getLevel().playSound(player, player.blockPosition(), SoundEvents.COPPER_HIT, SoundSource.PLAYERS,
                     0.7F, 0.6F);
             return InteractionResult.FAIL;
@@ -141,6 +141,11 @@ public class PanItem extends Item {
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         int efficiency = PanEnchantments.level(entity.level(), Enchantments.EFFICIENCY, stack);
         return Math.max(MIN_USE_TICKS, USE_TICKS - EFFICIENCY_TICKS * efficiency);
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return true;
     }
 
     @Override
@@ -182,7 +187,7 @@ public class PanItem extends Item {
         if (hit.getType() != HitResult.Type.BLOCK || !canPan(level, hit.getBlockPos())) {
             return stack;
         }
-        if (!hasWater(player, stack)) {
+        if (!hasWater(stack)) {
             return stack;
         }
         boolean keepBlock = PanEnchantments.level(level, Enchantments.SILK_TOUCH, stack) > 0;
@@ -195,14 +200,11 @@ public class PanItem extends Item {
         UUID id = stack.getOrDefault(ModPan.ID, UUID.randomUUID());
         stack.set(ModPan.ID, id);
         stack.remove(ModPan.LAST);
-        if (!player.hasInfiniteMaterials()) {
-            setWater(stack, water(stack) - WASH_COST);
-        }
+        setWater(stack, water(stack) - WASH_COST);
         PanYield.measure(server, pos)
                 .thenAcceptAsync(result -> collect(server, player, pos, id, result, keepBlock, fortune, reach),
                         server.getServer())
                 .whenComplete(Kimberlite::logFailure);
-        stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(player.getUsedItemHand()));
         return stack;
     }
 

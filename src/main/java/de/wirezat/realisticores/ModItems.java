@@ -23,7 +23,7 @@ public final class ModItems {
     public static final DeferredItem<Item> KIMBERLITE_MAP = ITEMS.register("kimberlite_map",
             () -> new KimberliteMapItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> IRON_PAN = ITEMS.register("iron_pan",
-            () -> new PanItem(new Item.Properties().durability(128)));
+            () -> new PanItem(new Item.Properties().stacksTo(1)));
 
     private ModItems() {
     }
