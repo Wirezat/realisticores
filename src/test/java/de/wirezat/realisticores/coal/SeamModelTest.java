@@ -85,11 +85,13 @@ class SeamModelTest {
     }
 
     @Test
-    void neighbouringColumnsOfAnUnfaultedBasinTouch() {
+    void neighbouringColumnsOfTheSmallestUnfaultedBasinTouch() {
+        double root = Math.sqrt(PARAMS.basin().minAspect());
         for (BasinType type : BasinType.values()) {
-            ResolvedBasin rolled = basin(type, 5L, 0);
-            BasinLayout l = rolled.layout();
-            ResolvedBasin basin = new ResolvedBasin(rolled.basin(), type, 117, new BasinLayout(l.depth(),
+            Basin smallest = new Basin(0, 0, PARAMS.basin().minRadius() / root, PARAMS.basin().minRadius() * root, 0.4,
+                    type, 5L);
+            BasinLayout l = BasinLayout.of(smallest, type, PARAMS);
+            ResolvedBasin basin = new ResolvedBasin(smallest, type, 117, new BasinLayout(l.depth(),
                     l.seams(), List.of(), l.foldAmplitude(), l.foldWavelength(), l.foldPhase()));
             for (int x = -840; x < 840; x += 7) {
                 for (int z = -560; z < 560; z += 7) {
