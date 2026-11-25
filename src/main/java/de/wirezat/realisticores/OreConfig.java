@@ -1,5 +1,7 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.coal.CoalOres;
+import de.wirezat.realisticores.coal.Rank;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.Deposit;
 import de.wirezat.realisticores.ore.DepositRegistry;
@@ -16,6 +18,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /** Common config: which ores this mod places, which block each uses, and which natural ores are suppressed. */
 public final class OreConfig {
     public static final String KIMBERLITE_PIPE = "kimberlite_pipe";
+    public static final String COAL_BASIN = "coal_basin";
     public static final ModConfigSpec SPEC;
 
     private static final ModConfigSpec.ConfigValue<List<? extends String>> SUPPRESSED_ORES;
@@ -34,8 +37,10 @@ public final class OreConfig {
      * @param matcher natural ore generation to suppress: the configured list plus the tag of every enabled ore
      * @param kimberlitePipeActive true if at least one ore of the kimberlite pipe is enabled
      * @param kimberliteMinerals enabled minerals of the kimberlite pipe with the block each one places
+     * @param coalBlocks block placed for each coal rank, empty if no ore of the coal basin is enabled
      */
-    public record Resolved(OreMatcher matcher, boolean kimberlitePipeActive, List<ActiveMineral> kimberliteMinerals) {
+    public record Resolved(OreMatcher matcher, boolean kimberlitePipeActive, List<ActiveMineral> kimberliteMinerals,
+            Map<Rank, String> coalBlocks) {
     }
 
     static {
@@ -49,7 +54,7 @@ public final class OreConfig {
                         OreConfig::isValidSuppression);
         ENABLED_ORES = builder
                 .comment("Ores this mod places in its deposits. A deposit generates as soon as at least one of",
-                        "its ores is enabled; with none enabled there are no kimberlite pipes at all.")
+                        "its ores is enabled; with none of its ores enabled a deposit does not exist at all.")
                 .defineListAllowEmpty("enabledOres", List.of("diamond", "bort", "peridot", "graphite"), () -> "peridot", OreConfig::isValidOreId);
         ORE_OVERRIDES = builder
                 .comment("Replaces the block placed for an ore, as ore=block, e.g. peridot=othermod:peridot_ore.")
@@ -168,6 +173,8 @@ public final class OreConfig {
                 .forEach(id -> suppressedEntries.add("#" + REGISTRY.ores().get(id).tag()));
         Deposit pipe = REGISTRY.deposits().get(KIMBERLITE_PIPE);
         return new Resolved(new OreMatcher(suppressedEntries), DepositSetup.isActive(pipe, enabledOres),
-                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions));
+                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions),
+                CoalOres.blocks(DepositSetup.activeMinerals(REGISTRY.deposits().get(COAL_BASIN), REGISTRY,
+                        enabledOres, overrideBlocks, Map.of())));
     }
 }

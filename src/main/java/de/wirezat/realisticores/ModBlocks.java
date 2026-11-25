@@ -63,11 +63,11 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> ILMENITE_BLOCK = register("ilmenite_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_GRAY));
 
-    public static final DeferredBlock<Block> COAL_SEAM = registerSeam("coal_seam",
+    public static final DeferredBlock<Block> COAL_SEAM = registerOre("coal_seam", "coal",
             BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_BLACK));
-    public static final DeferredBlock<Block> LIGNITE_SEAM = registerSeam("lignite_seam",
+    public static final DeferredBlock<Block> LIGNITE_SEAM = registerOre("lignite_seam", "lignite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_BROWN).strength(1.5F, 2.0F));
-    public static final DeferredBlock<Block> ANTHRACITE_SEAM = registerSeam("anthracite_seam",
+    public static final DeferredBlock<Block> ANTHRACITE_SEAM = registerOre("anthracite_seam", "anthracite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_BLACK).strength(4.0F, 4.0F));
     public static final DeferredBlock<Block> FIRECLAY = register("fireclay",
             BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY).mapColor(MapColor.SAND));
@@ -104,26 +104,8 @@ public final class ModBlocks {
 
     private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
         OreDefinition ore = DepositRegistry.load().ores().get(oreId);
-        return registerExperienceBlock(name, ore.xpMin(), ore.xpMax(), properties);
-    }
-
-    private static DeferredBlock<Block> registerSeam(String name, BlockBehaviour.Properties properties) {
-        return registerExperienceBlock(name, 0, 2, properties);
-    }
-
-    /**
-     * Registers a block that drops experience when mined, together with its block item.
-     *
-     * @param name registry name
-     * @param xpMin least experience dropped
-     * @param xpMax most experience dropped
-     * @param properties block properties
-     * @return the registered block
-     */
-    private static DeferredBlock<Block> registerExperienceBlock(String name, int xpMin, int xpMax,
-            BlockBehaviour.Properties properties) {
         DeferredBlock<Block> block = BLOCKS.registerBlock(name,
-                props -> new DropExperienceBlock(UniformInt.of(xpMin, xpMax), props), properties);
+                props -> new DropExperienceBlock(UniformInt.of(ore.xpMin(), ore.xpMax()), props), properties);
         BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
         return block;
     }

@@ -51,6 +51,7 @@ class DepositSetupTest {
     void shippedDataDefinesEveryOreItsDepositsUse() {
         DepositRegistry shipped = DepositRegistry.load();
         assertTrue(shipped.deposits().containsKey("kimberlite_pipe"));
+        assertTrue(shipped.deposits().containsKey("coal_basin"));
         for (Deposit deposit : shipped.deposits().values()) {
             for (Mineral mineral : deposit.minerals()) {
                 assertTrue(shipped.ores().containsKey(mineral.ore()), mineral.ore());

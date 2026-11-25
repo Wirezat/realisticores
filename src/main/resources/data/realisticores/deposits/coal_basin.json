@@ -1,0 +1,7 @@
+{
+  "minerals": [
+    {"ore": "coal", "zones": ["HARD_COAL"], "fraction": 1.0},
+    {"ore": "lignite", "zones": ["LIGNITE"], "fraction": 1.0},
+    {"ore": "anthracite", "zones": ["ANTHRACITE"], "fraction": 1.0}
+  ]
+}
