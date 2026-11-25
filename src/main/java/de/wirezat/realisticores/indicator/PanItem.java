@@ -5,6 +5,8 @@ import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.Plume;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -43,6 +45,10 @@ public class PanItem extends Item {
     private static final int ENCHANTABILITY = 14;
     private static final double TRAIL_SPACING = 2.5;
     private static final int SPLASH_INTERVAL = 6;
+    private static final float[] CHIME_PITCHES = {0.8F, 1.0F, 1.3F};
+    private static final int CHIME_DELAY_MILLIS = 400;
+    private static final int CHIME_LAYERS = 4;
+    private static final float CHIME_VOLUME = 5.0F;
 
     /**
      * Creates the pan.
@@ -174,8 +180,8 @@ public class PanItem extends Item {
         }
         boolean sand = level.getBlockState(hit.getBlockPos()).is(Tags.Blocks.SANDS);
         level.playSound(null, hit.getBlockPos(), sand ? SoundEvents.BRUSH_SAND : SoundEvents.BRUSH_GRAVEL,
-                SoundSource.PLAYERS, 0.6F, 1.0F);
-        level.playSound(null, hit.getBlockPos(), SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.15F, 1.4F);
+                SoundSource.PLAYERS, 1.2F, 1.0F);
+        level.playSound(null, hit.getBlockPos(), SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.4F, 1.4F);
     }
 
     @Override
@@ -232,14 +238,32 @@ public class PanItem extends Item {
         give(player, ModItems.CHROMITE, items.chromite());
         give(player, ModItems.ILMENITE, items.ilmenite());
         if (grains.isEmpty()) {
-            level.playSound(null, player.blockPosition(), SoundEvents.MUD_PLACE, SoundSource.PLAYERS, 0.8F, 0.7F);
+            level.playSound(null, player.blockPosition(), SoundEvents.MUD_PLACE, SoundSource.PLAYERS, 1.6F, 0.7F);
         } else {
-            level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.8F,
-                    1.2F);
+            chime(player, grains);
         }
         if (reach > 0.0 && result.source() != null) {
             TrailEffects.start(player, level, Plume.guide(result.source(), pos.getX() + 0.5, pos.getZ() + 0.5, reach,
                     TRAIL_SPACING));
+        }
+    }
+
+    private static void chime(ServerPlayer player, Grains grains) {
+        int[] amounts = {grains.pyrope(), grains.chromite(), grains.ilmenite()};
+        int delay = 0;
+        for (int mineral = 0; mineral < amounts.length; mineral++) {
+            if (amounts[mineral] > 0) {
+                float pitch = CHIME_PITCHES[mineral];
+                CompletableFuture.runAsync(() -> playChime(player, pitch),
+                        CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS, player.getServer()));
+                delay += CHIME_DELAY_MILLIS;
+            }
+        }
+    }
+
+    private static void playChime(ServerPlayer player, float pitch) {
+        for (int layer = 0; layer < CHIME_LAYERS; layer++) {
+            player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, CHIME_VOLUME, pitch);
         }
     }
 
