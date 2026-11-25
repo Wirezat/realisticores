@@ -2,6 +2,9 @@
   "values": [
     "#c:ores/peridot",
     "#c:ores/bort",
-    "#c:ores/graphite"
+    "#c:ores/graphite",
+    "#c:ores/coal",
+    "#c:ores/lignite_coal",
+    "#c:ores/anthracite"
   ]
 }

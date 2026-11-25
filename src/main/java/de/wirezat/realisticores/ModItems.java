@@ -20,6 +20,8 @@ public final class ModItems {
     public static final DeferredItem<Item> PYROPE = ITEMS.registerSimpleItem("pyrope");
     public static final DeferredItem<Item> CHROMITE = ITEMS.registerSimpleItem("chromite");
     public static final DeferredItem<Item> ILMENITE = ITEMS.registerSimpleItem("ilmenite");
+    public static final DeferredItem<Item> LIGNITE = ITEMS.registerSimpleItem("lignite");
+    public static final DeferredItem<Item> ANTHRACITE = ITEMS.registerSimpleItem("anthracite");
     public static final DeferredItem<Item> KIMBERLITE_MAP = ITEMS.register("kimberlite_map",
             () -> new KimberliteMapItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> IRON_PAN = ITEMS.register("iron_pan",

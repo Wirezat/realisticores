@@ -1,0 +1,16 @@
+{
+  "values": {
+    "realisticores:lignite": {
+      "burn_time": 800
+    },
+    "realisticores:lignite_block": {
+      "burn_time": 8000
+    },
+    "realisticores:anthracite": {
+      "burn_time": 1800
+    },
+    "realisticores:anthracite_block": {
+      "burn_time": 18000
+    }
+  }
+}

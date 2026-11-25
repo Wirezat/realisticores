@@ -1,0 +1,66 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/anthracite_seam"
+      },
+      {
+        "model": "realisticores:block/anthracite_seam",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/anthracite_seam",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/anthracite_seam",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_1"
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_1",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_1",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_1",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_2"
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_2",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_2",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_2",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_3"
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_3",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_3",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/anthracite_seam_3",
+        "y": 270
+      }
+    ]
+  }
+}

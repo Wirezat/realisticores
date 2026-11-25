@@ -5,6 +5,8 @@
     "#c:storage_blocks/peridot",
     "#c:storage_blocks/pyrope",
     "#c:storage_blocks/raw_chromite",
-    "#c:storage_blocks/raw_ilmenite"
+    "#c:storage_blocks/raw_ilmenite",
+    "#c:storage_blocks/lignite_coal",
+    "#c:storage_blocks/anthracite"
   ]
 }

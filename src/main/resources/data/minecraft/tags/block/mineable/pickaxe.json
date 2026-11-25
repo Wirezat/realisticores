@@ -16,6 +16,14 @@
     "realisticores:pyrope_block",
     "realisticores:chromite_block",
     "realisticores:ilmenite_block",
-    "realisticores:crystal_press"
+    "realisticores:crystal_press",
+    "realisticores:coal_seam",
+    "realisticores:lignite_seam",
+    "realisticores:anthracite_seam",
+    "realisticores:shale",
+    "realisticores:black_shale",
+    "realisticores:mudstone",
+    "realisticores:lignite_block",
+    "realisticores:anthracite_block"
   ]
 }

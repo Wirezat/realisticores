@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "realisticores:block/lignite_seam_top_1",
+    "bottom": "realisticores:block/lignite_seam_top_1",
+    "side": "realisticores:block/lignite_seam_1"
+  }
+}

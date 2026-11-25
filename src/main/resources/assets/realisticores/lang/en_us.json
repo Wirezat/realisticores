@@ -51,5 +51,18 @@
   "tooltip.realisticores.pan.fortune": "Collects more indicator minerals from every wash.",
   "tooltip.realisticores.pan.silk_touch": "Leaves the material in place, but collects only half the amount of indicator minerals.",
   "block.realisticores.kimberlite_bort_ore": "Kimberlite Bort Ore",
-  "item.realisticores.bort": "Bort"
+  "item.realisticores.bort": "Bort",
+  "block.realisticores.coal_seam": "Coal Seam",
+  "block.realisticores.lignite_seam": "Lignite Seam",
+  "block.realisticores.anthracite_seam": "Anthracite Seam",
+  "block.realisticores.fireclay": "Fireclay",
+  "block.realisticores.shale": "Shale",
+  "block.realisticores.black_shale": "Black Shale",
+  "block.realisticores.mudstone": "Mudstone",
+  "block.realisticores.lignite_block": "Block of Lignite",
+  "block.realisticores.anthracite_block": "Block of Anthracite",
+  "item.realisticores.lignite": "Lignite",
+  "item.realisticores.anthracite": "Anthracite",
+  "trim_material.realisticores.lignite": "Lignite Material",
+  "trim_material.realisticores.anthracite": "Anthracite Material"
 }

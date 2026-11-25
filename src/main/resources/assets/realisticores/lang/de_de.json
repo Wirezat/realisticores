@@ -51,5 +51,18 @@
   "tooltip.realisticores.pan.fortune": "Sammelt aus jeder Wäsche mehr Indikatorminerale.",
   "tooltip.realisticores.pan.silk_touch": "Lässt das Material liegen, sammelt aber nur die halbe Menge an Indikatormineralen.",
   "block.realisticores.kimberlite_bort_ore": "Borterz im Kimberlit",
-  "item.realisticores.bort": "Bort"
+  "item.realisticores.bort": "Bort",
+  "block.realisticores.coal_seam": "Steinkohleflöz",
+  "block.realisticores.lignite_seam": "Braunkohleflöz",
+  "block.realisticores.anthracite_seam": "Anthrazitflöz",
+  "block.realisticores.fireclay": "Feuerton",
+  "block.realisticores.shale": "Schiefer",
+  "block.realisticores.black_shale": "Schwarzschiefer",
+  "block.realisticores.mudstone": "Tonstein",
+  "block.realisticores.lignite_block": "Braunkohleblock",
+  "block.realisticores.anthracite_block": "Anthrazitblock",
+  "item.realisticores.lignite": "Braunkohle",
+  "item.realisticores.anthracite": "Anthrazit",
+  "trim_material.realisticores.lignite": "Braunkohle",
+  "trim_material.realisticores.anthracite": "Anthrazit"
 }

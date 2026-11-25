@@ -8,6 +8,8 @@
     "realisticores:graphite_block",
     "realisticores:crystal_press",
     "realisticores:chromite_block",
-    "realisticores:ilmenite_block"
+    "realisticores:ilmenite_block",
+    "realisticores:anthracite_seam",
+    "realisticores:anthracite_block"
   ]
 }

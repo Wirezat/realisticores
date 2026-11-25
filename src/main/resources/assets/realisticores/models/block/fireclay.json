@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "realisticores:block/fireclay_top",
+    "bottom": "realisticores:block/fireclay_top",
+    "side": "realisticores:block/fireclay"
+  }
+}

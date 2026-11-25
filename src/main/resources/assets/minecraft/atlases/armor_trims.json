@@ -49,7 +49,9 @@
         "realisticores_peridot": "realisticores:trims/color_palettes/peridot",
         "realisticores_pyrope": "realisticores:trims/color_palettes/pyrope",
         "realisticores_chromite": "realisticores:trims/color_palettes/chromite",
-        "realisticores_ilmenite": "realisticores:trims/color_palettes/ilmenite"
+        "realisticores_ilmenite": "realisticores:trims/color_palettes/ilmenite",
+        "realisticores_lignite": "realisticores:trims/color_palettes/lignite",
+        "realisticores_anthracite": "realisticores:trims/color_palettes/anthracite"
       }
     }
   ]

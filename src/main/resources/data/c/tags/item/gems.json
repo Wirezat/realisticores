@@ -2,6 +2,8 @@
   "values": [
     "#c:gems/peridot",
     "#c:gems/bort",
-    "#c:gems/pyrope"
+    "#c:gems/pyrope",
+    "#c:gems/lignite_coal",
+    "#c:gems/anthracite"
   ]
 }

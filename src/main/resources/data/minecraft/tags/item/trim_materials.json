@@ -6,6 +6,8 @@
     "realisticores:peridot",
     "realisticores:pyrope",
     "realisticores:chromite",
-    "realisticores:ilmenite"
+    "realisticores:ilmenite",
+    "realisticores:lignite",
+    "realisticores:anthracite"
   ]
 }

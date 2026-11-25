@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/lignite_seam"
+      },
+      {
+        "model": "realisticores:block/lignite_seam_1"
+      },
+      {
+        "model": "realisticores:block/lignite_seam_2"
+      },
+      {
+        "model": "realisticores:block/lignite_seam_3"
+      }
+    ]
+  }
+}
