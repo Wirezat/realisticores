@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Screen of the crystal press: the anvils close while it burns and the crystal grows between them. */
+/** Screen of the crystal press: the anvils close when a run starts and the crystal grows between them. */
 public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "textures/gui/crystal_press.png");
@@ -28,9 +28,11 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
     private static final int ARROW_WIDTH = 22;
     private static final int FLAME_SIZE = 14;
     private static final double PULSE_MILLIS = 400.0;
+    private static final int START_TICKS = 8;
 
     private int closed;
     private int lastClosed;
+    private int lastProgress;
 
     /**
      * Creates the screen.
@@ -46,8 +48,15 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
     @Override
     protected void containerTick() {
         super.containerTick();
+        int progress = menu.progress();
+        boolean runStarted = progress <= START_TICKS && lastProgress > progress + START_TICKS;
+        boolean seenMidRun = lastProgress == 0 && progress > START_TICKS;
+        if (runStarted || seenMidRun) {
+            closed = seenMidRun ? CLOSED : 0;
+        }
         lastClosed = closed;
-        closed = Mth.clamp(closed + (menu.isLit() ? 1 : -1), 0, CLOSED);
+        closed = Mth.clamp(closed + (progress > 0 ? 1 : -1), 0, CLOSED);
+        lastProgress = progress;
     }
 
     @Override
@@ -74,7 +83,7 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
         sprite(graphics, ROD_X, CHAMBER_BOTTOM - offset, 204, 0, ROD_WIDTH, offset);
         sprite(graphics, ANVIL_X, CHAMBER_TOP + offset, 176, 0, ANVIL_WIDTH, ANVIL_HEIGHT);
         sprite(graphics, ANVIL_X, CHAMBER_BOTTOM - ANVIL_HEIGHT - offset, 176, 17, ANVIL_WIDTH, ANVIL_HEIGHT);
-        if (menu.isPressing()) {
+        if (menu.progress() > 0) {
             int stage = Math.min(GEM_STAGES - 1, menu.arrowProgress(GEM_STAGES));
             sprite(graphics, 85, 36, stage * GEM_SIZE, 168, GEM_SIZE, GEM_SIZE);
         }

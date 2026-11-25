@@ -86,12 +86,12 @@ public class CrystalPressMenu extends AbstractContainerMenu {
     }
 
     /**
-     * Tells whether a run is under way.
+     * Gives the progress of the run.
      *
-     * @return true while there is progress
+     * @return progress in ticks, 0 without a run
      */
-    public boolean isPressing() {
-        return data.get(2) > 0;
+    public int progress() {
+        return data.get(2);
     }
 
     /**
