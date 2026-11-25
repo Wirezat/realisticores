@@ -24,8 +24,6 @@ public final class OreConfig {
     private static final ModConfigSpec.ConfigValue<List<? extends String>> SUPPRESSED_ORES;
     private static final ModConfigSpec.ConfigValue<List<? extends String>> ENABLED_ORES;
     private static final ModConfigSpec.ConfigValue<List<? extends String>> ORE_OVERRIDES;
-    private static final ModConfigSpec.IntValue COMMAND_MAX_RESULTS;
-    private static final ModConfigSpec.IntValue COMMAND_START_RADIUS;
     private static final ModConfigSpec.IntValue COMMAND_SEARCH_LIMIT;
     private static final DepositRegistry REGISTRY = DepositRegistry.load();
 
@@ -62,12 +60,8 @@ public final class OreConfig {
                 .comment("Replaces the block placed for an ore, as ore=block, e.g. peridot=othermod:peridot_ore.")
                 .defineListAllowEmpty("oreBlockOverrides", List.of(), () -> "peridot=othermod:peridot_ore",
                         OreConfig::isValidOverride);
-        builder.comment("Settings of the operator commands /realisticores pipes and /realisticores basins.").push("command");
-        COMMAND_MAX_RESULTS = builder.comment("Number of nearest pipes or basins listed.")
-                .defineInRange("maxResults", 10, 1, 100);
-        COMMAND_START_RADIUS = builder.comment("First search radius for pipes in blocks; it doubles until enough are found.")
-                .defineInRange("startRadius", 5000, 100, 100000);
-        COMMAND_SEARCH_LIMIT = builder.comment("Largest search radius in blocks; basins are searched up to 100000.")
+        builder.comment("Settings of the operator command /locate realisticores.").push("command");
+        COMMAND_SEARCH_LIMIT = builder.comment("Largest search radius in blocks; coal basins are searched up to 100000.")
                 .defineInRange("searchLimit", 320000, 1000, 2000000);
         builder.pop();
         SPEC = builder.build();
@@ -106,30 +100,22 @@ public final class OreConfig {
     }
 
     /**
-     * Gives the number of pipes the command lists.
-     *
-     * @return maximum number of results
-     */
-    public static int commandMaxResults() {
-        return COMMAND_MAX_RESULTS.get();
-    }
-
-    /**
-     * Gives the first search radius of the command.
-     *
-     * @return radius in blocks
-     */
-    public static int commandStartRadius() {
-        return COMMAND_START_RADIUS.get();
-    }
-
-    /**
      * Gives the largest search radius of the command.
      *
      * @return radius in blocks
      */
     public static int commandSearchLimit() {
         return COMMAND_SEARCH_LIMIT.get();
+    }
+
+    /**
+     * Tells whether an ore is switched on.
+     *
+     * @param ore ore id
+     * @return true if the config enables the ore
+     */
+    public static boolean isEnabled(String ore) {
+        return ENABLED_ORES.get().contains(ore);
     }
 
     /**

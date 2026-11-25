@@ -1,8 +1,5 @@
 {
   "block.realisticores.kimberlite": "Kimberlit",
-  "command.realisticores.pipes.none": "Keine Kimberlit-Pipes in der Nähe gefunden.",
-  "command.realisticores.pipes.header": "%s nächste Kimberlit-Pipes (Klick zum Teleportieren):",
-  "command.realisticores.pipes.entry": "X %s Z %s, Durchmesser %s, Entfernung %s",
   "block.realisticores.kimberlite_breccia": "Kimberlit-Brekzie",
   "block.realisticores.volcaniclastic_kimberlite": "Vulkanoklastischer Kimberlit",
   "block.realisticores.weathered_kimberlite": "Verwitterter Kimberlit",
@@ -65,10 +62,8 @@
   "item.realisticores.anthracite": "Anthrazit",
   "trim_material.realisticores.lignite": "Braunkohle",
   "trim_material.realisticores.anthracite": "Anthrazit",
-  "command.realisticores.basins.none": "Keine Kohle-Becken in der Nähe gefunden.",
-  "command.realisticores.basins.header": "%s nächste Kohle-Becken (Klick zum Teleportieren):",
-  "command.realisticores.basins.entry": "X %s Z %s, %s, Durchmesser %s, Entfernung %s",
-  "command.realisticores.basins.type.hard_coal": "Steinkohle",
-  "command.realisticores.basins.type.lignite": "Braunkohle",
-  "command.realisticores.basins.type.folded": "gefaltet"
+  "command.realisticores.locate.kimberlite_pipe": "Kimberlit-Pipe",
+  "command.realisticores.locate.hard_coal": "Steinkohle-Becken",
+  "command.realisticores.locate.lignite": "Braunkohle-Becken",
+  "command.realisticores.locate.anthracite": "Anthrazit-Becken"
 }

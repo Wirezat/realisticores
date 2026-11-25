@@ -1,8 +1,5 @@
 {
   "block.realisticores.kimberlite": "Kimberlite",
-  "command.realisticores.pipes.none": "No kimberlite pipes found nearby.",
-  "command.realisticores.pipes.header": "%s nearest kimberlite pipes (click to teleport):",
-  "command.realisticores.pipes.entry": "X %s Z %s, diameter %s, distance %s",
   "block.realisticores.kimberlite_breccia": "Kimberlite Breccia",
   "block.realisticores.volcaniclastic_kimberlite": "Volcaniclastic Kimberlite",
   "block.realisticores.weathered_kimberlite": "Weathered Kimberlite",
@@ -65,10 +62,8 @@
   "item.realisticores.anthracite": "Anthracite",
   "trim_material.realisticores.lignite": "Lignite Material",
   "trim_material.realisticores.anthracite": "Anthracite Material",
-  "command.realisticores.basins.none": "No coal basins found nearby.",
-  "command.realisticores.basins.header": "%s nearest coal basins (click to teleport):",
-  "command.realisticores.basins.entry": "X %s Z %s, %s, diameter %s, distance %s",
-  "command.realisticores.basins.type.hard_coal": "hard coal",
-  "command.realisticores.basins.type.lignite": "lignite",
-  "command.realisticores.basins.type.folded": "folded"
+  "command.realisticores.locate.kimberlite_pipe": "Kimberlite Pipe",
+  "command.realisticores.locate.hard_coal": "Hard Coal Basin",
+  "command.realisticores.locate.lignite": "Lignite Basin",
+  "command.realisticores.locate.anthracite": "Anthracite Basin"
 }

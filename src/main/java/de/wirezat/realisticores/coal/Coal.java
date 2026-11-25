@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 /** Shared generator objects of coal basin generation, rebuilt whenever the config changes. */
 public final class Coal {
     private static final Executor SURVEYOR = new ForkJoinPool(1);
-    private static final int CANDIDATES_PER_RESULT = 20;
+    private static final int MAX_CANDIDATES = 300;
 
     private static volatile State state;
 
@@ -67,37 +67,35 @@ public final class Coal {
     public static List<ResolvedBasin> basinsNear(long seed, TerrainProbe probe, Set<Rank> ranks, int minX, int minZ,
             int maxX, int maxZ) {
         State current = state();
-        return resolved(current, seed, probe, ranks,
-                current.generator().basinsNear(seed, minX, minZ, maxX, maxZ).stream()).toList();
+        return resolved(current, seed, probe, current.generator().basinsNear(seed, minX, minZ, maxX, maxZ).stream())
+                .filter(basin -> CoalOres.generates(basin.type(), ranks)).toList();
     }
 
     /**
-     * Finds the basins with coal nearest to a position, measuring as few basins as possible.
+     * Finds the basin of a type nearest to a position, measuring basins from near to far.
      *
      * @param seed world seed
      * @param probe terrain source
-     * @param ranks ranks that have a block
+     * @param type wanted type
      * @param x world X
      * @param z world Z
      * @param radius search limit in blocks
-     * @param count most basins to find
-     * @return basins by distance of their centre
+     * @return the nearest basin of that type, empty if none is among the nearest candidates
      */
-    public static List<ResolvedBasin> nearest(long seed, TerrainProbe probe, Set<Rank> ranks, int x, int z, int radius,
-            int count) {
+    public static Optional<ResolvedBasin> nearest(long seed, TerrainProbe probe, BasinType type, int x, int z,
+            int radius) {
         State current = state();
         Stream<Basin> candidates = current.generator()
                 .basinsNear(seed, x - radius, z - radius, x + radius, z + radius).stream()
+                .filter(basin -> type == BasinType.FOLDED || basin.rolledType() == type)
                 .sorted(Comparator.comparingDouble(basin -> Math.hypot(basin.x() - x, basin.z() - z)))
-                .limit((long) count * CANDIDATES_PER_RESULT);
-        return resolved(current, seed, probe, ranks, candidates).limit(count).toList();
+                .limit(MAX_CANDIDATES);
+        return resolved(current, seed, probe, candidates).filter(basin -> basin.type() == type).findFirst();
     }
 
-    private static Stream<ResolvedBasin> resolved(State current, long seed, TerrainProbe probe, Set<Rank> ranks,
-            Stream<Basin> basins) {
+    private static Stream<ResolvedBasin> resolved(State current, long seed, TerrainProbe probe, Stream<Basin> basins) {
         return basins.flatMap(basin -> current.basins().computeIfAbsent(new BasinKey(seed, basin),
-                        key -> resolve(basin, probe, current.params())).stream())
-                .filter(basin -> CoalOres.generates(basin.type(), ranks));
+                key -> resolve(basin, probe, current.params())).stream());
     }
 
     /**
