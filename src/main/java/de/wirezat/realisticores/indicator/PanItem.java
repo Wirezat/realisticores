@@ -34,6 +34,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
@@ -95,18 +96,14 @@ public class PanItem extends Item {
         return water(pan) >= WASH_COST;
     }
 
-    private static boolean dip(Level level, Player player, ItemStack pan) {
+    private static boolean canDip(Level level, Player player, ItemStack pan) {
         if (water(pan) >= CAPACITY) {
             return false;
         }
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != HitResult.Type.BLOCK || !level.getFluidState(hit.getBlockPos()).isSourceOfType(Fluids.WATER)
-                || !level.mayInteract(player, hit.getBlockPos())) {
-            return false;
-        }
-        setWater(pan, CAPACITY);
-        playFill(player);
-        return true;
+        return hit.getType() == HitResult.Type.BLOCK
+                && level.getFluidState(hit.getBlockPos()).isSourceOfType(Fluids.WATER)
+                && level.mayInteract(player, hit.getBlockPos());
     }
 
     private static void playFill(Player player) {
@@ -171,13 +168,8 @@ public class PanItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null) {
-            return InteractionResult.PASS;
-        }
-        if (dip(context.getLevel(), player, context.getItemInHand())) {
-            return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
-        }
-        if (!canPan(context.getLevel(), context.getClickedPos())) {
+        if (player == null || canDip(context.getLevel(), player, context.getItemInHand())
+                || !canPan(context.getLevel(), context.getClickedPos())) {
             return InteractionResult.PASS;
         }
         if (!hasWater(context.getItemInHand())) {
@@ -195,8 +187,12 @@ public class PanItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack pan = player.getItemInHand(hand);
-        return dip(level, player, pan) ? InteractionResultHolder.sidedSuccess(pan, level.isClientSide)
-                : InteractionResultHolder.pass(pan);
+        if (!canDip(level, player, pan)) {
+            return InteractionResultHolder.pass(pan);
+        }
+        setWater(pan, CAPACITY);
+        playFill(player);
+        return InteractionResultHolder.sidedSuccess(pan, level.isClientSide);
     }
 
     @Override
@@ -283,9 +279,16 @@ public class PanItem extends Item {
 
     private static void collect(ServerLevel level, ServerPlayer player, BlockPos pos, UUID id,
             PanYield.Measurement result, boolean keepBlock, int fortune, double reach) {
+        if (!level.getServer().isSameThread()) {
+            return;
+        }
         ItemStack pan = findPan(player, id);
         if (pan.isEmpty() || player.isRemoved() || player.serverLevel() != level || !level.isLoaded(pos)
                 || !canPan(level, pos)) {
+            return;
+        }
+        if (!keepBlock && CommonHooks.fireBlockBreak(level, player.gameMode.getGameModeForPlayer(), player, pos,
+                level.getBlockState(pos)).isCanceled()) {
             return;
         }
         Grains grains = result.grains();

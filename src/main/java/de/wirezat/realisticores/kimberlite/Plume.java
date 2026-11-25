@@ -114,14 +114,14 @@ public final class Plume {
     }
 
     /**
-     * Gives the chance of finding a mineral by panning at a position.
+     * Gives how dense a mineral is at a position.
      *
      * @param path trail of the pipe
      * @param x world X in blocks
      * @param z world Z in blocks
      * @param indicator spread of the mineral
      * @param params trail settings
-     * @return chance from 0 to 1; it falls with the distance along the trail and from its centre line
+     * @return density from 0 to 1; it falls with the distance along the trail and from its centre line
      */
     public static double density(PlumePath path, double x, double z,
             KimberliteParams.PlumeParams params, KimberliteParams.IndicatorParams indicator) {

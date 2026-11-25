@@ -156,7 +156,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * Spread of one indicator mineral.
      *
      * @param length trail length in blocks over which the grains fall to 1/e
-     * @param peak chance per pan of finding the mineral next to the pipe, 0 to 1
+     * @param peak density of the mineral next to the pipe, 0 to 1; 1 is 100 g per wash
      */
     public record IndicatorParams(double length, double peak) {
     }

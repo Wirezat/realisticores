@@ -246,15 +246,15 @@ public final class KimberliteConfig {
         PYROPE_LENGTH = decimal(b, "pyropeLength", d.plume().pyrope().length(), 10.0, 5000.0,
                 "Length in blocks over which pyrope garnet falls to 1/e.");
         PYROPE_PEAK = decimal(b, "pyropePeak", d.plume().pyrope().peak(), 0.0, 1.0,
-                "Chance per pan of finding pyrope garnet next to the pipe.");
+                "Measured share of pyrope garnet next to the pipe; 1 is 100 g per wash.");
         CHROMITE_LENGTH = decimal(b, "chromiteLength", d.plume().chromite().length(), 10.0, 5000.0,
                 "Length in blocks over which chromite falls to 1/e.");
         CHROMITE_PEAK = decimal(b, "chromitePeak", d.plume().chromite().peak(), 0.0, 1.0,
-                "Chance per pan of finding chromite next to the pipe.");
+                "Measured share of chromite next to the pipe; 1 is 100 g per wash.");
         ILMENITE_LENGTH = decimal(b, "ilmeniteLength", d.plume().ilmenite().length(), 10.0, 5000.0,
                 "Length in blocks over which ilmenite falls to 1/e; it is heavy and stops early.");
         ILMENITE_PEAK = decimal(b, "ilmenitePeak", d.plume().ilmenite().peak(), 0.0, 1.0,
-                "Chance per pan of finding ilmenite next to the pipe.");
+                "Measured share of ilmenite next to the pipe; 1 is 100 g per wash.");
         b.pop();
 
         b.comment("Share of the blocks in the ore's rock zones that become ore.").push("minerals");

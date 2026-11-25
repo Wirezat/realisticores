@@ -69,6 +69,9 @@ public class KimberliteMapItem extends Item {
                 level.getRandom().nextInt())
                 .thenApplyAsync(spot -> spot.map(found -> survey(server, found)), Util.backgroundExecutor())
                 .whenCompleteAsync((survey, failure) -> {
+                    if (player.isRemoved() || !server.getServer().isSameThread()) {
+                        return;
+                    }
                     player.getCooldowns().removeCooldown(this);
                     if (failure == null) {
                         survey.ifPresentOrElse(found -> hand(server, reader, found), () -> playNothingFound(reader));
@@ -101,9 +104,6 @@ public class KimberliteMapItem extends Item {
     }
 
     private void hand(ServerLevel level, ServerPlayer player, Survey survey) {
-        if (player.isRemoved()) {
-            return;
-        }
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack empty = inventory.getItem(slot);
@@ -155,7 +155,8 @@ public class KimberliteMapItem extends Item {
         level.setMapData(mapId, data.locked());
         ItemStack map = new ItemStack(Items.FILLED_MAP);
         map.set(DataComponents.MAP_ID, mapId);
-        MapItemSavedData.addTargetDecoration(map, new BlockPos(survey.x(), 0, survey.z()), "+", MapDecorationTypes.RED_X);
+        MapItemSavedData.addTargetDecoration(map, new BlockPos(survey.x(), 0, survey.z()), "+",
+                MapDecorationTypes.RED_X);
         map.set(DataComponents.ITEM_NAME, Component.translatable("item.realisticores.kimberlite_map.filled"));
         return map;
     }
