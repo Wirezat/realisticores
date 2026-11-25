@@ -12,6 +12,9 @@ import net.minecraft.world.entity.player.Inventory;
 public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "textures/gui/crystal_press.png");
+    private static final int SEED_BAR_WIDTH = 16;
+    private static final int SEED_BAR_EMPTY = 0xFF373737;
+    private static final int SEED_BAR_FULL = 0xFF4AEDD9;
 
     /**
      * Creates the screen.
@@ -30,6 +33,11 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
         if (menu.isLit()) {
             int flame = menu.litProgress();
             graphics.blit(TEXTURE, leftPos + 57, topPos + 36 + 12 - flame, 176, 12 - flame, 14, flame + 1);
+        }
+        int seed = menu.seedProgress(SEED_BAR_WIDTH);
+        if (seed > 0) {
+            graphics.fill(leftPos + 26, topPos + 71, leftPos + 26 + SEED_BAR_WIDTH, topPos + 73, SEED_BAR_EMPTY);
+            graphics.fill(leftPos + 26, topPos + 71, leftPos + 26 + seed, topPos + 73, SEED_BAR_FULL);
         }
         int arrow = menu.arrowProgress();
         if (arrow > 0) {

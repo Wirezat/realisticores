@@ -2,19 +2,24 @@ package de.wirezat.realisticores.press;
 
 import de.wirezat.realisticores.ModBlocks;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-/** Menu of the crystal press: three input slots, one output slot and the player inventory. */
+/** Menu of the crystal press: four input slots, one output slot and the player inventory. */
 public class CrystalPressMenu extends AbstractContainerMenu {
+    private static final ResourceLocation SEED_SLOT_ICON =
+            ResourceLocation.withDefaultNamespace("item/empty_slot_diamond");
+
     private final CrystalPressBlockEntity press;
     private final ContainerData data;
     private final ContainerLevelAccess access;
@@ -28,7 +33,7 @@ public class CrystalPressMenu extends AbstractContainerMenu {
      */
     public CrystalPressMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {
         this(id, inventory, (CrystalPressBlockEntity) inventory.player.level().getBlockEntity(buffer.readBlockPos()),
-                new SimpleContainerData(4));
+                new SimpleContainerData(CrystalPressBlockEntity.DATA_VALUES));
     }
 
     /**
@@ -48,6 +53,8 @@ public class CrystalPressMenu extends AbstractContainerMenu {
         addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.CATALYST_SLOT, 26, 17));
         addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.FUEL_SLOT, 56, 53));
         addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.OUTPUT_SLOT, 116, 35));
+        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.SEED_SLOT, 26, 53)
+                .setBackground(InventoryMenu.BLOCK_ATLAS, SEED_SLOT_ICON));
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
                 addSlot(new Slot(inventory, column + row * 9 + 9, 8 + column * 18, 84 + row * 18));
@@ -88,6 +95,17 @@ public class CrystalPressMenu extends AbstractContainerMenu {
         return total == 0 ? 0 : data.get(2) * 24 / total;
     }
 
+    /**
+     * Gives how much of the seed crystal at work is left, scaled to its bar.
+     *
+     * @param width width of a full bar in pixels
+     * @return bar width in pixels, 0 without a seed
+     */
+    public int seedProgress(int width) {
+        int uses = data.get(5);
+        return uses == 0 ? 0 : Math.ceilDiv(data.get(4) * width, uses);
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = slots.get(index);
@@ -96,15 +114,16 @@ public class CrystalPressMenu extends AbstractContainerMenu {
         }
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
-        if (index < 4) {
-            if (!moveItemStackTo(stack, 4, slots.size(), true)) {
+        if (index < CrystalPressBlockEntity.SLOTS) {
+            if (!moveItemStackTo(stack, CrystalPressBlockEntity.SLOTS, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
         } else if (stack.getBurnTime(RecipeType.SMELTING) > 0
                 && moveItemStackTo(stack, CrystalPressBlockEntity.FUEL_SLOT, CrystalPressBlockEntity.FUEL_SLOT + 1,
                         false)) {
             slot.setChanged();
-        } else if (!moveItemStackTo(stack, 0, 2, false)) {
+        } else if (!moveItemStackTo(stack, 0, 2, false)
+                && !moveItemStackTo(stack, CrystalPressBlockEntity.SEED_SLOT, CrystalPressBlockEntity.SLOTS, false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) {

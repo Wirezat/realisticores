@@ -3,6 +3,7 @@ package de.wirezat.realisticores.compat.jei;
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.RealisticOres;
 import de.wirezat.realisticores.press.PressRecipe;
+import de.wirezat.realisticores.press.PressSeed;
 import java.util.Arrays;
 import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -79,6 +80,7 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
                 .addItemStacks(Arrays.asList(recipe.catalyst().getItems()));
         builder.addSlot(RecipeIngredientRole.CATALYST, 56 - ORIGIN_X, 53 - ORIGIN_Y)
                 .addItemStack(new ItemStack(Items.COAL));
+        builder.addSlot(RecipeIngredientRole.CATALYST, 26 - ORIGIN_X, 53 - ORIGIN_Y).addItemStacks(PressSeed.all());
         builder.addSlot(RecipeIngredientRole.OUTPUT, 116 - ORIGIN_X, 35 - ORIGIN_Y).addItemStack(recipe.result());
     }
 

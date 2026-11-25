@@ -26,6 +26,8 @@ class PressSidesTest {
                 PressSides.forSide(Direction.EAST, facing));
         assertEquals(new PressSides.Access(CrystalPressBlockEntity.CATALYST_SLOT, true, false),
                 PressSides.forSide(Direction.WEST, facing));
+        assertEquals(new PressSides.Access(CrystalPressBlockEntity.SEED_SLOT, true, false),
+                PressSides.forSide(Direction.NORTH, facing));
     }
 
     @Test

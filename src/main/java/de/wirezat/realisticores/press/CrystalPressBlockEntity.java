@@ -4,6 +4,7 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -21,20 +22,24 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-/** Block entity of the crystal press: four slots, fuel burning and the press cycle. */
+/** Block entity of the crystal press: five slots, fuel burning, the press cycle and the seed crystal at work. */
 public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider {
     public static final int MATERIAL_SLOT = 0;
     public static final int CATALYST_SLOT = 1;
     public static final int FUEL_SLOT = 2;
     public static final int OUTPUT_SLOT = 3;
+    public static final int SEED_SLOT = 4;
+    public static final int SLOTS = 5;
+    public static final int DATA_VALUES = 6;
 
-    private final ItemStackHandler inventory = new ItemStackHandler(4) {
+    private final ItemStackHandler inventory = new ItemStackHandler(SLOTS) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return switch (slot) {
                 case MATERIAL_SLOT -> acceptsMaterial(stack);
                 case CATALYST_SLOT -> acceptsCatalyst(stack);
                 case FUEL_SLOT -> stack.getBurnTime(RecipeType.SMELTING) > 0;
+                case SEED_SLOT -> PressSeed.of(stack) != null;
                 default -> false;
             };
         }
@@ -46,6 +51,7 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
     };
 
     private final PressCycle cycle = new PressCycle();
+    private final SeedState seeds = new SeedState();
     private final RecipeManager.CachedCheck<PressInput, PressRecipe> recipeCheck =
             RecipeManager.createCheck(ModPress.PRESS_TYPE.get());
 
@@ -56,7 +62,9 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
                 case 0 -> cycle.litTime();
                 case 1 -> cycle.litDuration();
                 case 2 -> cycle.progress();
-                default -> cycle.total();
+                case 3 -> cycle.total();
+                case 4 -> seeds.left();
+                default -> seeds.seed().uses();
             };
         }
 
@@ -66,7 +74,7 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
 
         @Override
         public int getCount() {
-            return 4;
+            return DATA_VALUES;
         }
     };
 
@@ -81,7 +89,7 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
     }
 
     /**
-     * Gives the inventory: material, catalyst, fuel, output.
+     * Gives the inventory: material, catalyst, fuel, output, seed crystal.
      *
      * @return the item handler
      */
@@ -111,7 +119,7 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
             return true;
         }
         return ItemStack.isSameItemSameComponents(output, recipe.result())
-                && output.getCount() + recipe.result().getCount() <= output.getMaxStackSize();
+                && output.getCount() + seeds.crystals(recipe.result().getCount()) <= output.getMaxStackSize();
     }
 
     /**
@@ -127,12 +135,16 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
             return;
         }
         Optional<RecipeHolder<PressRecipe>> recipe = press.currentRecipe(level);
-        boolean canWork = recipe.isPresent() && press.outputFits(recipe.get().value());
         ItemStack fuel = press.inventory.getStackInSlot(FUEL_SLOT);
         int burnTime = fuel.isEmpty() ? 0 : fuel.getBurnTime(RecipeType.SMELTING);
+        if (recipe.isPresent() && press.outputFits(recipe.get().value()) && (press.cycle.isLit() || burnTime > 0)) {
+            press.loadSeed();
+        }
+        boolean canWork = recipe.isPresent() && press.outputFits(recipe.get().value());
         boolean wasLit = press.cycle.isLit();
         int oldProgress = press.cycle.progress();
-        PressCycle.Result result = press.cycle.tick(canWork, burnTime, recipe.map(r -> r.value().time()).orElse(1));
+        PressCycle.Result result = press.cycle.tick(canWork, burnTime,
+                press.seeds.time(recipe.map(r -> r.value().time()).orElse(1)));
         if (result.burnFuel()) {
             ItemStack remainder = fuel.getCraftingRemainingItem();
             fuel.shrink(1);
@@ -153,14 +165,23 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         }
     }
 
+    private void loadSeed() {
+        PressSeed seed = PressSeed.of(inventory.getStackInSlot(SEED_SLOT));
+        if (seed != null && seeds.wantsSeed(cycle.progress())) {
+            inventory.extractItem(SEED_SLOT, 1, false);
+            seeds.load(seed);
+        }
+    }
+
     private void craft(PressRecipe recipe) {
         inventory.getStackInSlot(MATERIAL_SLOT).shrink(recipe.materialCount());
         inventory.getStackInSlot(CATALYST_SLOT).shrink(1);
         ItemStack output = inventory.getStackInSlot(OUTPUT_SLOT);
+        int count = seeds.finishRun(recipe.result().getCount());
         if (output.isEmpty()) {
-            inventory.setStackInSlot(OUTPUT_SLOT, recipe.result().copy());
+            inventory.setStackInSlot(OUTPUT_SLOT, recipe.result().copyWithCount(count));
         } else {
-            output.grow(recipe.result().getCount());
+            output.grow(count);
         }
     }
 
@@ -184,12 +205,19 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         tag.putInt("LitDuration", cycle.litDuration());
         tag.putInt("Progress", cycle.progress());
         tag.putInt("Total", cycle.total());
+        tag.putInt("SeedLeft", seeds.left());
+        tag.putDouble("SeedRemainder", seeds.remainder());
+        PressSeed.CODEC.encodeStart(NbtOps.INSTANCE, seeds.seed()).ifSuccess(seed -> tag.put("Seed", seed));
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+        CompoundTag items = tag.getCompound("Inventory").copy();
+        items.remove("Size");
+        inventory.deserializeNBT(registries, items);
+        PressSeed.CODEC.parse(NbtOps.INSTANCE, tag.getCompound("Seed"))
+                .ifSuccess(seed -> seeds.restore(seed, tag.getInt("SeedLeft"), tag.getDouble("SeedRemainder")));
         cycle.restore(tag.getInt("LitTime"), tag.getInt("LitDuration"), tag.getInt("Progress"), tag.getInt("Total"));
     }
 

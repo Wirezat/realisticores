@@ -1,0 +1,6 @@
+{
+  "values": {
+    "realisticores:bort": {"uses": 8, "speed": 2},
+    "realisticores:natural_diamond": {"uses": 16, "speed": 4, "yield": 2}
+  }
+}

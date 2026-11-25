@@ -23,8 +23,8 @@ public final class PressSides {
     }
 
     /**
-     * Gives the access of a face: top feeds material, bottom yields output, back feeds fuel, the other sides feed
-     * the catalyst.
+     * Gives the access of a face: top feeds material, bottom yields output, back feeds fuel, front feeds seed
+     * crystals, the other sides feed the catalyst.
      *
      * @param side the face being accessed
      * @param facing the horizontal front of the press
@@ -39,6 +39,9 @@ public final class PressSides {
         }
         if (side == facing.getOpposite()) {
             return new Access(CrystalPressBlockEntity.FUEL_SLOT, true, false);
+        }
+        if (side == facing) {
+            return new Access(CrystalPressBlockEntity.SEED_SLOT, true, false);
         }
         return new Access(CrystalPressBlockEntity.CATALYST_SLOT, true, false);
     }

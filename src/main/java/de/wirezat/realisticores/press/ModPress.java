@@ -6,6 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -15,8 +16,10 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.datamaps.DataMapType;
+import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 
-/** Registries of the crystal press: block entity, menu and recipe type. */
+/** Registries of the crystal press: block entity, menu, recipe type and seed crystals. */
 public final class ModPress {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, RealisticOres.MOD_ID);
@@ -38,11 +41,15 @@ public final class ModPress {
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PressRecipe>> PRESS_SERIALIZER =
             RECIPE_SERIALIZERS.register("crystal_press", PressRecipe.Serializer::new);
 
+    public static final DataMapType<Item, PressSeed> SEEDS = DataMapType.builder(
+            ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "press_seed"), Registries.ITEM, PressSeed.CODEC)
+            .synced(PressSeed.CODEC, true).build();
+
     private ModPress() {
     }
 
     /**
-     * Registers the press registries and the item handler capability on the mod event bus.
+     * Registers the press registries, the seed data and the item handler capability on the mod event bus.
      *
      * @param modBus the mod event bus
      */
@@ -51,6 +58,7 @@ public final class ModPress {
         MENUS.register(modBus);
         RECIPE_TYPES.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
+        modBus.addListener((RegisterDataMapTypesEvent event) -> event.register(SEEDS));
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK, PRESS_BLOCK_ENTITY.get(), (entity, side) -> PressSides.handlerFor(entity.inventory(), side,
                         entity.getBlockState().getValue(CrystalPressBlock.FACING))));

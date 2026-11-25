@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.compat.emi;
 
 import de.wirezat.realisticores.press.PressRecipe;
+import de.wirezat.realisticores.press.PressSeed;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.render.EmiTexture;
@@ -55,6 +56,15 @@ public class PressEmiRecipe implements EmiRecipe {
     }
 
     @Override
+    public List<EmiIngredient> getCatalysts() {
+        return List.of(seeds());
+    }
+
+    private static EmiIngredient seeds() {
+        return EmiIngredient.of(PressSeed.all().stream().map(EmiStack::of).toList());
+    }
+
+    @Override
     public List<EmiStack> getOutputs() {
         return List.of(result);
     }
@@ -74,6 +84,7 @@ public class PressEmiRecipe implements EmiRecipe {
         widgets.addSlot(catalyst, 0, 0);
         widgets.addSlot(material, 30, 0);
         widgets.addSlot(EmiStack.of(Items.COAL), 30, 36);
+        widgets.addSlot(seeds(), 0, 36).catalyst(true);
         widgets.addTexture(EmiTexture.EMPTY_FLAME, 31, 19);
         widgets.addAnimatedTexture(EmiTexture.FULL_FLAME, 31, 19, 4000, false, true, true);
         widgets.addFillingArrow(53, 17, time * 50);
