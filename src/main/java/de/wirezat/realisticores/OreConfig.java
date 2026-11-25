@@ -62,12 +62,12 @@ public final class OreConfig {
                 .comment("Replaces the block placed for an ore, as ore=block, e.g. peridot=othermod:peridot_ore.")
                 .defineListAllowEmpty("oreBlockOverrides", List.of(), () -> "peridot=othermod:peridot_ore",
                         OreConfig::isValidOverride);
-        builder.comment("Settings of the operator command /realisticores pipes.").push("command");
-        COMMAND_MAX_RESULTS = builder.comment("Number of nearest pipes listed.")
+        builder.comment("Settings of the operator commands /realisticores pipes and /realisticores basins.").push("command");
+        COMMAND_MAX_RESULTS = builder.comment("Number of nearest pipes or basins listed.")
                 .defineInRange("maxResults", 10, 1, 100);
-        COMMAND_START_RADIUS = builder.comment("First search radius in blocks; it doubles until enough pipes are found.")
+        COMMAND_START_RADIUS = builder.comment("First search radius for pipes in blocks; it doubles until enough are found.")
                 .defineInRange("startRadius", 5000, 100, 100000);
-        COMMAND_SEARCH_LIMIT = builder.comment("Largest search radius in blocks.")
+        COMMAND_SEARCH_LIMIT = builder.comment("Largest search radius in blocks; basins are searched up to 100000.")
                 .defineInRange("searchLimit", 320000, 1000, 2000000);
         builder.pop();
         SPEC = builder.build();

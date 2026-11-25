@@ -1,15 +1,21 @@
 package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.kimberlite.TerrainProbe;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 
 /** Shared generator objects of coal basin generation, rebuilt whenever the config changes. */
 public final class Coal {
+    private static final Executor SURVEYOR = new ForkJoinPool(1);
+    private static final int CANDIDATES_PER_RESULT = 20;
+
     private static volatile State state;
 
     private Coal() {
@@ -65,11 +71,42 @@ public final class Coal {
                 current.generator().basinsNear(seed, minX, minZ, maxX, maxZ).stream()).toList();
     }
 
+    /**
+     * Finds the basins with coal nearest to a position, measuring as few basins as possible.
+     *
+     * @param seed world seed
+     * @param probe terrain source
+     * @param ranks ranks that have a block
+     * @param x world X
+     * @param z world Z
+     * @param radius search limit in blocks
+     * @param count most basins to find
+     * @return basins by distance of their centre
+     */
+    public static List<ResolvedBasin> nearest(long seed, TerrainProbe probe, Set<Rank> ranks, int x, int z, int radius,
+            int count) {
+        State current = state();
+        Stream<Basin> candidates = current.generator()
+                .basinsNear(seed, x - radius, z - radius, x + radius, z + radius).stream()
+                .sorted(Comparator.comparingDouble(basin -> Math.hypot(basin.x() - x, basin.z() - z)))
+                .limit((long) count * CANDIDATES_PER_RESULT);
+        return resolved(current, seed, probe, ranks, candidates).limit(count).toList();
+    }
+
     private static Stream<ResolvedBasin> resolved(State current, long seed, TerrainProbe probe, Set<Rank> ranks,
             Stream<Basin> basins) {
         return basins.flatMap(basin -> current.basins().computeIfAbsent(new BasinKey(seed, basin),
                         key -> resolve(basin, probe, current.params())).stream())
                 .filter(basin -> CoalOres.generates(basin.type(), ranks));
+    }
+
+    /**
+     * Gives the background thread for surveys that measure many basins.
+     *
+     * @return executor with one thread
+     */
+    public static Executor surveyor() {
+        return SURVEYOR;
     }
 
     private static Optional<ResolvedBasin> resolve(Basin basin, TerrainProbe probe, CoalParams params) {

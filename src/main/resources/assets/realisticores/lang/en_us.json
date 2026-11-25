@@ -64,5 +64,11 @@
   "item.realisticores.lignite": "Lignite",
   "item.realisticores.anthracite": "Anthracite",
   "trim_material.realisticores.lignite": "Lignite Material",
-  "trim_material.realisticores.anthracite": "Anthracite Material"
+  "trim_material.realisticores.anthracite": "Anthracite Material",
+  "command.realisticores.basins.none": "No coal basins found nearby.",
+  "command.realisticores.basins.header": "%s nearest coal basins (click to teleport):",
+  "command.realisticores.basins.entry": "X %s Z %s, %s, diameter %s, distance %s",
+  "command.realisticores.basins.type.hard_coal": "hard coal",
+  "command.realisticores.basins.type.lignite": "lignite",
+  "command.realisticores.basins.type.folded": "folded"
 }

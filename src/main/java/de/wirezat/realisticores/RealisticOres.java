@@ -40,6 +40,8 @@ public class RealisticOres {
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onLoot);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 KimberliteCommand.register(event.getDispatcher()));
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
+                BasinCommand.register(event.getDispatcher()));
     }
 
     private static void invalidateConfig() {

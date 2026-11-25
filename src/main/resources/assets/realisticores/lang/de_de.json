@@ -64,5 +64,11 @@
   "item.realisticores.lignite": "Braunkohle",
   "item.realisticores.anthracite": "Anthrazit",
   "trim_material.realisticores.lignite": "Braunkohle",
-  "trim_material.realisticores.anthracite": "Anthrazit"
+  "trim_material.realisticores.anthracite": "Anthrazit",
+  "command.realisticores.basins.none": "Keine Kohle-Becken in der Nähe gefunden.",
+  "command.realisticores.basins.header": "%s nächste Kohle-Becken (Klick zum Teleportieren):",
+  "command.realisticores.basins.entry": "X %s Z %s, %s, Durchmesser %s, Entfernung %s",
+  "command.realisticores.basins.type.hard_coal": "Steinkohle",
+  "command.realisticores.basins.type.lignite": "Braunkohle",
+  "command.realisticores.basins.type.folded": "gefaltet"
 }
