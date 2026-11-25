@@ -32,6 +32,7 @@ public class RealisticOres {
         NeoForge.EVENT_BUS.addListener(TrailEffects::tick);
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Kimberlite.invalidate());
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onTrades);
+        NeoForge.EVENT_BUS.addListener(NaturalDiamondTrades::onTrades);
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onLoot);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 KimberliteCommand.register(event.getDispatcher()));
