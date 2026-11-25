@@ -183,8 +183,8 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                 new TypeParams(15, 35, 1, 2, 3.0, 8.0, 5, 10, 1),
                 new TypeParams(60, 110, 2, 4, 1.0, 3.0, 8, 20, 4),
                 new FoldParams(10.0, 18.0, 200.0, 300.0, 0.55),
-                new SeamParams(6.0, 0.75, 0.6, 180.0, 0.1, 0.5, 6.0, 300.0, 0.4, 400.0, 3, 4.0, 10.0, 10.0, 200.0,
+                new SeamParams(6.0, 1.25, 0.6, 180.0, 0.1, 0.5, 6.0, 300.0, 0.4, 400.0, 3, 4.0, 10.0, 10.0, 200.0,
                         0.18, 14.0),
-                new RockParams(2, 4, 1, 2, 1, 2, 3, 5, 2, 4, 60.0));
+                new RockParams(1, 2, 1, 2, 1, 2, 3, 5, 2, 4, 60.0));
     }
 }
