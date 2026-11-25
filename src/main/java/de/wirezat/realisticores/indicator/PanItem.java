@@ -34,7 +34,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 
 /** The pan: washes sediment, measures its indicator grains and collects them. */
 public class PanItem extends Item {
-    public static final int CAPACITY = 1000;
+    static final int CAPACITY = 1000;
     static final int WASH_COST = 100;
 
     private static final int USE_TICKS = 60;
@@ -133,8 +133,8 @@ public class PanItem extends Item {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        return Optional.of(new PanTooltip(water(stack), Optional.ofNullable(stack.get(ModPan.LAST)),
-                stack.getOrDefault(ModPan.CONTENT, Grains.NONE)));
+        return Optional.of(new PanTooltip(water(stack) * 100 / CAPACITY, Optional.ofNullable(stack.get(ModPan.LAST)),
+                stack.getOrDefault(ModPan.CONTENT, Grains.NONE), 0));
     }
 
     @Override
