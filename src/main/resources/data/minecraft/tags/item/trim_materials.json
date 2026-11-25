@@ -1,1 +1,11 @@
-{"values": ["realisticores:natural_diamond", "realisticores:pyrope", "realisticores:peridot"]}
+{
+  "values": [
+    "realisticores:natural_diamond",
+    "realisticores:bort",
+    "realisticores:graphite",
+    "realisticores:peridot",
+    "realisticores:pyrope",
+    "realisticores:chromite",
+    "realisticores:ilmenite"
+  ]
+}

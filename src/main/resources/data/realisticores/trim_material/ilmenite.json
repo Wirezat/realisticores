@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_ilmenite",
+  "description": {
+    "color": "#7F95B4",
+    "translate": "trim_material.realisticores.ilmenite"
+  },
+  "ingredient": "realisticores:ilmenite",
+  "item_model_index": 0.2
+}

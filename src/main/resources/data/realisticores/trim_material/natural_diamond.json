@@ -1,12 +1,12 @@
 {
-  "asset_name": "diamond",
+  "asset_name": "realisticores_natural_diamond",
   "description": {
     "color": "#6EECD2",
-    "translate": "trim_material.minecraft.diamond"
+    "translate": "trim_material.realisticores.natural_diamond"
   },
   "ingredient": "realisticores:natural_diamond",
   "item_model_index": 0.8,
   "override_armor_materials": {
-    "minecraft:diamond": "diamond_darker"
+    "minecraft:diamond": "realisticores_natural_diamond_darker"
   }
 }

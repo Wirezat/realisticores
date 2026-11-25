@@ -42,8 +42,14 @@
       ],
       "palette_key": "trims/color_palettes/trim_palette",
       "permutations": {
+        "realisticores_natural_diamond": "realisticores:trims/color_palettes/natural_diamond",
+        "realisticores_natural_diamond_darker": "realisticores:trims/color_palettes/natural_diamond_darker",
+        "realisticores_bort": "realisticores:trims/color_palettes/bort",
+        "realisticores_graphite": "realisticores:trims/color_palettes/graphite",
+        "realisticores_peridot": "realisticores:trims/color_palettes/peridot",
         "realisticores_pyrope": "realisticores:trims/color_palettes/pyrope",
-        "realisticores_peridot": "realisticores:trims/color_palettes/peridot"
+        "realisticores_chromite": "realisticores:trims/color_palettes/chromite",
+        "realisticores_ilmenite": "realisticores:trims/color_palettes/ilmenite"
       }
     }
   ]
