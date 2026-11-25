@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -17,7 +18,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,9 +33,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 /** The pan: washes sediment, measures its indicator grains and collects them. */
@@ -98,8 +105,63 @@ public class PanItem extends Item {
             return false;
         }
         setWater(pan, CAPACITY);
-        level.playSound(player, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
+        playFill(player);
         return true;
+    }
+
+    private static void playFill(Player player) {
+        player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F);
+    }
+
+    /**
+     * Pours water from a container into a pan. A container that only gives its whole content loses the surplus.
+     *
+     * @param pan the pan to fill
+     * @param source a single fluid container, for example a water bucket
+     * @return the container after pouring, or empty if nothing was poured
+     */
+    static ItemStack pour(ItemStack pan, ItemStack source) {
+        IFluidHandlerItem handler = source.getCapability(Capabilities.FluidHandler.ITEM);
+        int missing = CAPACITY - water(pan);
+        if (handler == null || source.getCount() != 1 || missing == 0) {
+            return ItemStack.EMPTY;
+        }
+        FluidStack poured = handler.drain(new FluidStack(Fluids.WATER, missing), FluidAction.EXECUTE);
+        if (poured.isEmpty()) {
+            poured = handler.drain(new FluidStack(Fluids.WATER, CAPACITY), FluidAction.EXECUTE);
+        }
+        if (poured.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        setWater(pan, Math.min(CAPACITY, water(pan) + poured.getAmount()));
+        return handler.getContainer();
+    }
+
+    private static boolean pour(ItemStack pan, ItemStack source, Slot slot, ClickAction action, Player player,
+            Predicate<ItemStack> replaceSource) {
+        if (action != ClickAction.SECONDARY || source.is(pan.getItem()) || !slot.allowModification(player)) {
+            return false;
+        }
+        ItemStack container = pour(pan, source.copy());
+        if (container.isEmpty() || !replaceSource.test(container)) {
+            return false;
+        }
+        playFill(player);
+        return true;
+    }
+
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack pan, ItemStack other, Slot slot, ClickAction action,
+            Player player, SlotAccess access) {
+        return pour(pan, other, slot, action, player, access::set);
+    }
+
+    @Override
+    public boolean overrideStackedOnOther(ItemStack pan, Slot slot, ClickAction action, Player player) {
+        return pour(pan, slot.getItem(), slot, action, player, container -> {
+            slot.set(container);
+            return true;
+        });
     }
 
     private BlockHitResult target(Level level, Player player) {
