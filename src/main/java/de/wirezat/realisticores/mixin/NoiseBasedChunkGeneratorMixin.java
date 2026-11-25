@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.mixin;
 
+import de.wirezat.realisticores.coal.CoalCarver;
 import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.KimberliteCarver;
 import de.wirezat.realisticores.kimberlite.TerrainProbe;
@@ -17,7 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NoiseBasedChunkGenerator.class)
 public abstract class NoiseBasedChunkGeneratorMixin {
     /**
-     * Carves kimberlite pipes, crater bowls and crater lakes into overworld chunks after their surface is built.
+     * Carves kimberlite pipes with their craters and then coal basins into overworld chunks after their surface is
+     * built.
      *
      * @param level region the chunk is generated in
      * @param structureManager structure manager of the level
@@ -27,7 +29,7 @@ public abstract class NoiseBasedChunkGeneratorMixin {
      */
     @Inject(method = "buildSurface(Lnet/minecraft/server/level/WorldGenRegion;Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/level/levelgen/RandomState;Lnet/minecraft/world/level/chunk/ChunkAccess;)V",
             at = @At("TAIL"))
-    private void realisticores$carveKimberlite(WorldGenRegion level, StructureManager structureManager,
+    private void realisticores$carveDeposits(WorldGenRegion level, StructureManager structureManager,
             RandomState random, ChunkAccess chunk, CallbackInfo ci) {
         if (level.getLevel().dimension() != Level.OVERWORLD) {
             return;
@@ -35,5 +37,6 @@ public abstract class NoiseBasedChunkGeneratorMixin {
         NoiseBasedChunkGenerator generator = (NoiseBasedChunkGenerator) (Object) this;
         TerrainProbe probe = new LevelTerrainProbe(level.getLevel(), generator);
         KimberliteCarver.carve(chunk, level.getSeed(), probe, generator.getSeaLevel());
+        CoalCarver.carve(chunk, level.getSeed(), probe);
     }
 }

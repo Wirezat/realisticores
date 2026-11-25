@@ -55,7 +55,9 @@ public final class OreConfig {
         ENABLED_ORES = builder
                 .comment("Ores this mod places in its deposits. A deposit generates as soon as at least one of",
                         "its ores is enabled; with none of its ores enabled a deposit does not exist at all.")
-                .defineListAllowEmpty("enabledOres", List.of("diamond", "bort", "peridot", "graphite"), () -> "peridot", OreConfig::isValidOreId);
+                .defineListAllowEmpty("enabledOres",
+                        List.of("diamond", "bort", "peridot", "graphite", "coal", "lignite", "anthracite"),
+                        () -> "peridot", OreConfig::isValidOreId);
         ORE_OVERRIDES = builder
                 .comment("Replaces the block placed for an ore, as ore=block, e.g. peridot=othermod:peridot_ore.")
                 .defineListAllowEmpty("oreBlockOverrides", List.of(), () -> "peridot=othermod:peridot_ore",
