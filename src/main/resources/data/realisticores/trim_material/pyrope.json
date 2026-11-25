@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_pyrope",
+  "description": {
+    "color": "#C42A40",
+    "translate": "trim_material.realisticores.pyrope"
+  },
+  "ingredient": "realisticores:pyrope",
+  "item_model_index": 0.4
+}

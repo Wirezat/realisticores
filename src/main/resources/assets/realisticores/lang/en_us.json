@@ -22,6 +22,8 @@
   "block.realisticores.crystal_press": "Crystal Press",
   "gui.realisticores.crystal_press.time": "%s s",
   "emi.category.realisticores.crystal_press": "Crystal Press",
+  "trim_material.realisticores.pyrope": "Pyrope Material",
+  "trim_material.realisticores.peridot": "Peridot Material",
   "item.realisticores.pyrope": "Pyrope Garnet",
   "item.realisticores.chromite": "Chromite",
   "item.realisticores.ilmenite": "Ilmenite",

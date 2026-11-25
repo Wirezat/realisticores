@@ -22,6 +22,8 @@
   "block.realisticores.crystal_press": "Kristallpresse",
   "gui.realisticores.crystal_press.time": "%s s",
   "emi.category.realisticores.crystal_press": "Kristallpresse",
+  "trim_material.realisticores.pyrope": "Pyrop",
+  "trim_material.realisticores.peridot": "Peridot",
   "item.realisticores.pyrope": "Pyrop-Granat",
   "item.realisticores.chromite": "Chromit",
   "item.realisticores.ilmenite": "Ilmenit",

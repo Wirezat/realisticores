@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_peridot",
+  "description": {
+    "color": "#6FB52F",
+    "translate": "trim_material.realisticores.peridot"
+  },
+  "ingredient": "realisticores:peridot",
+  "item_model_index": 0.7
+}
