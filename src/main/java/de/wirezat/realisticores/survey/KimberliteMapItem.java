@@ -142,7 +142,7 @@ public class KimberliteMapItem extends Item {
      *
      * @param level the world
      * @param survey the marked point and the water outlines around it
-     * @return a locked filled map
+     * @return a filled map that fills in as the player explores it
      */
     private static ItemStack surveyMap(ServerLevel level, Survey survey) {
         MapItemSavedData data = mapData(survey.x(), survey.z(), level.registryAccess());
@@ -152,7 +152,7 @@ public class KimberliteMapItem extends Item {
             }
         }
         MapId mapId = level.getFreeMapId();
-        level.setMapData(mapId, data.locked());
+        level.setMapData(mapId, data);
         ItemStack map = new ItemStack(Items.FILLED_MAP);
         map.set(DataComponents.MAP_ID, mapId);
         MapItemSavedData.addTargetDecoration(map, new BlockPos(survey.x(), 0, survey.z()), "+",
