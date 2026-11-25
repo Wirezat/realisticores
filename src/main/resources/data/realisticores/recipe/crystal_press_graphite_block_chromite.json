@@ -1,0 +1,15 @@
+{
+  "type": "realisticores:crystal_press",
+  "material": {
+    "item": "realisticores:graphite_block"
+  },
+  "material_count": 4,
+  "catalyst": {
+    "tag": "c:raw_materials/chromite"
+  },
+  "result": {
+    "id": "minecraft:diamond",
+    "count": 6
+  },
+  "time": 21600
+}
