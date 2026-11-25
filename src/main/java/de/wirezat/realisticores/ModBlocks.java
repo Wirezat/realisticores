@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -51,6 +52,16 @@ public final class ModBlocks {
             register("graphite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
     public static final DeferredBlock<Block> NATURAL_DIAMOND_BLOCK =
             register("natural_diamond_block", BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_BLOCK));
+    public static final DeferredBlock<Block> BORT_BLOCK = register("bort_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.STONE));
+    public static final DeferredBlock<Block> PERIDOT_BLOCK = register("peridot_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.EMERALD_BLOCK).mapColor(MapColor.COLOR_LIGHT_GREEN));
+    public static final DeferredBlock<Block> PYROPE_BLOCK = register("pyrope_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.EMERALD_BLOCK).mapColor(MapColor.COLOR_RED));
+    public static final DeferredBlock<Block> CHROMITE_BLOCK = register("chromite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_BLACK));
+    public static final DeferredBlock<Block> ILMENITE_BLOCK = register("ilmenite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_GRAY));
 
     public static final DeferredBlock<CrystalPressBlock> CRYSTAL_PRESS = registerPress();
 

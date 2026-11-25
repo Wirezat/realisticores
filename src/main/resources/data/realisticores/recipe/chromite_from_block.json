@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "realisticores:chromite_block"
+    }
+  ],
+  "result": {
+    "id": "realisticores:chromite",
+    "count": 9
+  }
+}

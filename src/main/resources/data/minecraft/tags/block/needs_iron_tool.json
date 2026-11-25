@@ -1,6 +1,9 @@
 {
   "values": [
     "realisticores:kimberlite_diamond_ore",
-    "realisticores:natural_diamond_block"
+    "realisticores:natural_diamond_block",
+    "realisticores:bort_block",
+    "realisticores:peridot_block",
+    "realisticores:pyrope_block"
   ]
 }

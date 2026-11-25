@@ -6,6 +6,8 @@
     "realisticores:kimberlite_graphite_ore",
     "realisticores:kimberlite_bort_ore",
     "realisticores:graphite_block",
-    "realisticores:crystal_press"
+    "realisticores:crystal_press",
+    "realisticores:chromite_block",
+    "realisticores:ilmenite_block"
   ]
 }
