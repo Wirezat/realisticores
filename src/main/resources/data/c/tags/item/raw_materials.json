@@ -1,5 +1,7 @@
 {
   "values": [
-    "#c:raw_materials/graphite"
+    "#c:raw_materials/graphite",
+    "#c:raw_materials/ilmenite",
+    "#c:raw_materials/chromite"
   ]
 }
