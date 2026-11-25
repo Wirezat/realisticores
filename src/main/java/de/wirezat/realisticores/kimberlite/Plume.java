@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 public final class Plume {
     private static final long SALT = 0x504C554D455F4B49L;
     private static final double SPOT_MIN_PYROPE = 0.02;
-    private static final double SPOT_MIN_DISTANCE = 250.0;
 
     private Plume() {
     }
@@ -148,25 +147,43 @@ public final class Plume {
      *
      * @param path trail of the pipe
      * @param pipes all pipes near the trail
+     * @param minDistance smallest distance to the edge of every pipe in blocks
      * @param probe terrain height source
      * @param seaLevel Y of the sea surface
      * @param params trail settings
      * @return the points from the pipe to the end of the trail, possibly none
      */
-    public static List<Spot> mapSpots(PlumePath path, List<Pipe> pipes, TerrainProbe probe, int seaLevel,
-            KimberliteParams.PlumeParams params) {
+    public static List<Spot> mapSpots(PlumePath path, List<Pipe> pipes, double minDistance, TerrainProbe probe,
+            int seaLevel, KimberliteParams.PlumeParams params) {
         List<Spot> spots = new ArrayList<>();
         for (int i = 0; i < path.xs().length; i++) {
             double x = path.xs()[i];
             double z = path.zs()[i];
             if (density(path, x, z, params, params.pyrope()) >= SPOT_MIN_PYROPE
                     && pipes.stream().allMatch(pipe -> Math.hypot(x - pipe.x(), z - pipe.z())
-                            >= SPOT_MIN_DISTANCE + pipe.diameter() / 2.0)
+                            >= minDistance + pipe.diameter() / 2.0)
                     && height(probe, x, z) >= seaLevel - 1) {
                 spots.add(new Spot(x, z));
             }
         }
         return spots;
+    }
+
+    /**
+     * Keeps the points where the strongest trail belongs to a pipe with diamonds.
+     *
+     * @param spots the points
+     * @param paths all trails that may reach them
+     * @param grade diamond grade of the pipes
+     * @param params trail settings
+     * @return the points a player will find diamonds from
+     */
+    public static List<Spot> withDiamonds(List<Spot> spots, List<PlumePath> paths, PipeGrade grade,
+            KimberliteParams.PlumeParams params) {
+        return spots.stream().filter(spot -> {
+            PlumePath strongest = strongest(paths, spot.x(), spot.z(), params);
+            return strongest != null && grade.pipeFactor(strongest.pipe()) > 0.0;
+        }).toList();
     }
 
     /**

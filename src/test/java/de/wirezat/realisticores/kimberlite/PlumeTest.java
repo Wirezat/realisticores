@@ -104,7 +104,7 @@ class PlumeTest {
         Pipe source = new Pipe(-1200, 0, 70);
         Pipe neighbour = new Pipe(-500, 0, 70);
         PlumePath path = Plume.trace(source, 0.0, shelf(), 63, params);
-        List<Plume.Spot> spots = Plume.mapSpots(path, List.of(source, neighbour), shelf(), 63, params);
+        List<Plume.Spot> spots = Plume.mapSpots(path, List.of(source, neighbour), 250.0, shelf(), 63, params);
         assertFalse(spots.isEmpty());
         for (Plume.Spot spot : spots) {
             assertTrue(Math.hypot(spot.x() - source.x(), spot.z()) >= 285.0);
@@ -112,5 +112,32 @@ class PlumeTest {
             assertTrue(shelf().terrainHeight((int) Math.round(spot.x()), 0) >= 62);
             assertTrue(Plume.density(path, spot.x(), spot.z(), params, params.pyrope()) >= 0.02);
         }
+    }
+
+    @Test
+    void mapSpotsAreKeptOnlyWhereTheStrongestTrailHasDiamonds() {
+        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PipeGrade grade = new PipeGrade(KimberliteParams.defaults().grade());
+        Pipe barren = pipeWith(grade, true);
+        Pipe graded = pipeWith(grade, false);
+        PlumePath barrenTrail = straight(barren);
+        PlumePath gradedTrail = straight(graded);
+        Plume.Spot onBarren = new Plume.Spot(barren.x() + 300, barren.z());
+        Plume.Spot onGraded = new Plume.Spot(graded.x() + 300, graded.z());
+        assertEquals(List.of(onGraded), Plume.withDiamonds(List.of(onBarren, onGraded),
+                List.of(barrenTrail, gradedTrail), grade, params));
+    }
+
+    private static Pipe pipeWith(PipeGrade grade, boolean barren) {
+        int z = barren ? 0 : 5000;
+        while ((grade.pipeFactor(new Pipe(0, z, 70)) == 0.0) != barren) {
+            z += 10;
+        }
+        return new Pipe(0, z, 70);
+    }
+
+    private static PlumePath straight(Pipe pipe) {
+        return new PlumePath(pipe, new double[] {pipe.x(), pipe.x() + 1600}, new double[] {pipe.z(), pipe.z()},
+                new double[] {0, 1600}, 1.0);
     }
 }

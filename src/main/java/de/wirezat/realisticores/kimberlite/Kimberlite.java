@@ -18,6 +18,7 @@ public final class Kimberlite {
             new ForkJoinPool(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
 
     private static final int SPOT_SEARCH_MARGIN = 300;
+    private static final double[] SPOT_DISTANCES = {250.0, 150.0};
 
     private static volatile State state;
 
@@ -153,7 +154,8 @@ public final class Kimberlite {
     }
 
     /**
-     * Picks a trail point for a map on the trail pool: from the first pipe whose trail has a suitable one.
+     * Picks a trail point for a map on the trail pool: where the strongest trail has diamonds and no pipe is near,
+     * else closer to a pipe, else on any trail.
      *
      * @param seed world seed
      * @param probe terrain and climate source, read from the pool's threads
@@ -165,24 +167,47 @@ public final class Kimberlite {
     public static CompletableFuture<Optional<Plume.Spot>> mapSpot(long seed, TerrainProbe probe, int seaLevel,
             List<Pipe> pipes, int pick) {
         State current = state();
+        KimberliteParams.PlumeParams params = current.params().plume();
         return CompletableFuture.supplyAsync(() -> {
-            for (Pipe pipe : pipes) {
-                PlumePath path = plume(current, seed, pipe, probe, seaLevel);
-                List<Plume.Spot> spots = Plume.mapSpots(path, pipesAround(current, seed, path), probe, seaLevel,
-                        current.params().plume());
-                if (!spots.isEmpty()) {
-                    return Optional.of(spots.get(Math.floorMod(pick, spots.size())));
+            List<PlumePath> own = pipes.parallelStream()
+                    .map(pipe -> plume(current, seed, pipe, probe, seaLevel)).toList();
+            Optional<Plume.Spot> any = Optional.empty();
+            for (double distance : SPOT_DISTANCES) {
+                for (PlumePath path : own) {
+                    List<Plume.Spot> spots = Plume.mapSpots(path, pipesAround(current, seed, path), distance, probe,
+                            seaLevel, params);
+                    List<Plume.Spot> good = spots.isEmpty() ? spots : Plume.withDiamonds(spots,
+                            plumesReaching(seed, probe, seaLevel, minOf(path.xs()), minOf(path.zs()),
+                                    maxOf(path.xs()), maxOf(path.zs())).join(), current.grade(), params);
+                    if (!good.isEmpty()) {
+                        return Optional.of(choose(good, pick));
+                    }
+                    if (any.isEmpty() && !spots.isEmpty()) {
+                        any = Optional.of(choose(spots, pick));
+                    }
                 }
             }
-            return Optional.empty();
+            return any;
         }, TRACERS);
     }
 
+    private static Plume.Spot choose(List<Plume.Spot> spots, int pick) {
+        return spots.get(Math.floorMod(pick, spots.size()));
+    }
+
+    private static int minOf(double[] values) {
+        return (int) Arrays.stream(values).min().orElseThrow();
+    }
+
+    private static int maxOf(double[] values) {
+        return (int) Arrays.stream(values).max().orElseThrow();
+    }
+
     private static List<Pipe> pipesAround(State current, long seed, PlumePath path) {
-        int minX = (int) Arrays.stream(path.xs()).min().orElseThrow() - SPOT_SEARCH_MARGIN;
-        int minZ = (int) Arrays.stream(path.zs()).min().orElseThrow() - SPOT_SEARCH_MARGIN;
-        int maxX = (int) Arrays.stream(path.xs()).max().orElseThrow() + SPOT_SEARCH_MARGIN;
-        int maxZ = (int) Arrays.stream(path.zs()).max().orElseThrow() + SPOT_SEARCH_MARGIN;
+        int minX = minOf(path.xs()) - SPOT_SEARCH_MARGIN;
+        int minZ = minOf(path.zs()) - SPOT_SEARCH_MARGIN;
+        int maxX = maxOf(path.xs()) + SPOT_SEARCH_MARGIN;
+        int maxZ = maxOf(path.zs()) + SPOT_SEARCH_MARGIN;
         return current.generator().pipesNear(seed, minX, minZ, maxX, maxZ);
     }
 
