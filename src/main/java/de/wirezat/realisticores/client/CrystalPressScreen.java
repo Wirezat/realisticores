@@ -2,19 +2,35 @@ package de.wirezat.realisticores.client;
 
 import de.wirezat.realisticores.RealisticOres;
 import de.wirezat.realisticores.press.CrystalPressMenu;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Screen of the crystal press. */
+/** Screen of the crystal press: the anvils close while it burns and the crystal grows between them. */
 public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "textures/gui/crystal_press.png");
-    private static final int SEED_BAR_WIDTH = 16;
-    private static final int SEED_BAR_EMPTY = 0xFF373737;
-    private static final int SEED_BAR_FULL = 0xFF4AEDD9;
+    private static final int CLOSED = 4;
+    private static final int CHAMBER_TOP = 18;
+    private static final int CHAMBER_BOTTOM = 68;
+    private static final int ANVIL_X = 78;
+    private static final int ANVIL_WIDTH = 28;
+    private static final int ANVIL_HEIGHT = 17;
+    private static final int ROD_X = 86;
+    private static final int ROD_WIDTH = 12;
+    private static final int GEM_SIZE = 14;
+    private static final int GEM_STAGES = 8;
+    private static final int GAUGE_HEIGHT = 16;
+    private static final int ARROW_WIDTH = 22;
+    private static final int FLAME_SIZE = 14;
+    private static final double PULSE_MILLIS = 400.0;
+
+    private int closed;
+    private int lastClosed;
 
     /**
      * Creates the screen.
@@ -28,20 +44,45 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
     }
 
     @Override
+    protected void containerTick() {
+        super.containerTick();
+        lastClosed = closed;
+        closed = Mth.clamp(closed + (menu.isLit() ? 1 : -1), 0, CLOSED);
+    }
+
+    @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        renderChamber(graphics, Math.round(Mth.lerp(partialTick, lastClosed, closed)));
         if (menu.isLit()) {
-            int flame = menu.litProgress();
-            graphics.blit(TEXTURE, leftPos + 57, topPos + 36 + 12 - flame, 176, 12 - flame, 14, flame + 1);
+            int flame = menu.litProgress(FLAME_SIZE);
+            sprite(graphics, 44, 36 + FLAME_SIZE - flame, 210, 34 + FLAME_SIZE - flame, FLAME_SIZE, flame);
         }
-        int seed = menu.seedProgress(SEED_BAR_WIDTH);
-        if (seed > 0) {
-            graphics.fill(leftPos + 26, topPos + 71, leftPos + 26 + SEED_BAR_WIDTH, topPos + 73, SEED_BAR_EMPTY);
-            graphics.fill(leftPos + 26, topPos + 71, leftPos + 26 + seed, topPos + 73, SEED_BAR_FULL);
+        int seed = menu.seedProgress(GAUGE_HEIGHT);
+        sprite(graphics, 36, 52 + GAUGE_HEIGHT - seed, 204, 4 + GAUGE_HEIGHT - seed, 4, seed);
+        sprite(graphics, 114, 36, 176, 56, menu.arrowProgress(ARROW_WIDTH), 15);
+    }
+
+    private void renderChamber(GuiGraphics graphics, int offset) {
+        if (menu.isLit()) {
+            float heat = 0.9F + 0.1F * (float) Math.sin(Util.getMillis() / PULSE_MILLIS);
+            graphics.setColor(heat, heat, heat, 1.0F);
+            sprite(graphics, 75, 32, 176, 34, 34, 22);
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
-        int arrow = menu.arrowProgress();
-        if (arrow > 0) {
-            graphics.blit(TEXTURE, leftPos + 79, topPos + 34, 176, 14, arrow, 16);
+        sprite(graphics, ROD_X, CHAMBER_TOP, 204, 0, ROD_WIDTH, offset);
+        sprite(graphics, ROD_X, CHAMBER_BOTTOM - offset, 204, 0, ROD_WIDTH, offset);
+        sprite(graphics, ANVIL_X, CHAMBER_TOP + offset, 176, 0, ANVIL_WIDTH, ANVIL_HEIGHT);
+        sprite(graphics, ANVIL_X, CHAMBER_BOTTOM - ANVIL_HEIGHT - offset, 176, 17, ANVIL_WIDTH, ANVIL_HEIGHT);
+        if (menu.isPressing()) {
+            int stage = Math.min(GEM_STAGES - 1, menu.arrowProgress(GEM_STAGES));
+            sprite(graphics, 85, 36, stage * GEM_SIZE, 168, GEM_SIZE, GEM_SIZE);
+        }
+    }
+
+    private void sprite(GuiGraphics graphics, int x, int y, int u, int v, int width, int height) {
+        if (width > 0 && height > 0) {
+            graphics.blit(TEXTURE, leftPos + x, topPos + y, u, v, width, height);
         }
     }
 

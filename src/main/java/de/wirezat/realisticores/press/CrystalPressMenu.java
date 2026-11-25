@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.press;
 
 import de.wirezat.realisticores.ModBlocks;
+import de.wirezat.realisticores.RealisticOres;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,7 +18,13 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 
 /** Menu of the crystal press: four input slots, one output slot and the player inventory. */
 public class CrystalPressMenu extends AbstractContainerMenu {
-    private static final ResourceLocation SEED_SLOT_ICON =
+    private static final ResourceLocation MATERIAL_ICON =
+            ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "item/empty_slot_graphite");
+    private static final ResourceLocation CATALYST_ICON =
+            ResourceLocation.withDefaultNamespace("item/empty_slot_ingot");
+    private static final ResourceLocation FUEL_ICON =
+            ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "item/empty_slot_fuel");
+    private static final ResourceLocation SEED_ICON =
             ResourceLocation.withDefaultNamespace("item/empty_slot_diamond");
 
     private final CrystalPressBlockEntity press;
@@ -49,12 +56,15 @@ public class CrystalPressMenu extends AbstractContainerMenu {
         this.press = press;
         this.data = data;
         this.access = ContainerLevelAccess.create(press.getLevel(), press.getBlockPos());
-        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.MATERIAL_SLOT, 56, 17));
-        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.CATALYST_SLOT, 26, 17));
-        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.FUEL_SLOT, 56, 53));
-        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.OUTPUT_SLOT, 116, 35));
-        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.SEED_SLOT, 26, 53)
-                .setBackground(InventoryMenu.BLOCK_ATLAS, SEED_SLOT_ICON));
+        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.MATERIAL_SLOT, 43, 18)
+                .setBackground(InventoryMenu.BLOCK_ATLAS, MATERIAL_ICON));
+        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.CATALYST_SLOT, 17, 18)
+                .setBackground(InventoryMenu.BLOCK_ATLAS, CATALYST_ICON));
+        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.FUEL_SLOT, 43, 52)
+                .setBackground(InventoryMenu.BLOCK_ATLAS, FUEL_ICON));
+        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.OUTPUT_SLOT, 144, 35));
+        addSlot(new SlotItemHandler(press.inventory(), CrystalPressBlockEntity.SEED_SLOT, 17, 52)
+                .setBackground(InventoryMenu.BLOCK_ATLAS, SEED_ICON));
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
                 addSlot(new Slot(inventory, column + row * 9 + 9, 8 + column * 18, 84 + row * 18));
@@ -76,34 +86,45 @@ public class CrystalPressMenu extends AbstractContainerMenu {
     }
 
     /**
+     * Tells whether a run is under way.
+     *
+     * @return true while there is progress
+     */
+    public boolean isPressing() {
+        return data.get(2) > 0;
+    }
+
+    /**
      * Gives the remaining burn time scaled to the flame sprite.
      *
-     * @return flame height in pixels, 0 to 13
+     * @param height height of the full flame in pixels
+     * @return flame height in pixels, at least 1 while fuel burns
      */
-    public int litProgress() {
+    public int litProgress(int height) {
         int duration = data.get(1) == 0 ? 200 : data.get(1);
-        return data.get(0) * 13 / duration;
+        return Math.ceilDiv(data.get(0) * height, duration);
     }
 
     /**
-     * Gives the recipe progress scaled to the arrow sprite.
+     * Gives the progress of the run scaled to a length.
      *
-     * @return arrow width in pixels, 0 to 24
+     * @param length length of the full progress
+     * @return progress from 0 to the length
      */
-    public int arrowProgress() {
+    public int arrowProgress(int length) {
         int total = data.get(3);
-        return total == 0 ? 0 : data.get(2) * 24 / total;
+        return total == 0 ? 0 : data.get(2) * length / total;
     }
 
     /**
-     * Gives how much of the seed crystal at work is left, scaled to its bar.
+     * Gives how much of the seed crystal at work is left, scaled to its gauge.
      *
-     * @param width width of a full bar in pixels
-     * @return bar width in pixels, 0 without a seed
+     * @param height height of a full gauge in pixels
+     * @return gauge height in pixels, 0 without a seed
      */
-    public int seedProgress(int width) {
+    public int seedProgress(int height) {
         int uses = data.get(5);
-        return uses == 0 ? 0 : Math.ceilDiv(data.get(4) * width, uses);
+        return uses == 0 ? 0 : Math.ceilDiv(data.get(4) * height, uses);
     }
 
     @Override

@@ -29,13 +29,16 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
             RecipeType.create(RealisticOres.MOD_ID, "crystal_press", PressRecipe.class);
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "textures/gui/crystal_press.png");
-    private static final int ORIGIN_X = 20;
+    private static final int ORIGIN_X = 12;
     private static final int ORIGIN_Y = 11;
 
     private final IDrawable background;
     private final IDrawable icon;
     private final IDrawable flame;
     private final IDrawable arrow;
+    private final IDrawable upperAnvil;
+    private final IDrawable lowerAnvil;
+    private final IDrawable crystal;
 
     /**
      * Creates the category.
@@ -43,12 +46,15 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
      * @param helper JEI drawing helper
      */
     public PressCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, ORIGIN_X, ORIGIN_Y, 126, 62);
+        this.background = helper.createDrawable(TEXTURE, ORIGIN_X, ORIGIN_Y, 156, 63);
         this.icon = helper.createDrawableItemLike(ModBlocks.CRYSTAL_PRESS.get());
-        IDrawableStatic flameSprite = helper.createDrawable(TEXTURE, 176, 0, 14, 14);
+        IDrawableStatic flameSprite = helper.createDrawable(TEXTURE, 210, 34, 14, 14);
         this.flame = helper.createAnimatedDrawable(flameSprite, 300, IDrawableAnimated.StartDirection.TOP, true);
-        IDrawableStatic arrowSprite = helper.createDrawable(TEXTURE, 176, 14, 24, 17);
+        IDrawableStatic arrowSprite = helper.createDrawable(TEXTURE, 176, 56, 22, 15);
         this.arrow = helper.createAnimatedDrawable(arrowSprite, 200, IDrawableAnimated.StartDirection.LEFT, false);
+        this.upperAnvil = helper.createDrawable(TEXTURE, 176, 0, 28, 17);
+        this.lowerAnvil = helper.createDrawable(TEXTURE, 176, 17, 28, 17);
+        this.crystal = helper.createDrawable(TEXTURE, 84, 168, 14, 14);
     }
 
     @Override
@@ -75,20 +81,23 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
     public void setRecipe(IRecipeLayoutBuilder builder, PressRecipe recipe, IFocusGroup focuses) {
         List<ItemStack> materials = Arrays.stream(recipe.material().getItems())
                 .map(stack -> stack.copyWithCount(recipe.materialCount())).toList();
-        builder.addSlot(RecipeIngredientRole.INPUT, 56 - ORIGIN_X, 17 - ORIGIN_Y).addItemStacks(materials);
-        builder.addSlot(RecipeIngredientRole.INPUT, 26 - ORIGIN_X, 17 - ORIGIN_Y)
+        builder.addSlot(RecipeIngredientRole.INPUT, 43 - ORIGIN_X, 18 - ORIGIN_Y).addItemStacks(materials);
+        builder.addSlot(RecipeIngredientRole.INPUT, 17 - ORIGIN_X, 18 - ORIGIN_Y)
                 .addItemStacks(Arrays.asList(recipe.catalyst().getItems()));
-        builder.addSlot(RecipeIngredientRole.CATALYST, 56 - ORIGIN_X, 53 - ORIGIN_Y)
+        builder.addSlot(RecipeIngredientRole.CATALYST, 43 - ORIGIN_X, 52 - ORIGIN_Y)
                 .addItemStack(new ItemStack(Items.COAL));
-        builder.addSlot(RecipeIngredientRole.CATALYST, 26 - ORIGIN_X, 53 - ORIGIN_Y).addItemStacks(PressSeed.all());
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 116 - ORIGIN_X, 35 - ORIGIN_Y).addItemStack(recipe.result());
+        builder.addSlot(RecipeIngredientRole.CATALYST, 17 - ORIGIN_X, 52 - ORIGIN_Y).addItemStacks(PressSeed.all());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 144 - ORIGIN_X, 35 - ORIGIN_Y).addItemStack(recipe.result());
     }
 
     @Override
     public void draw(PressRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        flame.draw(graphics, 57 - ORIGIN_X, 36 - ORIGIN_Y);
-        arrow.draw(graphics, 79 - ORIGIN_X, 34 - ORIGIN_Y);
+        upperAnvil.draw(graphics, 78 - ORIGIN_X, 18 - ORIGIN_Y);
+        lowerAnvil.draw(graphics, 78 - ORIGIN_X, 51 - ORIGIN_Y);
+        crystal.draw(graphics, 85 - ORIGIN_X, 36 - ORIGIN_Y);
+        flame.draw(graphics, 44 - ORIGIN_X, 36 - ORIGIN_Y);
+        arrow.draw(graphics, 114 - ORIGIN_X, 36 - ORIGIN_Y);
         Component time = Component.translatable("gui.realisticores.crystal_press.time", recipe.time() / 20);
-        graphics.drawString(Minecraft.getInstance().font, time, 80 - ORIGIN_X, 54 - ORIGIN_Y, 0xFF404040, false);
+        graphics.drawString(Minecraft.getInstance().font, time, 116 - ORIGIN_X, 60 - ORIGIN_Y, 0xFF404040, false);
     }
 }
