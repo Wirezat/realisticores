@@ -31,6 +31,9 @@ public final class ModPan {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Grains>> LAST =
             COMPONENTS.registerComponentType("last_grains",
                     builder -> builder.persistent(Grains.CODEC).networkSynchronized(Grains.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<PyropeTone>> TONE =
+            COMPONENTS.registerComponentType("last_tone",
+                    builder -> builder.persistent(PyropeTone.CODEC).networkSynchronized(PyropeTone.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Grains>> CONTENT =
             COMPONENTS.registerComponentType("pan_content",
                     builder -> builder.persistent(Grains.CODEC).networkSynchronized(Grains.STREAM_CODEC));

@@ -4,6 +4,7 @@ import de.wirezat.realisticores.ModItems;
 import de.wirezat.realisticores.RealisticOres;
 import de.wirezat.realisticores.indicator.Grains;
 import de.wirezat.realisticores.indicator.PanTooltip;
+import de.wirezat.realisticores.indicator.PyropeTone;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +47,7 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
 
     private final int water;
     private final int textWidth;
+    private final PyropeTone tone;
     private final List<String> last;
     private final List<String> content;
 
@@ -61,6 +63,7 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
         format.setMaximumFractionDigits(1);
         this.water = tooltip.water();
         this.textWidth = tooltip.textWidth();
+        this.tone = tooltip.tone();
         this.last = tooltip.last().map(grains -> texts(grains, format)).orElse(List.of());
         this.content = texts(tooltip.content(), format);
     }
@@ -112,8 +115,8 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
 
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics graphics) {
-        drawIcons(font, x, y, graphics, LAST_SYMBOL, !last.isEmpty());
-        drawIcons(font, x, y + ROW_HEIGHT, graphics, CONTENT_SYMBOL, true);
+        drawIcons(font, x, y, graphics, LAST_SYMBOL, last.isEmpty() ? List.of() : MINERALS, tone);
+        drawIcons(font, x, y + ROW_HEIGHT, graphics, CONTENT_SYMBOL, MINERALS, PyropeTone.RED);
         int strokes = getWidth(font) / STROKE_SPACING;
         for (int i = 0; i < strokes; i++) {
             int left = x + i * STROKE_SPACING;
@@ -122,10 +125,16 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
         }
     }
 
-    private void drawIcons(Font font, int x, int y, GuiGraphics graphics, ResourceLocation symbol, boolean minerals) {
+    private void drawIcons(Font font, int x, int y, GuiGraphics graphics, ResourceLocation symbol,
+            List<DeferredItem<Item>> minerals, PyropeTone pyropeTone) {
         graphics.blitSprite(symbol, x, y + (ICON_SIZE - SYMBOL_SIZE) / 2, SYMBOL_SIZE, SYMBOL_SIZE);
-        for (int i = 0; minerals && i < MINERALS.size(); i++) {
-            graphics.renderFakeItem(new ItemStack(MINERALS.get(i).get()), x + SYMBOL_WIDTH + i * columnWidth(font), y);
+        for (int i = 0; i < minerals.size(); i++) {
+            int left = x + SYMBOL_WIDTH + i * columnWidth(font);
+            if (minerals.get(i) == ModItems.PYROPE && pyropeTone != PyropeTone.RED) {
+                graphics.blitSprite(sprite("pyrope_" + pyropeTone.getSerializedName()), left, y, ICON_SIZE, ICON_SIZE);
+            } else {
+                graphics.renderFakeItem(new ItemStack(minerals.get(i).get()), left, y);
+            }
         }
     }
 }

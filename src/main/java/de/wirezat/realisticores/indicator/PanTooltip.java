@@ -8,9 +8,10 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
  *
  * @param water filling of the pan in percent
  * @param last grains of the last wash, empty while it is computed or before the first one
+ * @param tone colour of the pyrope in the last wash
  * @param content grains collected in the pan
  * @param textWidth width in pixels of the widest text line around the picture, 0 if unknown
  */
-public record PanTooltip(int water, Optional<Grains> last, Grains content, int textWidth)
+public record PanTooltip(int water, Optional<Grains> last, PyropeTone tone, Grains content, int textWidth)
         implements TooltipComponent {
 }

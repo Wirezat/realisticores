@@ -3,6 +3,7 @@ package de.wirezat.realisticores.indicator;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.KimberliteParams;
+import de.wirezat.realisticores.kimberlite.PipeGrade;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
 import java.util.List;
@@ -23,8 +24,11 @@ public final class PanYield {
      *
      * @param grains the measured grains
      * @param source trail the grains belong to, or null without grains
+     * @param tone colour of the pyrope
      */
-    public record Measurement(Grains grains, @Nullable PlumePath source) {
+    public record Measurement(Grains grains, @Nullable PlumePath source, PyropeTone tone) {
+        private static final Measurement NONE = new Measurement(Grains.NONE, null, PyropeTone.PALE);
+
     }
 
     /**
@@ -37,12 +41,13 @@ public final class PanYield {
     public static CompletableFuture<Measurement> measure(ServerLevel level, BlockPos pos) {
         if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
                 || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
-            return CompletableFuture.completedFuture(new Measurement(Grains.NONE, null));
+            return CompletableFuture.completedFuture(Measurement.NONE);
         }
         KimberliteParams.PlumeParams params = Kimberlite.params().plume();
+        PipeGrade grade = Kimberlite.grade();
         return Kimberlite.plumesReaching(level.getSeed(), new LevelTerrainProbe(level, generator),
                 level.getSeaLevel(), pos.getX(), pos.getZ(), pos.getX(), pos.getZ())
-                .thenApply(paths -> combine(paths, params, level.getSeed(), pos.getX(), pos.getZ()));
+                .thenApply(paths -> combine(paths, params, grade, level.getSeed(), pos.getX(), pos.getZ()));
     }
 
     /**
@@ -50,26 +55,22 @@ public final class PanYield {
      *
      * @param paths trails that may reach the position
      * @param params trail settings
+     * @param grade diamond grade of the pipes
      * @param seed world seed
      * @param x world X in blocks
      * @param z world Z in blocks
      * @return grains of the trail with the most pyrope there
      */
-    static Measurement combine(List<PlumePath> paths, KimberliteParams.PlumeParams params, long seed, int x, int z) {
-        double strongest = 0.0;
-        PlumePath source = null;
-        for (PlumePath path : paths) {
-            double pyrope = Plume.density(path, x, z, params, params.pyrope());
-            if (pyrope > strongest) {
-                strongest = pyrope;
-                source = path;
-            }
-        }
+    static Measurement combine(List<PlumePath> paths, KimberliteParams.PlumeParams params, PipeGrade grade,
+            long seed, int x, int z) {
+        PlumePath source = Plume.strongest(paths, x, z, params);
         if (source == null) {
-            return new Measurement(Grains.NONE, null);
+            return Measurement.NONE;
         }
-        Grains grains = Grains.measure(strongest, Plume.density(source, x, z, params, params.chromite()),
+        Grains grains = Grains.measure(Plume.density(source, x, z, params, params.pyrope()),
+                Plume.density(source, x, z, params, params.chromite()),
                 Plume.density(source, x, z, params, params.ilmenite()), seed, x, z);
-        return new Measurement(grains, grains.isEmpty() ? null : source);
+        return new Measurement(grains, grains.isEmpty() ? null : source,
+                PyropeTone.of(grade.pipeFactor(source.pipe()), grains.pyrope()));
     }
 }

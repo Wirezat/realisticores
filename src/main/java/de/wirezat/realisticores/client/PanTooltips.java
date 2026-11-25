@@ -56,6 +56,6 @@ public final class PanTooltips {
                 .mapToInt(Minecraft.getInstance().font::width).max().orElse(0);
         int textWidth = Math.min(widest, event.getScreenWidth() / 2);
         event.getTooltipElements().replaceAll(element -> element.mapRight(picture -> picture instanceof PanTooltip pan
-                ? new PanTooltip(pan.water(), pan.last(), pan.content(), textWidth) : picture));
+                ? new PanTooltip(pan.water(), pan.last(), pan.tone(), pan.content(), textWidth) : picture));
     }
 }

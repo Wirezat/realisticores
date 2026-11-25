@@ -198,7 +198,7 @@ public class PanItem extends Item {
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return Optional.of(new PanTooltip(water(stack) * 100 / CAPACITY, Optional.ofNullable(stack.get(ModPan.LAST)),
-                stack.getOrDefault(ModPan.CONTENT, Grains.NONE), 0));
+                stack.getOrDefault(ModPan.TONE, PyropeTone.PALE), stack.getOrDefault(ModPan.CONTENT, Grains.NONE), 0));
     }
 
     @Override
@@ -264,6 +264,7 @@ public class PanItem extends Item {
         UUID id = stack.getOrDefault(ModPan.ID, UUID.randomUUID());
         stack.set(ModPan.ID, id);
         stack.remove(ModPan.LAST);
+        stack.remove(ModPan.TONE);
         setWater(stack, water(stack) - WASH_COST);
         PanYield.measure(server, pos)
                 .thenAcceptAsync(result -> collect(server, player, pos, id, result, keepBlock, fortune, reach),
@@ -294,6 +295,7 @@ public class PanItem extends Item {
         Grains grains = result.grains();
         Grains sum = pan.getOrDefault(ModPan.CONTENT, Grains.NONE).plus(grains.gain(fortune, keepBlock));
         pan.set(ModPan.LAST, grains);
+        pan.set(ModPan.TONE, result.tone());
         pan.set(ModPan.CONTENT, sum.rest());
         if (!keepBlock) {
             level.destroyBlock(pos, false, player);

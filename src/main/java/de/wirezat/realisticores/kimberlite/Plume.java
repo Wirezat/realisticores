@@ -3,6 +3,7 @@ package de.wirezat.realisticores.kimberlite;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 /** Traces the downhill trail of indicator grains from a pipe and tells how dense the grains are at a position. */
 public final class Plume {
@@ -166,6 +167,29 @@ public final class Plume {
             }
         }
         return spots;
+    }
+
+    /**
+     * Gives the trail with the most pyrope at a position.
+     *
+     * @param paths trails that may reach the position
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param params trail settings
+     * @return the strongest trail, or null without trails
+     */
+    @Nullable
+    public static PlumePath strongest(List<PlumePath> paths, double x, double z, KimberliteParams.PlumeParams params) {
+        double most = 0.0;
+        PlumePath strongest = null;
+        for (PlumePath path : paths) {
+            double pyrope = density(path, x, z, params, params.pyrope());
+            if (pyrope > most) {
+                most = pyrope;
+                strongest = path;
+            }
+        }
+        return strongest;
     }
 
     /**
