@@ -40,7 +40,7 @@
   "enchantment.realisticores.trail_sense.desc": "Führt eine Spur aus Geisterflammen vom Wasch-Ort zur Quelle der Indikatorminerale.",
   "tooltip.realisticores.pan.grams": "%s g",
   "tooltip.realisticores.pan.water": "Wasser: %s %%",
-  "jei.realisticores.pan": "Am Wasser füllen und Sand, Kies oder Erde waschen. Die obere Zeile zeigt die Indikatorminerale der letzten Wäsche, die untere, was sich in der Pfanne gesammelt hat. Höhere Werte liegen näher an der Quelle. Ilmenit findet sich nur in ihrer Nähe.",
+  "jei.realisticores.pan": "Am Wasser füllen und Sand, Kies oder Erde waschen. Die obere Zeile zeigt die Indikatorminerale der letzten Wäsche, die untere, was sich in der Pfanne gesammelt hat. Höhere Werte liegen näher an der Quelle. Ilmenit findet sich nur in ihrer Nähe. Die Farbe des Pyrops in der oberen Zeile zeigt, woher er stammt: violett aus diamantreichen, rot aus diamantarmen, braun aus tauben Pipes. Blass heißt, es ist noch zu wenig.",
   "jei.realisticores.kimberlite_map": "Das Kreuz liegt auf einer Spur aus Indikatormineralen, die aus einem Kimberlit ausgewaschen wurden. Von dort führt die Pfanne weiter.",
   "tooltip.realisticores.pan.efficiency": "Wäscht Material schneller.",
   "tooltip.realisticores.pan.fortune": "Sammelt aus jeder Wäsche mehr Indikatorminerale.",
