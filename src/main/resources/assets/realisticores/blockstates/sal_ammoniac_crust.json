@@ -1,7 +1,66 @@
 {
   "variants": {
-    "": {
-      "model": "realisticores:block/sal_ammoniac_crust"
-    }
+    "": [
+      {
+        "model": "realisticores:block/sal_ammoniac_crust"
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_1"
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_1",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_1",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_1",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_2"
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_2",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_2",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_2",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_3"
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_3",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_3",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/sal_ammoniac_crust_3",
+        "y": 270
+      }
+    ]
   }
 }

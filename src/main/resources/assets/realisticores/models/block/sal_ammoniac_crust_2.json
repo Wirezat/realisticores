@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "realisticores:block/sal_ammoniac_crust_top_2",
+    "bottom": "realisticores:block/sal_ammoniac_crust_top_2",
+    "side": "realisticores:block/sal_ammoniac_crust_2"
+  }
+}

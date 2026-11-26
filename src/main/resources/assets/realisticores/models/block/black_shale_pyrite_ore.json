@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "realisticores:block/black_shale_pyrite_ore"
+    "top": "realisticores:block/black_shale_pyrite_ore_top",
+    "bottom": "realisticores:block/black_shale_pyrite_ore_top",
+    "side": "realisticores:block/black_shale_pyrite_ore"
   }
 }

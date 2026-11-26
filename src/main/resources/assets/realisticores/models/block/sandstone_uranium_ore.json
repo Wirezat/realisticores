@@ -1,6 +1,91 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout_mipped",
   "textures": {
-    "all": "realisticores:block/sandstone_uranium_ore"
-  }
+    "particle": "minecraft:block/sandstone",
+    "base_side": "minecraft:block/sandstone",
+    "base_top": "minecraft:block/sandstone_top",
+    "base_bottom": "minecraft:block/sandstone_bottom",
+    "ore_side": "realisticores:block/sandstone_uranium_ore_overlay",
+    "ore_top": "realisticores:block/sandstone_uranium_ore_top_overlay",
+    "ore_bottom": "realisticores:block/sandstone_uranium_ore_bottom_overlay"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#base_bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#base_top",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#base_side",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#base_side",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#base_side",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#base_side",
+          "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ore_bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#ore_top",
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#ore_side",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#ore_side",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#ore_side",
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#ore_side",
+          "cullface": "east"
+        }
+      }
+    }
+  ]
 }
