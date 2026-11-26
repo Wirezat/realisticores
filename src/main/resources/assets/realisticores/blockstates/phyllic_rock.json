@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/phyllic_rock"
+      },
+      {
+        "model": "realisticores:block/phyllic_rock_1"
+      },
+      {
+        "model": "realisticores:block/phyllic_rock_2"
+      },
+      {
+        "model": "realisticores:block/phyllic_rock_3"
+      }
+    ]
+  }
+}

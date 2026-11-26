@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/gossan"
+      },
+      {
+        "model": "realisticores:block/gossan_1"
+      },
+      {
+        "model": "realisticores:block/gossan_2"
+      },
+      {
+        "model": "realisticores:block/gossan_3"
+      }
+    ]
+  }
+}

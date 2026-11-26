@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/bleached_porphyry"
+      },
+      {
+        "model": "realisticores:block/bleached_porphyry_1"
+      },
+      {
+        "model": "realisticores:block/bleached_porphyry_2"
+      },
+      {
+        "model": "realisticores:block/bleached_porphyry_3"
+      }
+    ]
+  }
+}

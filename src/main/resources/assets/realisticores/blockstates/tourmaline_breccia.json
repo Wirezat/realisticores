@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/tourmaline_breccia"
+      },
+      {
+        "model": "realisticores:block/tourmaline_breccia_1"
+      },
+      {
+        "model": "realisticores:block/tourmaline_breccia_2"
+      },
+      {
+        "model": "realisticores:block/tourmaline_breccia_3"
+      }
+    ]
+  }
+}

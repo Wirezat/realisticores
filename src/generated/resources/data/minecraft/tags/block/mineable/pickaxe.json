@@ -38,6 +38,13 @@
     "realisticores:mudstone",
     "realisticores:clinker",
     "realisticores:rust_stained_shale",
+    "realisticores:porphyry",
+    "realisticores:potassic_porphyry",
+    "realisticores:phyllic_rock",
+    "realisticores:propylite",
+    "realisticores:gossan",
+    "realisticores:bleached_porphyry",
+    "realisticores:tourmaline_breccia",
     "realisticores:crystal_press"
   ]
 }
