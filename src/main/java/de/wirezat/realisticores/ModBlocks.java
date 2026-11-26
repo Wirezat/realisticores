@@ -91,6 +91,14 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> ANTHRACITE_BLOCK =
             register("anthracite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
 
+    public static final DeferredBlock<Block> RAW_URANIUM_BLOCK = register("raw_uranium_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_BLACK));
+    public static final DeferredBlock<Block> PYRITE_BLOCK = register("pyrite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.GOLD));
+    public static final DeferredBlock<Block> SAL_AMMONIAC_BLOCK = register("sal_ammoniac_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .sound(SoundType.CALCITE));
+
     public static final DeferredBlock<Block> SANDSTONE_URANIUM_ORE = registerOre("sandstone_uranium_ore", 1, 4,
             BlockBehaviour.Properties.ofFullCopy(Blocks.SANDSTONE).strength(3.0F, 3.0F));
     public static final DeferredBlock<Block> BLACK_SHALE_PYRITE_ORE = registerOre("black_shale_pyrite_ore", 0, 2,

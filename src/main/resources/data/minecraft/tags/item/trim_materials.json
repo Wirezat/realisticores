@@ -8,6 +8,9 @@
     "realisticores:chromite",
     "realisticores:ilmenite",
     "realisticores:lignite",
-    "realisticores:anthracite"
+    "realisticores:anthracite",
+    "realisticores:raw_uranium",
+    "realisticores:pyrite",
+    "realisticores:sal_ammoniac"
   ]
 }

@@ -78,5 +78,11 @@
   "block.realisticores.sal_ammoniac_crust": "Salmiakkruste",
   "item.realisticores.raw_uranium": "Rohuran",
   "item.realisticores.pyrite": "Pyrit",
-  "item.realisticores.sal_ammoniac": "Salmiak"
+  "item.realisticores.sal_ammoniac": "Salmiak",
+  "block.realisticores.raw_uranium_block": "Rohuranblock",
+  "trim_material.realisticores.uranium": "Uran",
+  "block.realisticores.pyrite_block": "Pyritblock",
+  "trim_material.realisticores.pyrite": "Pyrit",
+  "block.realisticores.sal_ammoniac_block": "Salmiakblock",
+  "trim_material.realisticores.sal_ammoniac": "Salmiak"
 }

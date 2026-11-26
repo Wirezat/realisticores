@@ -11,6 +11,9 @@
     "realisticores:ilmenite_block",
     "realisticores:anthracite_seam",
     "realisticores:anthracite_block",
-    "realisticores:black_shale_pyrite_ore"
+    "realisticores:black_shale_pyrite_ore",
+    "realisticores:raw_uranium_block",
+    "realisticores:pyrite_block",
+    "realisticores:sal_ammoniac_block"
   ]
 }

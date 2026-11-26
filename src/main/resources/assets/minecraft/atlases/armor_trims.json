@@ -51,7 +51,10 @@
         "realisticores_chromite": "realisticores:trims/color_palettes/chromite",
         "realisticores_ilmenite": "realisticores:trims/color_palettes/ilmenite",
         "realisticores_lignite": "realisticores:trims/color_palettes/lignite",
-        "realisticores_anthracite": "realisticores:trims/color_palettes/anthracite"
+        "realisticores_anthracite": "realisticores:trims/color_palettes/anthracite",
+        "realisticores_uranium": "realisticores:trims/color_palettes/uranium",
+        "realisticores_pyrite": "realisticores:trims/color_palettes/pyrite",
+        "realisticores_sal_ammoniac": "realisticores:trims/color_palettes/sal_ammoniac"
       }
     }
   ]

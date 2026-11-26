@@ -78,5 +78,11 @@
   "block.realisticores.sal_ammoniac_crust": "Sal Ammoniac Crust",
   "item.realisticores.raw_uranium": "Raw Uranium",
   "item.realisticores.pyrite": "Pyrite",
-  "item.realisticores.sal_ammoniac": "Sal Ammoniac"
+  "item.realisticores.sal_ammoniac": "Sal Ammoniac",
+  "block.realisticores.raw_uranium_block": "Block of Raw Uranium",
+  "trim_material.realisticores.uranium": "Uranium Material",
+  "block.realisticores.pyrite_block": "Block of Pyrite",
+  "trim_material.realisticores.pyrite": "Pyrite Material",
+  "block.realisticores.sal_ammoniac_block": "Block of Sal Ammoniac",
+  "trim_material.realisticores.sal_ammoniac": "Sal Ammoniac Material"
 }
