@@ -130,6 +130,24 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> SAL_AMMONIAC_CRUST = registerOre("sal_ammoniac_crust", "sal_ammoniac",
             BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE).mapColor(MapColor.TERRACOTTA_WHITE));
 
+    public static final DeferredBlock<Block> PORPHYRY = register("porphyry",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRANITE).mapColor(MapColor.TERRACOTTA_LIGHT_GRAY));
+    public static final DeferredBlock<Block> POTASSIC_PORPHYRY = register("potassic_porphyry",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRANITE).mapColor(MapColor.TERRACOTTA_PINK));
+    public static final DeferredBlock<Block> PHYLLIC_ROCK = register("phyllic_rock",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(1.2F, 4.0F));
+    public static final DeferredBlock<Block> PROPYLITE = register("propylite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_GREEN));
+    public static final DeferredBlock<Block> GOSSAN = register("gossan",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_BROWN)
+                    .strength(1.0F, 3.0F));
+    public static final DeferredBlock<Block> BLEACHED_PORPHYRY = register("bleached_porphyry",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(1.0F, 3.0F));
+    public static final DeferredBlock<Block> TOURMALINE_BRECCIA = register("tourmaline_breccia",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_BLACK).strength(2.0F, 6.0F));
+
     public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
             registerPieces("coal_pieces", MapColor.COLOR_BLACK, () -> Items.COAL);
     public static final DeferredBlock<CoalPiecesBlock> LIGNITE_PIECES =
