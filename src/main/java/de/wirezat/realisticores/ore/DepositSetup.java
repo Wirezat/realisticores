@@ -52,7 +52,10 @@ public final class DepositSetup {
                 continue;
             }
             double fraction = fractions.getOrDefault(mineral.ore(), mineral.fraction());
-            active.add(new ActiveMineral(mineral.ore(), mineral.zones(), fraction, mineral.graded(), block, enabled));
+            Map<String, String> zoneBlocks = enabled && !overrides.containsKey(mineral.ore()) ? mineral.zoneBlocks()
+                    : Map.of();
+            active.add(new ActiveMineral(mineral.ore(), mineral.zones(), fraction, mineral.graded(), block, enabled,
+                    zoneBlocks));
         }
         return List.copyOf(active);
     }

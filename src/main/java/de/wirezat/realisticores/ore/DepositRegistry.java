@@ -53,9 +53,14 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
             JsonObject mineral = element.getAsJsonObject();
             List<String> zones = new ArrayList<>();
             mineral.getAsJsonArray("zones").forEach(zone -> zones.add(zone.getAsString()));
+            Map<String, String> zoneBlocks = new LinkedHashMap<>();
+            if (mineral.has("blocks")) {
+                mineral.getAsJsonObject("blocks").entrySet()
+                        .forEach(entry -> zoneBlocks.put(entry.getKey(), entry.getValue().getAsString()));
+            }
             minerals.add(new Mineral(mineral.get("ore").getAsString(), List.copyOf(zones),
                     mineral.get("fraction").getAsDouble(),
-                    mineral.has("graded") && mineral.get("graded").getAsBoolean()));
+                    mineral.has("graded") && mineral.get("graded").getAsBoolean(), Map.copyOf(zoneBlocks)));
         }
         return List.copyOf(minerals);
     }

@@ -79,9 +79,10 @@ public final class CoalCarver {
     private static Map<String, Accent> accents(List<ActiveMineral> minerals) {
         Map<String, Accent> accents = new HashMap<>();
         for (ActiveMineral mineral : minerals) {
-            BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block())).ifPresent(block ->
-                    mineral.zones().forEach(zone -> accents.put(zone,
-                            new Accent(mineral.ore(), block.defaultBlockState(), mineral.fraction()))));
+            for (String zone : mineral.zones()) {
+                BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.blockFor(zone))).ifPresent(block ->
+                        accents.put(zone, new Accent(mineral.ore(), block.defaultBlockState(), mineral.fraction())));
+            }
         }
         return accents;
     }

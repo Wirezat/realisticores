@@ -59,6 +59,22 @@ class DepositSetupTest {
     }
 
     @Test
+    void zoneBlocksApplyOnlyWhileTheOreIsEnabledWithoutOverride() {
+        Deposit deposit = new Deposit("basin", List.of(new Mineral("siderite", List.of("SHALE", "MUDSTONE"), 0.04,
+                false, Map.of("MUDSTONE", "mod:mudstone_ore"))));
+        DepositRegistry registry = new DepositRegistry(
+                Map.of("siderite", new OreDefinition("siderite", "mod:shale_ore", "c:ores/siderite", 0, 0)),
+                Map.of("basin", deposit));
+        ActiveMineral on = DepositSetup.activeMinerals(deposit, registry, Set.of("siderite"), Map.of(), Map.of(),
+                Map.of()).get(0);
+        assertEquals("mod:shale_ore", on.blockFor("SHALE"));
+        assertEquals("mod:mudstone_ore", on.blockFor("MUDSTONE"));
+        ActiveMineral overridden = DepositSetup.activeMinerals(deposit, registry, Set.of("siderite"),
+                Map.of("siderite", "other:iron_ore"), Map.of(), Map.of()).get(0);
+        assertEquals("other:iron_ore", overridden.blockFor("MUDSTONE"));
+    }
+
+    @Test
     void shippedOresHaveAValidExperienceRange() {
         for (OreDefinition ore : DepositRegistry.load().ores().values()) {
             assertTrue(ore.xpMin() >= 0 && ore.xpMin() <= ore.xpMax(), ore.id());

@@ -5,6 +5,8 @@
     {"ore": "anthracite", "zones": ["ANTHRACITE"], "fraction": 1.0},
     {"ore": "uranium", "zones": ["SANDSTONE"], "fraction": 0.35},
     {"ore": "pyrite", "zones": ["BLACK_SHALE"], "fraction": 0.03},
-    {"ore": "sal_ammoniac", "zones": ["SEAM_FIRE"], "fraction": 0.3}
+    {"ore": "sal_ammoniac", "zones": ["SEAM_FIRE"], "fraction": 0.3},
+    {"ore": "siderite", "zones": ["SHALE", "MUDSTONE", "BLACKBAND"], "fraction": 0.04,
+     "blocks": {"MUDSTONE": "realisticores:mudstone_ironstone_ore", "BLACKBAND": "realisticores:blackband_ironstone"}}
   ]
 }
