@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 
-/** Armour trim materials, one per resource. */
+/** Armour trim materials of the resources that have one. */
 final class TrimMaterials {
     private TrimMaterials() {
     }
@@ -27,17 +27,21 @@ final class TrimMaterials {
      */
     static void bootstrap(BootstrapContext<TrimMaterial> context) {
         for (Resources.Resource resource : Resources.RESOURCES) {
+            Resources.Trim trim = resource.trim();
+            if (trim == null) {
+                continue;
+            }
             ResourceKey<TrimMaterial> key = ResourceKey.create(Registries.TRIM_MATERIAL,
-                    ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, resource.name()));
+                    ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, trim.name()));
             Component description = Component.translatable(
-                    "trim_material." + RealisticOres.MOD_ID + "." + resource.name())
-                    .withStyle(Style.EMPTY.withColor(TextColor.parseColor(resource.trimColor()).getOrThrow()));
-            String asset = RealisticOres.MOD_ID + "_" + resource.name();
-            Map<Holder<ArmorMaterial>, String> darker = resource.darkerOn().stream().collect(Collectors.toMap(
+                    "trim_material." + RealisticOres.MOD_ID + "." + trim.name())
+                    .withStyle(Style.EMPTY.withColor(TextColor.parseColor(trim.color()).getOrThrow()));
+            String asset = RealisticOres.MOD_ID + "_" + trim.name();
+            Map<Holder<ArmorMaterial>, String> darker = trim.darkerOn().stream().collect(Collectors.toMap(
                     armor -> BuiltInRegistries.ARMOR_MATERIAL.getHolderOrThrow(
                             ResourceKey.create(Registries.ARMOR_MATERIAL, ResourceLocation.parse(armor))),
                     armor -> asset + "_darker"));
-            context.register(key, TrimMaterial.create(asset, resource.item().asItem(), resource.trimIndex(),
+            context.register(key, TrimMaterial.create(asset, resource.item().asItem(), trim.index(),
                     description, darker));
         }
     }

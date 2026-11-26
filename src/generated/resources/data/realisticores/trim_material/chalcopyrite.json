@@ -1,9 +1,0 @@
-{
-  "asset_name": "realisticores_chalcopyrite",
-  "description": {
-    "color": "#9A922E",
-    "translate": "trim_material.realisticores.chalcopyrite"
-  },
-  "ingredient": "realisticores:chalcopyrite",
-  "item_model_index": 0.6
-}

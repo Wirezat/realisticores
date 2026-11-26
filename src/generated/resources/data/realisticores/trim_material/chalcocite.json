@@ -1,9 +1,0 @@
-{
-  "asset_name": "realisticores_chalcocite",
-  "description": {
-    "color": "#4F5578",
-    "translate": "trim_material.realisticores.chalcocite"
-  },
-  "ingredient": "realisticores:chalcocite",
-  "item_model_index": 0.3
-}

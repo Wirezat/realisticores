@@ -41,7 +41,9 @@ final class ModItemTags extends ItemTagsProvider {
             resource.itemTags().forEach(name -> tag(common(name)).add(resource.item().asItem()));
             copy(ModBlockTags.common("storage_blocks/" + resource.storageTag()),
                     common("storage_blocks/" + resource.storageTag()));
-            tag(ItemTags.TRIM_MATERIALS).add(resource.item().asItem());
+            if (resource.trim() != null) {
+                tag(ItemTags.TRIM_MATERIALS).add(resource.item().asItem());
+            }
         }
         Resources.RESOURCES.stream().flatMap(resource -> resource.itemTags().stream()).distinct().forEach(name ->
                 tag(common(name.substring(0, name.indexOf('/')))).addTag(common(name)));

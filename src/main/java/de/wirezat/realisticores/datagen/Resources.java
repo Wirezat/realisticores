@@ -27,20 +27,28 @@ final class Resources {
     }
 
     /**
-     * A gem or raw material with its storage block and armour trim colour.
+     * A gem or raw material with its storage block and optional armour trim material.
      *
-     * @param name trim material id
      * @param item the item
      * @param itemTags common tags of the item without the {@code c:} namespace, such as {@code gems/peridot}
      * @param block block of nine items
      * @param storageTag name of its {@code c:storage_blocks/} tag
      * @param tier tool tier the block needs
-     * @param trimColor colour of trim names as {@code #RRGGBB}
-     * @param trimIndex item model index of the trim material
+     * @param trim armour trim material of the item, or null for none
+     */
+    record Resource(ItemLike item, List<String> itemTags, DeferredBlock<? extends Block> block, String storageTag,
+            Tier tier, Trim trim) {
+    }
+
+    /**
+     * An armour trim material.
+     *
+     * @param name trim material id
+     * @param color colour of trim names as {@code #RRGGBB}
+     * @param index item model index of the trim material
      * @param darkerOn armour materials of the same colour, on which the trim uses its darker palette
      */
-    record Resource(String name, ItemLike item, List<String> itemTags, DeferredBlock<? extends Block> block,
-            String storageTag, Tier tier, String trimColor, float trimIndex, List<String> darkerOn) {
+    record Trim(String name, String color, float index, List<String> darkerOn) {
     }
 
     /**
@@ -69,44 +77,43 @@ final class Resources {
     }
 
     static final List<Resource> RESOURCES = List.of(
-            new Resource("graphite", ModItems.GRAPHITE, List.of("raw_materials/graphite"), ModBlocks.GRAPHITE_BLOCK,
-                    "graphite", Tier.STONE, "#77787E", 0.3F, List.of()),
-            new Resource("natural_diamond", ModItems.NATURAL_DIAMOND, List.of("gems/diamond"),
-                    ModBlocks.NATURAL_DIAMOND_BLOCK, "diamond", Tier.IRON, "#6EECD2", 0.8F,
-                    List.of("minecraft:diamond")),
-            new Resource("bort", ModItems.BORT, List.of("gems/bort"), ModBlocks.BORT_BLOCK, "bort", Tier.IRON,
-                    "#B1AC9C", 0.1F, List.of()),
-            new Resource("peridot", ModItems.PERIDOT, List.of("gems/peridot"), ModBlocks.PERIDOT_BLOCK, "peridot",
-                    Tier.IRON, "#6FB52F", 0.7F, List.of()),
-            new Resource("pyrope", ModItems.PYROPE, List.of("gems/pyrope"), ModBlocks.PYROPE_BLOCK, "pyrope",
-                    Tier.IRON, "#C42A40", 0.4F, List.of()),
-            new Resource("chromite", ModItems.CHROMITE, List.of("raw_materials/chromite"), ModBlocks.CHROMITE_BLOCK,
-                    "raw_chromite", Tier.STONE, "#8F7672", 0.3F, List.of()),
-            new Resource("ilmenite", ModItems.ILMENITE, List.of("raw_materials/ilmenite"), ModBlocks.ILMENITE_BLOCK,
-                    "raw_ilmenite", Tier.STONE, "#7F95B4", 0.2F, List.of()),
-            new Resource("lignite", ModItems.LIGNITE, List.of("gems/lignite_coal"), ModBlocks.LIGNITE_BLOCK,
-                    "lignite_coal", Tier.ANY, "#80603E", 0.5F, List.of()),
-            new Resource("anthracite", ModItems.ANTHRACITE, List.of("gems/anthracite"), ModBlocks.ANTHRACITE_BLOCK,
-                    "anthracite", Tier.STONE, "#56657F", 0.3F, List.of()),
-            new Resource("uranium", ModItems.RAW_URANIUM, List.of("raw_materials/uranium"),
-                    ModBlocks.RAW_URANIUM_BLOCK, "raw_uranium", Tier.STONE, "#A9B82C", 0.7F, List.of()),
-            new Resource("pyrite", ModItems.PYRITE, List.of(), ModBlocks.PYRITE_BLOCK, "pyrite", Tier.STONE,
-                    "#BCAE55", 0.6F, List.of()),
-            new Resource("sal_ammoniac", ModItems.SAL_AMMONIAC, List.of(), ModBlocks.SAL_AMMONIAC_BLOCK,
-                    "sal_ammoniac", Tier.STONE, "#DDD2A6", 0.1F, List.of()),
-            new Resource("siderite", ModItems.RAW_SIDERITE, List.of("raw_materials/siderite", "raw_materials/iron"),
-                    ModBlocks.RAW_SIDERITE_BLOCK, "raw_siderite", Tier.STONE, "#A0683A", 0.2F, List.of()),
-            new Resource("malachite", ModItems.MALACHITE, List.of("raw_materials/malachite", "raw_materials/copper"),
-                    ModBlocks.MALACHITE_BLOCK, "raw_malachite", Tier.STONE, "#2E9A62", 0.7F, List.of()),
-            new Resource("azurite", ModItems.AZURITE, List.of("raw_materials/azurite", "raw_materials/copper"),
-                    ModBlocks.AZURITE_BLOCK, "raw_azurite", Tier.STONE, "#2D4FB8", 0.9F, List.of()),
-            new Resource("chalcopyrite", ModItems.CHALCOPYRITE,
-                    List.of("raw_materials/chalcopyrite", "raw_materials/copper"), ModBlocks.CHALCOPYRITE_BLOCK,
-                    "raw_chalcopyrite", Tier.STONE, "#9A922E", 0.6F, List.of()),
-            new Resource("molybdenite", ModItems.MOLYBDENITE, List.of("raw_materials/molybdenite"),
-                    ModBlocks.MOLYBDENITE_BLOCK, "raw_molybdenite", Tier.STONE, "#868C99", 0.2F, List.of()),
-            new Resource("chalcocite", ModItems.CHALCOCITE, List.of("raw_materials/chalcocite", "raw_materials/copper"),
-                    ModBlocks.CHALCOCITE_BLOCK, "raw_chalcocite", Tier.STONE, "#4F5578", 0.3F, List.of()));
+            new Resource(ModItems.GRAPHITE, List.of("raw_materials/graphite"), ModBlocks.GRAPHITE_BLOCK, "graphite",
+                    Tier.STONE, null),
+            new Resource(ModItems.NATURAL_DIAMOND, List.of("gems/diamond"), ModBlocks.NATURAL_DIAMOND_BLOCK, "diamond",
+                    Tier.IRON, new Trim("natural_diamond", "#6EECD2", 0.8F, List.of("minecraft:diamond"))),
+            new Resource(ModItems.BORT, List.of("gems/bort"), ModBlocks.BORT_BLOCK, "bort", Tier.IRON, null),
+            new Resource(ModItems.PERIDOT, List.of("gems/peridot"), ModBlocks.PERIDOT_BLOCK, "peridot", Tier.IRON,
+                    new Trim("peridot", "#6FB52F", 0.7F, List.of())),
+            new Resource(ModItems.PYROPE, List.of("gems/pyrope"), ModBlocks.PYROPE_BLOCK, "pyrope", Tier.IRON,
+                    new Trim("pyrope", "#C42A40", 0.4F, List.of())),
+            new Resource(ModItems.CHROMITE, List.of("raw_materials/chromite"), ModBlocks.CHROMITE_BLOCK, "raw_chromite",
+                    Tier.STONE, null),
+            new Resource(ModItems.ILMENITE, List.of("raw_materials/ilmenite"), ModBlocks.ILMENITE_BLOCK, "raw_ilmenite",
+                    Tier.STONE, null),
+            new Resource(ModItems.LIGNITE, List.of("gems/lignite_coal"), ModBlocks.LIGNITE_BLOCK, "lignite_coal",
+                    Tier.ANY, null),
+            new Resource(ModItems.ANTHRACITE, List.of("gems/anthracite"), ModBlocks.ANTHRACITE_BLOCK, "anthracite",
+                    Tier.STONE, null),
+            new Resource(ModItems.RAW_URANIUM, List.of("raw_materials/uranium"), ModBlocks.RAW_URANIUM_BLOCK,
+                    "raw_uranium", Tier.STONE, null),
+            new Resource(ModItems.PYRITE, List.of(), ModBlocks.PYRITE_BLOCK, "pyrite", Tier.STONE,
+                    new Trim("pyrite", "#BCAE55", 0.6F, List.of())),
+            new Resource(ModItems.SAL_AMMONIAC, List.of(), ModBlocks.SAL_AMMONIAC_BLOCK, "sal_ammoniac", Tier.STONE,
+                    null),
+            new Resource(ModItems.RAW_SIDERITE, List.of("raw_materials/siderite", "raw_materials/iron"),
+                    ModBlocks.RAW_SIDERITE_BLOCK, "raw_siderite", Tier.STONE, null),
+            new Resource(ModItems.MALACHITE, List.of("raw_materials/malachite", "raw_materials/copper"),
+                    ModBlocks.MALACHITE_BLOCK, "raw_malachite", Tier.STONE,
+                    new Trim("malachite", "#2E9A62", 0.7F, List.of())),
+            new Resource(ModItems.AZURITE, List.of("raw_materials/azurite", "raw_materials/copper"),
+                    ModBlocks.AZURITE_BLOCK, "raw_azurite", Tier.STONE,
+                    new Trim("azurite", "#2D4FB8", 0.9F, List.of())),
+            new Resource(ModItems.CHALCOPYRITE, List.of("raw_materials/chalcopyrite", "raw_materials/copper"),
+                    ModBlocks.CHALCOPYRITE_BLOCK, "raw_chalcopyrite", Tier.STONE, null),
+            new Resource(ModItems.MOLYBDENITE, List.of("raw_materials/molybdenite"), ModBlocks.MOLYBDENITE_BLOCK,
+                    "raw_molybdenite", Tier.STONE, null),
+            new Resource(ModItems.CHALCOCITE, List.of("raw_materials/chalcocite", "raw_materials/copper"),
+                    ModBlocks.CHALCOCITE_BLOCK, "raw_chalcocite", Tier.STONE, null));
 
     private static final List<String> IRONSTONE = List.of("ores/siderite", "ores/iron");
     private static final List<String> CHALCOPYRITE = List.of("ores/chalcopyrite", "ores/copper");

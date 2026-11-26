@@ -27,7 +27,7 @@ Vanilla ores come as scattered blobs that tell you nothing. In RealisticOres an 
 - **[Porphyry copper](#porphyry-copper-in-progress)** (in progress): zoned copper rock from gossan cap to potassic core.
 - **[Prospecting](#prospecting)**: pan sediment for indicator minerals, follow their trail upstream, buy a map to the nearest field.
 - **[Crystal press](#crystal-press)**: press graphite into synthetic diamond, faster and richer with the right catalyst and a seed crystal.
-- **[Plays well with others](#compatibility)**: enabled ores suppress same-tagged ores of vanilla and other mods; every resource carries `c:` tags, a storage block and an armor trim colour.
+- **[Plays well with others](#compatibility)**: enabled ores suppress same-tagged ores of vanilla and other mods; every resource carries `c:` tags and a storage block; gems and ornamental stones are armor trim materials.
 
 ## Deposits
 
@@ -120,7 +120,7 @@ Configs live in `config/realisticores/` and reload while the game runs; changes 
 - **Ore suppression.** Enabling an ore removes the natural generation of every overworld ore with the same tag, from vanilla and from other mods. Enabling `coal` removes vanilla coal ore and anything else in `c:ores/coal`; enabling `uranium` removes other mods' uranium ores. Other dimensions are left alone. Siderite never suppresses vanilla iron.
 - **`suppressedOres`** in `main.toml` suppresses further ores, by block id or tag (`#c:ores/tin`).
 - **`oreBlockOverrides`** places another mod's block instead of this mod's ore while the ore is enabled, e.g. `peridot=othermod:peridot_ore`.
-- **Tags.** Every resource carries the common `c:` tags (`c:ores/*`, `c:gems/*`, `c:raw_materials/*`, `c:storage_blocks/*`) and its own armor trim material.
+- **Tags.** Every resource carries the common `c:` tags (`c:ores/*`, `c:gems/*`, `c:raw_materials/*`, `c:storage_blocks/*`). Gems and ornamental stones (natural diamond, peridot, pyrope, malachite, azurite, pyrite) are armor trim materials; raw ores and coals are not, as in vanilla.
 - **JEI and EMI** show the crystal press recipes. Both are optional.
 
 ## Building from source

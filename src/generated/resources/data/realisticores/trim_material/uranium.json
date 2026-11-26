@@ -1,9 +1,0 @@
-{
-  "asset_name": "realisticores_uranium",
-  "description": {
-    "color": "#A9B82C",
-    "translate": "trim_material.realisticores.uranium"
-  },
-  "ingredient": "realisticores:raw_uranium",
-  "item_model_index": 0.7
-}

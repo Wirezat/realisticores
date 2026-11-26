@@ -1,9 +1,0 @@
-{
-  "asset_name": "realisticores_chromite",
-  "description": {
-    "color": "#8F7672",
-    "translate": "trim_material.realisticores.chromite"
-  },
-  "ingredient": "realisticores:chromite",
-  "item_model_index": 0.3
-}
