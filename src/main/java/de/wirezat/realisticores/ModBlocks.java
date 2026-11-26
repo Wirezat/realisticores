@@ -188,6 +188,8 @@ public final class ModBlocks {
                     .strength(2.0F, 4.0F));
     public static final DeferredBlock<Block> CHALCOCITE_BLOCK = register("chalcocite_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_BLACK));
+    public static final DeferredBlock<Block> TOURMALINE_BLOCK = register("tourmaline_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.EMERALD_BLOCK).mapColor(MapColor.COLOR_BLACK));
 
     public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
             registerPieces("coal_pieces", MapColor.COLOR_BLACK, () -> Items.COAL);

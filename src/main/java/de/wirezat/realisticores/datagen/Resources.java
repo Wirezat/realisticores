@@ -113,7 +113,9 @@ final class Resources {
             new Resource(ModItems.MOLYBDENITE, List.of("raw_materials/molybdenite"), ModBlocks.MOLYBDENITE_BLOCK,
                     "raw_molybdenite", Tier.STONE, null),
             new Resource(ModItems.CHALCOCITE, List.of("raw_materials/chalcocite", "raw_materials/copper"),
-                    ModBlocks.CHALCOCITE_BLOCK, "raw_chalcocite", Tier.STONE, null));
+                    ModBlocks.CHALCOCITE_BLOCK, "raw_chalcocite", Tier.STONE, null),
+            new Resource(ModItems.TOURMALINE, List.of("gems/tourmaline"), ModBlocks.TOURMALINE_BLOCK, "tourmaline",
+                    Tier.IRON, new Trim("tourmaline", "#77828F", 0.3F, List.of())));
 
     private static final List<String> IRONSTONE = List.of("ores/siderite", "ores/iron");
     private static final List<String> CHALCOPYRITE = List.of("ores/chalcopyrite", "ores/copper");
@@ -190,6 +192,7 @@ final class Resources {
                 ModBlocks.PERIDOT_BLOCK, ModBlocks.PYRITE_BLOCK, ModBlocks.PYROPE_BLOCK,
                 ModBlocks.RAW_SIDERITE_BLOCK, ModBlocks.RAW_URANIUM_BLOCK, ModBlocks.SAL_AMMONIAC_BLOCK,
                 ModBlocks.MALACHITE_BLOCK, ModBlocks.AZURITE_BLOCK, ModBlocks.CHALCOPYRITE_BLOCK,
-                ModBlocks.MOLYBDENITE_BLOCK, ModBlocks.CHALCOCITE_BLOCK);
+                ModBlocks.MOLYBDENITE_BLOCK, ModBlocks.CHALCOCITE_BLOCK,
+                ModBlocks.TOURMALINE_BLOCK);
     }
 }

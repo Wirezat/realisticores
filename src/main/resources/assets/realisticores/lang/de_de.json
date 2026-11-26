@@ -115,5 +115,8 @@
   "trim_material.realisticores.azurite": "Azurit",
   "block.realisticores.chalcocite_ore": "Chalkosinerz",
   "block.realisticores.chalcocite_block": "Chalkosinblock",
-  "item.realisticores.chalcocite": "Chalkosin"
+  "item.realisticores.chalcocite": "Chalkosin",
+  "item.realisticores.tourmaline": "Turmalin",
+  "block.realisticores.tourmaline_block": "Turmalinblock",
+  "trim_material.realisticores.tourmaline": "Turmalin"
 }

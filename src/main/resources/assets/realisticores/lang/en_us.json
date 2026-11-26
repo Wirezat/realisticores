@@ -115,5 +115,8 @@
   "trim_material.realisticores.azurite": "Azurite Material",
   "block.realisticores.chalcocite_ore": "Chalcocite Ore",
   "block.realisticores.chalcocite_block": "Block of Chalcocite",
-  "item.realisticores.chalcocite": "Chalcocite"
+  "item.realisticores.chalcocite": "Chalcocite",
+  "item.realisticores.tourmaline": "Tourmaline",
+  "block.realisticores.tourmaline_block": "Block of Tourmaline",
+  "trim_material.realisticores.tourmaline": "Tourmaline Material"
 }

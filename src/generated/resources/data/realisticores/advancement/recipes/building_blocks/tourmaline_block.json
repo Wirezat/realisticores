@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:tourmaline_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tourmaline": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:tourmaline"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tourmaline"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:tourmaline_block"
+    ]
+  }
+}

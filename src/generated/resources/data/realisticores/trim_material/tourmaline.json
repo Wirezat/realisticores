@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_tourmaline",
+  "description": {
+    "color": "#77828F",
+    "translate": "trim_material.realisticores.tourmaline"
+  },
+  "ingredient": "realisticores:tourmaline",
+  "item_model_index": 0.3
+}

@@ -48,7 +48,8 @@
         "realisticores_pyrope": "realisticores:trims/color_palettes/pyrope",
         "realisticores_pyrite": "realisticores:trims/color_palettes/pyrite",
         "realisticores_malachite": "realisticores:trims/color_palettes/malachite",
-        "realisticores_azurite": "realisticores:trims/color_palettes/azurite"
+        "realisticores_azurite": "realisticores:trims/color_palettes/azurite",
+        "realisticores_tourmaline": "realisticores:trims/color_palettes/tourmaline"
       }
     }
   ]
