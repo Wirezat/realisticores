@@ -1,7 +1,66 @@
 {
   "variants": {
-    "": {
-      "model": "realisticores:block/blackband_ironstone"
-    }
+    "": [
+      {
+        "model": "realisticores:block/blackband_ironstone"
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_1"
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_1",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_1",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_1",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_2"
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_2",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_2",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_2",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_3"
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_3",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_3",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/blackband_ironstone_3",
+        "y": 270
+      }
+    ]
   }
 }

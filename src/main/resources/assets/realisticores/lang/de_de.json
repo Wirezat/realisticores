@@ -93,5 +93,6 @@
   "block.realisticores.blackband_ironstone": "Kohleneisenstein",
   "block.realisticores.rust_stained_shale": "Rostfleckiger Schiefer",
   "block.realisticores.raw_siderite_block": "Roheisensteinblock",
-  "item.realisticores.raw_siderite": "Roheisenstein"
+  "item.realisticores.raw_siderite": "Roheisenstein",
+  "trim_material.realisticores.siderite": "Siderit"
 }

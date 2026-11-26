@@ -93,5 +93,6 @@
   "block.realisticores.blackband_ironstone": "Blackband Ironstone",
   "block.realisticores.rust_stained_shale": "Rust-Stained Shale",
   "block.realisticores.raw_siderite_block": "Block of Raw Siderite",
-  "item.realisticores.raw_siderite": "Raw Siderite"
+  "item.realisticores.raw_siderite": "Raw Siderite",
+  "trim_material.realisticores.siderite": "Siderite Material"
 }

@@ -1,7 +1,66 @@
 {
   "variants": {
-    "": {
-      "model": "realisticores:block/rust_stained_shale"
-    }
+    "": [
+      {
+        "model": "realisticores:block/rust_stained_shale"
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_1"
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_1",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_1",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_1",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_2"
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_2",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_2",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_2",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_3"
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_3",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_3",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/rust_stained_shale_3",
+        "y": 270
+      }
+    ]
   }
 }
