@@ -3,6 +3,7 @@ package de.wirezat.realisticores;
 import de.wirezat.realisticores.coal.CoalConfig;
 import de.wirezat.realisticores.coal.CoalOres;
 import de.wirezat.realisticores.coal.Rank;
+import de.wirezat.realisticores.kimberlite.KimberliteConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.Deposit;
 import de.wirezat.realisticores.ore.DepositRegistry;
@@ -105,16 +106,6 @@ public final class OreConfig {
     }
 
     /**
-     * Checks a replacement entry of a deposit config.
-     *
-     * @param entry config value
-     * @return true for an empty string or a block id
-     */
-    public static boolean isValidReplacement(Object entry) {
-        return entry instanceof String text && (text.isEmpty() || ResourceLocation.tryParse(text) != null);
-    }
-
-    /**
      * Gives the largest search radius of the command.
      *
      * @return radius in blocks
@@ -132,8 +123,8 @@ public final class OreConfig {
         Resolved resolved = cachedResolved;
         if (resolved == null) {
             resolved = resolve(SUPPRESSED_ORES.get(), ENABLED_ORES.get(), ORE_OVERRIDES.get(),
-                    KimberliteConfig.fractions(), KimberliteConfig.replacements(), CoalConfig.fractions(),
-                    CoalConfig.replacements());
+                    KimberliteConfig.MINERALS.fractions(), KimberliteConfig.MINERALS.replacements(),
+                    CoalConfig.MINERALS.fractions(), CoalConfig.MINERALS.replacements());
             cachedResolved = resolved;
         }
         return resolved;

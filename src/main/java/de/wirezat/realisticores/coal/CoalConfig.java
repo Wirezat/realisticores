@@ -1,9 +1,10 @@
 package de.wirezat.realisticores.coal;
 
+import static de.wirezat.realisticores.config.ConfigValues.decimal;
+import static de.wirezat.realisticores.config.ConfigValues.integer;
+
 import de.wirezat.realisticores.OreConfig;
-import de.wirezat.realisticores.ore.Mineral;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import de.wirezat.realisticores.config.MineralConfig;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -11,102 +12,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /** Feature config of the coal basin: where basins lie and what their seams look like. */
 public final class CoalConfig {
     public static final ModConfigSpec SPEC;
+    public static final MineralConfig MINERALS;
 
-    private static final Supplier<Integer> BASIN_CELL_SIZE;
-    private static final Supplier<Double> BASIN_CHANCE;
-    private static final Supplier<Double> BASIN_JITTER;
-    private static final Supplier<Integer> BASIN_MIN_RADIUS;
-    private static final Supplier<Integer> BASIN_MAX_RADIUS;
-    private static final Supplier<Double> BASIN_MIN_ASPECT;
-    private static final Supplier<Double> BASIN_OUTLINE_NOISE;
-    private static final Supplier<Double> BASIN_OUTLINE_WAVELENGTH;
-    private static final Supplier<Double> BASIN_HARD_COAL_SHARE;
-    private static final Supplier<Integer> RELIEF_MOUNTAIN_RELIEF;
-    private static final Supplier<Integer> RELIEF_FOOTHILL_RISE;
-    private static final Supplier<Integer> RELIEF_FOOTHILL_POINTS;
-    private static final Supplier<Integer> HARD_COAL_MIN_DEPTH;
-    private static final Supplier<Integer> HARD_COAL_MAX_DEPTH;
-    private static final Supplier<Integer> HARD_COAL_MIN_SEAMS;
-    private static final Supplier<Integer> HARD_COAL_MAX_SEAMS;
-    private static final Supplier<Double> HARD_COAL_MIN_THICKNESS;
-    private static final Supplier<Double> HARD_COAL_MAX_THICKNESS;
-    private static final Supplier<Integer> HARD_COAL_MIN_SPACING;
-    private static final Supplier<Integer> HARD_COAL_MAX_SPACING;
-    private static final Supplier<Integer> HARD_COAL_MAX_FAULTS;
-    private static final Supplier<Integer> LIGNITE_MIN_DEPTH;
-    private static final Supplier<Integer> LIGNITE_MAX_DEPTH;
-    private static final Supplier<Integer> LIGNITE_MIN_SEAMS;
-    private static final Supplier<Integer> LIGNITE_MAX_SEAMS;
-    private static final Supplier<Double> LIGNITE_MIN_THICKNESS;
-    private static final Supplier<Double> LIGNITE_MAX_THICKNESS;
-    private static final Supplier<Integer> LIGNITE_MIN_SPACING;
-    private static final Supplier<Integer> LIGNITE_MAX_SPACING;
-    private static final Supplier<Integer> LIGNITE_MAX_FAULTS;
-    private static final Supplier<Integer> FOLDED_MIN_DEPTH;
-    private static final Supplier<Integer> FOLDED_MAX_DEPTH;
-    private static final Supplier<Integer> FOLDED_MIN_SEAMS;
-    private static final Supplier<Integer> FOLDED_MAX_SEAMS;
-    private static final Supplier<Double> FOLDED_MIN_THICKNESS;
-    private static final Supplier<Double> FOLDED_MAX_THICKNESS;
-    private static final Supplier<Integer> FOLDED_MIN_SPACING;
-    private static final Supplier<Integer> FOLDED_MAX_SPACING;
-    private static final Supplier<Integer> FOLDED_MAX_FAULTS;
-    private static final Supplier<Double> FOLD_MIN_AMPLITUDE;
-    private static final Supplier<Double> FOLD_MAX_AMPLITUDE;
-    private static final Supplier<Double> FOLD_MIN_WAVELENGTH;
-    private static final Supplier<Double> FOLD_MAX_WAVELENGTH;
-    private static final Supplier<Double> FOLD_CORE_SHARE;
-    private static final Supplier<Double> SEAM_COVER;
-    private static final Supplier<Double> SEAM_THICKNESS_BASE;
-    private static final Supplier<Double> SEAM_THICKNESS_NOISE;
-    private static final Supplier<Double> SEAM_THICKNESS_WAVELENGTH;
-    private static final Supplier<Double> SEAM_PINCH_OUT;
-    private static final Supplier<Double> SEAM_MIN_THICKNESS;
-    private static final Supplier<Double> SEAM_WAVE_AMPLITUDE;
-    private static final Supplier<Double> SEAM_WAVE_WAVELENGTH;
-    private static final Supplier<Double> SEAM_SPLIT_THRESHOLD;
-    private static final Supplier<Double> SEAM_SPLIT_WAVELENGTH;
-    private static final Supplier<Integer> SEAM_MAX_PARTING;
-    private static final Supplier<Double> SEAM_MIN_THROW;
-    private static final Supplier<Double> SEAM_MAX_THROW;
-    private static final Supplier<Double> SEAM_FAULT_WAVE_AMPLITUDE;
-    private static final Supplier<Double> SEAM_FAULT_WAVE_WAVELENGTH;
-    private static final Supplier<Double> SEAM_OUTCROP_THRESHOLD;
-    private static final Supplier<Double> SEAM_OUTCROP_WAVELENGTH;
-    private static final Supplier<Integer> ROCK_MIN_SHALE;
-    private static final Supplier<Integer> ROCK_MAX_SHALE;
-    private static final Supplier<Integer> ROCK_MIN_BLACK_SHALE;
-    private static final Supplier<Integer> ROCK_MAX_BLACK_SHALE;
-    private static final Supplier<Integer> ROCK_MIN_FIRECLAY;
-    private static final Supplier<Integer> ROCK_MAX_FIRECLAY;
-    private static final Supplier<Integer> ROCK_MIN_ROOF_MUDSTONE;
-    private static final Supplier<Integer> ROCK_MAX_ROOF_MUDSTONE;
-    private static final Supplier<Integer> ROCK_MIN_FLOOR_MUDSTONE;
-    private static final Supplier<Integer> ROCK_MAX_FLOOR_MUDSTONE;
-    private static final Supplier<Double> ROCK_WAVELENGTH;
-    private static final Supplier<Double> SURFACE_LOOSE_DENSITY;
-    private static final Supplier<Integer> SURFACE_LOOSE_MAX_HEIGHT;
-    private static final Supplier<Double> SURFACE_SOIL_THRESHOLD;
-    private static final Supplier<Double> SURFACE_SOIL_WAVELENGTH;
-    private static final Supplier<Integer> SURFACE_SOIL_FRINGE;
-    private static final Supplier<Integer> ACC_SAND_MIN;
-    private static final Supplier<Integer> ACC_SAND_MAX;
-    private static final Supplier<Integer> ACC_LIGNITE_SAND_MIN;
-    private static final Supplier<Integer> ACC_LIGNITE_SAND_MAX;
-    private static final Supplier<Double> ACC_SAND_COVER;
-    private static final Supplier<Double> ACC_SAND_WAVELENGTH;
-    private static final Supplier<Double> ACC_FRONT_MIN;
-    private static final Supplier<Double> ACC_FRONT_MAX;
-    private static final Supplier<Integer> ACC_FRONT_BAND;
-    private static final Supplier<Integer> ACC_FIRE_CELL;
-    private static final Supplier<Double> ACC_FIRE_CHANCE;
-    private static final Supplier<Integer> ACC_FIRE_MIN_RADIUS;
-    private static final Supplier<Integer> ACC_FIRE_MAX_RADIUS;
-    private static final Supplier<Integer> ACC_FIRE_DEPTH;
-    private static final Supplier<Double> ACC_BLACKBAND_COVER;
-    private static final Supplier<Integer> ACC_RUST_DEPTH;
-    private static final Map<String, Supplier<Double>> MINERAL_FRACTIONS = new LinkedHashMap<>();
-    private static final Map<String, Supplier<String>> MINERAL_REPLACEMENTS = new LinkedHashMap<>();
+    private static final Supplier<CoalParams> PARAMS;
     private static final Map<String, String> DEFAULT_REPLACEMENTS = Map.of("coal", "realisticores:black_shale",
             "lignite", "realisticores:mudstone", "anthracite", "realisticores:black_shale");
 
@@ -115,281 +23,231 @@ public final class CoalConfig {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
         b.comment("Position, size and outline of basins.").push("basin");
-        BASIN_CELL_SIZE = integer(b, "cellSize", d.basin().cellSize(), 256, 100000,
+        Supplier<Integer> basinCellSize = integer(b, "cellSize", d.basin().cellSize(), 256, 100000,
                 "Grid cell size in blocks; each cell holds at most one basin.");
-        BASIN_CHANCE = decimal(b, "chance", d.basin().chance(), 0.0, 1.0,
+        Supplier<Double> basinChance = decimal(b, "chance", d.basin().chance(), 0.0, 1.0,
                 "Probability that a cell holds a basin.");
-        BASIN_JITTER = decimal(b, "jitter", d.basin().jitter(), 0.0, 0.4,
+        Supplier<Double> basinJitter = decimal(b, "jitter", d.basin().jitter(), 0.0, 0.4,
                 "Maximum offset of the centre from the cell centre, as a fraction of the cell size.");
-        BASIN_MIN_RADIUS = integer(b, "minRadius", d.basin().minRadius(), 16, 20000,
+        Supplier<Integer> basinMinRadius = integer(b, "minRadius", d.basin().minRadius(), 16, 20000,
                 "Smallest mean radius in blocks.");
-        BASIN_MAX_RADIUS = integer(b, "maxRadius", d.basin().maxRadius(), 16, 20000,
+        Supplier<Integer> basinMaxRadius = integer(b, "maxRadius", d.basin().maxRadius(), 16, 20000,
                 "Largest mean radius in blocks.");
-        BASIN_MIN_ASPECT = decimal(b, "minAspect", d.basin().minAspect(), 0.2, 1.0,
+        Supplier<Double> basinMinAspect = decimal(b, "minAspect", d.basin().minAspect(), 0.2, 1.0,
                 "Smallest ratio of short to long axis.");
-        BASIN_OUTLINE_NOISE = decimal(b, "outlineNoise", d.basin().outlineNoise(), 0.0, 0.5,
+        Supplier<Double> basinOutlineNoise = decimal(b, "outlineNoise", d.basin().outlineNoise(), 0.0, 0.5,
                 "Fraction of the radius the outline may deviate by noise.");
-        BASIN_OUTLINE_WAVELENGTH = decimal(b, "outlineWavelength", d.basin().outlineWavelength(), 1.0, 5000.0,
-                "Size of the outline bumps in blocks.");
-        BASIN_HARD_COAL_SHARE = decimal(b, "hardCoalShare", d.basin().hardCoalShare(), 0.0, 1.0,
+        Supplier<Double> basinOutlineWavelength = decimal(b, "outlineWavelength", d.basin().outlineWavelength(), 1.0,
+                5000.0, "Size of the outline bumps in blocks.");
+        Supplier<Double> basinHardCoalShare = decimal(b, "hardCoalShare", d.basin().hardCoalShare(), 0.0, 1.0,
                 "Share of basins with hard coal, the rest holds lignite.");
         b.pop();
+        Supplier<CoalParams.BasinParams> basin = () -> new CoalParams.BasinParams(
+                basinCellSize.get(), basinChance.get(), basinJitter.get(), basinMinRadius.get(), basinMaxRadius.get(),
+                basinMinAspect.get(), basinOutlineNoise.get(), basinOutlineWavelength.get(), basinHardCoalShare.get());
 
         b.comment("Terrain limits; applied per basin, never per column.").push("relief");
-        RELIEF_MOUNTAIN_RELIEF = integer(b, "mountainRelief", d.relief().mountainRelief(), 0, 2000,
+        Supplier<Integer> reliefMountainRelief = integer(b, "mountainRelief", d.relief().mountainRelief(), 0, 2000,
                 "Height difference in blocks inside a basin above which there is no basin.");
-        RELIEF_FOOTHILL_RISE = integer(b, "foothillRise", d.relief().foothillRise(), 0, 2000,
+        Supplier<Integer> reliefFoothillRise = integer(b, "foothillRise", d.relief().foothillRise(), 0, 2000,
                 "Height in blocks above the basin from which a rim point counts as mountain.");
-        RELIEF_FOOTHILL_POINTS = integer(b, "foothillPoints", d.relief().foothillPoints(), 1, 9,
+        Supplier<Integer> reliefFoothillPoints = integer(b, "foothillPoints", d.relief().foothillPoints(), 1, 9,
                 "Number of mountain points on the rim that make a basin folded.");
         b.pop();
+        Supplier<CoalParams.ReliefParams> relief = () -> new CoalParams.ReliefParams(
+                reliefMountainRelief.get(), reliefFoothillRise.get(), reliefFoothillPoints.get());
 
-        b.comment("Hard coal basins.").push("hard_coal");
-        HARD_COAL_MIN_DEPTH = integer(b, "minDepth", d.hardCoal().minDepth(), 1, 300,
-                "Smallest depth of the bowl in blocks.");
-        HARD_COAL_MAX_DEPTH = integer(b, "maxDepth", d.hardCoal().maxDepth(), 1, 300,
-                "Largest depth of the bowl in blocks.");
-        HARD_COAL_MIN_SEAMS = integer(b, "minSeams", d.hardCoal().minSeams(), 1, 10,
-                "Fewest seams.");
-        HARD_COAL_MAX_SEAMS = integer(b, "maxSeams", d.hardCoal().maxSeams(), 1, 10,
-                "Most seams.");
-        HARD_COAL_MIN_THICKNESS = decimal(b, "minThickness", d.hardCoal().minThickness(), 0.0, 200.0,
-                "Smallest seam thickness in blocks.");
-        HARD_COAL_MAX_THICKNESS = decimal(b, "maxThickness", d.hardCoal().maxThickness(), 0.0, 200.0,
-                "Largest seam thickness in blocks.");
-        HARD_COAL_MIN_SPACING = integer(b, "minSpacing", d.hardCoal().minSpacing(), 0, 200,
-                "Smallest gap between two seams in blocks.");
-        HARD_COAL_MAX_SPACING = integer(b, "maxSpacing", d.hardCoal().maxSpacing(), 0, 200,
-                "Largest gap between two seams in blocks.");
-        HARD_COAL_MAX_FAULTS = integer(b, "maxFaults", d.hardCoal().maxFaults(), 0, 20,
-                "Most faults.");
-        b.pop();
-
-        b.comment("Lignite basins.").push("lignite");
-        LIGNITE_MIN_DEPTH = integer(b, "minDepth", d.lignite().minDepth(), 1, 300,
-                "Smallest depth of the bowl in blocks.");
-        LIGNITE_MAX_DEPTH = integer(b, "maxDepth", d.lignite().maxDepth(), 1, 300,
-                "Largest depth of the bowl in blocks.");
-        LIGNITE_MIN_SEAMS = integer(b, "minSeams", d.lignite().minSeams(), 1, 10,
-                "Fewest seams.");
-        LIGNITE_MAX_SEAMS = integer(b, "maxSeams", d.lignite().maxSeams(), 1, 10,
-                "Most seams.");
-        LIGNITE_MIN_THICKNESS = decimal(b, "minThickness", d.lignite().minThickness(), 0.0, 200.0,
-                "Smallest seam thickness in blocks.");
-        LIGNITE_MAX_THICKNESS = decimal(b, "maxThickness", d.lignite().maxThickness(), 0.0, 200.0,
-                "Largest seam thickness in blocks.");
-        LIGNITE_MIN_SPACING = integer(b, "minSpacing", d.lignite().minSpacing(), 0, 200,
-                "Smallest gap between two seams in blocks.");
-        LIGNITE_MAX_SPACING = integer(b, "maxSpacing", d.lignite().maxSpacing(), 0, 200,
-                "Largest gap between two seams in blocks.");
-        LIGNITE_MAX_FAULTS = integer(b, "maxFaults", d.lignite().maxFaults(), 0, 20,
-                "Most faults.");
-        b.pop();
-
-        b.comment("Folded basins at the foot of mountains.").push("folded");
-        FOLDED_MIN_DEPTH = integer(b, "minDepth", d.folded().minDepth(), 1, 300,
-                "Smallest depth of the bowl in blocks.");
-        FOLDED_MAX_DEPTH = integer(b, "maxDepth", d.folded().maxDepth(), 1, 300,
-                "Largest depth of the bowl in blocks.");
-        FOLDED_MIN_SEAMS = integer(b, "minSeams", d.folded().minSeams(), 1, 10,
-                "Fewest seams.");
-        FOLDED_MAX_SEAMS = integer(b, "maxSeams", d.folded().maxSeams(), 1, 10,
-                "Most seams.");
-        FOLDED_MIN_THICKNESS = decimal(b, "minThickness", d.folded().minThickness(), 0.0, 200.0,
-                "Smallest seam thickness in blocks.");
-        FOLDED_MAX_THICKNESS = decimal(b, "maxThickness", d.folded().maxThickness(), 0.0, 200.0,
-                "Largest seam thickness in blocks.");
-        FOLDED_MIN_SPACING = integer(b, "minSpacing", d.folded().minSpacing(), 0, 200,
-                "Smallest gap between two seams in blocks.");
-        FOLDED_MAX_SPACING = integer(b, "maxSpacing", d.folded().maxSpacing(), 0, 200,
-                "Largest gap between two seams in blocks.");
-        FOLDED_MAX_FAULTS = integer(b, "maxFaults", d.folded().maxFaults(), 0, 20,
-                "Most faults.");
-        b.pop();
+        Supplier<CoalParams.TypeParams> hardCoal = typeSection(b, "hard_coal", "Hard coal basins.", d.hardCoal());
+        Supplier<CoalParams.TypeParams> lignite = typeSection(b, "lignite", "Lignite basins.", d.lignite());
+        Supplier<CoalParams.TypeParams> folded = typeSection(b, "folded",
+                "Folded basins at the foot of mountains.", d.folded());
 
         b.comment("Folds and anthracite core of folded basins.").push("fold");
-        FOLD_MIN_AMPLITUDE = decimal(b, "minAmplitude", d.fold().minAmplitude(), 0.0, 200.0,
+        Supplier<Double> foldMinAmplitude = decimal(b, "minAmplitude", d.fold().minAmplitude(), 0.0, 200.0,
                 "Smallest fold height in blocks.");
-        FOLD_MAX_AMPLITUDE = decimal(b, "maxAmplitude", d.fold().maxAmplitude(), 0.0, 200.0,
+        Supplier<Double> foldMaxAmplitude = decimal(b, "maxAmplitude", d.fold().maxAmplitude(), 0.0, 200.0,
                 "Largest fold height in blocks.");
-        FOLD_MIN_WAVELENGTH = decimal(b, "minWavelength", d.fold().minWavelength(), 1.0, 5000.0,
+        Supplier<Double> foldMinWavelength = decimal(b, "minWavelength", d.fold().minWavelength(), 1.0, 5000.0,
                 "Smallest distance between two folds in blocks.");
-        FOLD_MAX_WAVELENGTH = decimal(b, "maxWavelength", d.fold().maxWavelength(), 1.0, 5000.0,
+        Supplier<Double> foldMaxWavelength = decimal(b, "maxWavelength", d.fold().maxWavelength(), 1.0, 5000.0,
                 "Largest distance between two folds in blocks.");
-        FOLD_CORE_SHARE = decimal(b, "coreShare", d.fold().coreShare(), 0.0, 1.0,
+        Supplier<Double> foldCoreShare = decimal(b, "coreShare", d.fold().coreShare(), 0.0, 1.0,
                 "Part of the basin radius that holds anthracite.");
         b.pop();
+        Supplier<CoalParams.FoldParams> fold = () -> new CoalParams.FoldParams(
+                foldMinAmplitude.get(), foldMaxAmplitude.get(), foldMinWavelength.get(), foldMaxWavelength.get(),
+                foldCoreShare.get());
 
         b.comment("Shape of the seams.").push("seam");
-        SEAM_COVER = decimal(b, "cover", d.seam().cover(), 0.0, 100.0,
+        Supplier<Double> seamCover = decimal(b, "cover", d.seam().cover(), 0.0, 100.0,
                 "Blocks between the topmost seam and the basin datum at the centre.");
-        SEAM_THICKNESS_BASE = decimal(b, "thicknessBase", d.seam().thicknessBase(), 0.0, 5.0,
+        Supplier<Double> seamThicknessBase = decimal(b, "thicknessBase", d.seam().thicknessBase(), 0.0, 5.0,
                 "Constant part of the thickness factor.");
-        SEAM_THICKNESS_NOISE = decimal(b, "thicknessNoise", d.seam().thicknessNoise(), 0.0, 5.0,
+        Supplier<Double> seamThicknessNoise = decimal(b, "thicknessNoise", d.seam().thicknessNoise(), 0.0, 5.0,
                 "Noise part of the thickness factor.");
-        SEAM_THICKNESS_WAVELENGTH = decimal(b, "thicknessWavelength", d.seam().thicknessWavelength(), 1.0, 5000.0,
-                "Size of thick and thin zones in blocks.");
-        SEAM_PINCH_OUT = decimal(b, "pinchOut", d.seam().pinchOut(), 0.01, 1.0,
+        Supplier<Double> seamThicknessWavelength = decimal(b, "thicknessWavelength", d.seam().thicknessWavelength(),
+                1.0, 5000.0, "Size of thick and thin zones in blocks.");
+        Supplier<Double> seamPinchOut = decimal(b, "pinchOut", d.seam().pinchOut(), 0.01, 1.0,
                 "Outer fraction of the basin in which seams thin out.");
-        SEAM_MIN_THICKNESS = decimal(b, "minThickness", d.seam().minThickness(), 0.0, 200.0,
+        Supplier<Double> seamMinThickness = decimal(b, "minThickness", d.seam().minThickness(), 0.0, 200.0,
                 "Thickness in blocks below which there is no seam.");
-        SEAM_WAVE_AMPLITUDE = decimal(b, "waveAmplitude", d.seam().waveAmplitude(), 0.0, 100.0,
+        Supplier<Double> seamWaveAmplitude = decimal(b, "waveAmplitude", d.seam().waveAmplitude(), 0.0, 100.0,
                 "Height of the gentle waves in blocks.");
-        SEAM_WAVE_WAVELENGTH = decimal(b, "waveWavelength", d.seam().waveWavelength(), 1.0, 5000.0,
+        Supplier<Double> seamWaveWavelength = decimal(b, "waveWavelength", d.seam().waveWavelength(), 1.0, 5000.0,
                 "Size of the gentle waves in blocks.");
-        SEAM_SPLIT_THRESHOLD = decimal(b, "splitThreshold", d.seam().splitThreshold(), -1.0, 2.0,
+        Supplier<Double> seamSplitThreshold = decimal(b, "splitThreshold", d.seam().splitThreshold(), -1.0, 2.0,
                 "Noise value (-1..1) above which a seam splits.");
-        SEAM_SPLIT_WAVELENGTH = decimal(b, "splitWavelength", d.seam().splitWavelength(), 1.0, 5000.0,
+        Supplier<Double> seamSplitWavelength = decimal(b, "splitWavelength", d.seam().splitWavelength(), 1.0, 5000.0,
                 "Size of split zones in blocks.");
-        SEAM_MAX_PARTING = integer(b, "maxParting", d.seam().maxParting(), 1, 20,
+        Supplier<Integer> seamMaxParting = integer(b, "maxParting", d.seam().maxParting(), 1, 20,
                 "Thickest parting between two benches in blocks.");
-        SEAM_MIN_THROW = decimal(b, "minThrow", d.seam().minThrow(), 0.0, 200.0,
+        Supplier<Double> seamMinThrow = decimal(b, "minThrow", d.seam().minThrow(), 0.0, 200.0,
                 "Smallest shift at a fault in blocks.");
-        SEAM_MAX_THROW = decimal(b, "maxThrow", d.seam().maxThrow(), 0.0, 200.0,
+        Supplier<Double> seamMaxThrow = decimal(b, "maxThrow", d.seam().maxThrow(), 0.0, 200.0,
                 "Largest shift at a fault in blocks.");
-        SEAM_FAULT_WAVE_AMPLITUDE = decimal(b, "faultWaveAmplitude", d.seam().faultWaveAmplitude(), 0.0, 200.0,
-                "How far a fault line bends in blocks.");
-        SEAM_FAULT_WAVE_WAVELENGTH = decimal(b, "faultWaveWavelength", d.seam().faultWaveWavelength(), 1.0, 5000.0,
-                "Size of the bends in blocks.");
-        SEAM_OUTCROP_THRESHOLD = decimal(b, "outcropThreshold", d.seam().outcropThreshold(), -1.0, 2.0,
+        Supplier<Double> seamFaultWaveAmplitude = decimal(b, "faultWaveAmplitude", d.seam().faultWaveAmplitude(), 0.0,
+                200.0, "How far a fault line bends in blocks.");
+        Supplier<Double> seamFaultWaveWavelength = decimal(b, "faultWaveWavelength", d.seam().faultWaveWavelength(),
+                1.0, 5000.0, "Size of the bends in blocks.");
+        Supplier<Double> seamOutcropThreshold = decimal(b, "outcropThreshold", d.seam().outcropThreshold(), -1.0, 2.0,
                 "Noise value (-1..1) above which a seam shows through the soil.");
-        SEAM_OUTCROP_WAVELENGTH = decimal(b, "outcropWavelength", d.seam().outcropWavelength(), 1.0, 5000.0,
-                "Size of outcrops in blocks.");
+        Supplier<Double> seamOutcropWavelength = decimal(b, "outcropWavelength", d.seam().outcropWavelength(), 1.0,
+                5000.0, "Size of outcrops in blocks.");
         b.pop();
+        Supplier<CoalParams.SeamParams> seam = () -> new CoalParams.SeamParams(
+                seamCover.get(), seamThicknessBase.get(), seamThicknessNoise.get(), seamThicknessWavelength.get(),
+                seamPinchOut.get(), seamMinThickness.get(), seamWaveAmplitude.get(), seamWaveWavelength.get(),
+                seamSplitThreshold.get(), seamSplitWavelength.get(), seamMaxParting.get(), seamMinThrow.get(),
+                seamMaxThrow.get(), seamFaultWaveAmplitude.get(), seamFaultWaveWavelength.get(),
+                seamOutcropThreshold.get(), seamOutcropWavelength.get());
 
         b.comment("Rocks around a seam.").push("rock");
-        ROCK_MIN_SHALE = integer(b, "minShale", d.rock().minShale(), 0, 200,
+        Supplier<Integer> rockMinShale = integer(b, "minShale", d.rock().minShale(), 0, 200,
                 "Thinnest shale in blocks.");
-        ROCK_MAX_SHALE = integer(b, "maxShale", d.rock().maxShale(), 0, 200,
+        Supplier<Integer> rockMaxShale = integer(b, "maxShale", d.rock().maxShale(), 0, 200,
                 "Thickest shale in blocks.");
-        ROCK_MIN_BLACK_SHALE = integer(b, "minBlackShale", d.rock().minBlackShale(), 0, 200,
+        Supplier<Integer> rockMinBlackShale = integer(b, "minBlackShale", d.rock().minBlackShale(), 0, 200,
                 "Thinnest black shale above a seam in blocks.");
-        ROCK_MAX_BLACK_SHALE = integer(b, "maxBlackShale", d.rock().maxBlackShale(), 0, 200,
+        Supplier<Integer> rockMaxBlackShale = integer(b, "maxBlackShale", d.rock().maxBlackShale(), 0, 200,
                 "Thickest black shale above a seam in blocks.");
-        ROCK_MIN_FIRECLAY = integer(b, "minFireclay", d.rock().minFireclay(), 0, 200,
+        Supplier<Integer> rockMinFireclay = integer(b, "minFireclay", d.rock().minFireclay(), 0, 200,
                 "Thinnest fireclay below a seam in blocks.");
-        ROCK_MAX_FIRECLAY = integer(b, "maxFireclay", d.rock().maxFireclay(), 0, 200,
+        Supplier<Integer> rockMaxFireclay = integer(b, "maxFireclay", d.rock().maxFireclay(), 0, 200,
                 "Thickest fireclay below a seam in blocks.");
-        ROCK_MIN_ROOF_MUDSTONE = integer(b, "minRoofMudstone", d.rock().minRoofMudstone(), 0, 200,
+        Supplier<Integer> rockMinRoofMudstone = integer(b, "minRoofMudstone", d.rock().minRoofMudstone(), 0, 200,
                 "Thinnest mudstone above lignite in blocks.");
-        ROCK_MAX_ROOF_MUDSTONE = integer(b, "maxRoofMudstone", d.rock().maxRoofMudstone(), 0, 200,
+        Supplier<Integer> rockMaxRoofMudstone = integer(b, "maxRoofMudstone", d.rock().maxRoofMudstone(), 0, 200,
                 "Thickest mudstone above lignite in blocks.");
-        ROCK_MIN_FLOOR_MUDSTONE = integer(b, "minFloorMudstone", d.rock().minFloorMudstone(), 0, 200,
+        Supplier<Integer> rockMinFloorMudstone = integer(b, "minFloorMudstone", d.rock().minFloorMudstone(), 0, 200,
                 "Thinnest mudstone below lignite in blocks.");
-        ROCK_MAX_FLOOR_MUDSTONE = integer(b, "maxFloorMudstone", d.rock().maxFloorMudstone(), 0, 200,
+        Supplier<Integer> rockMaxFloorMudstone = integer(b, "maxFloorMudstone", d.rock().maxFloorMudstone(), 0, 200,
                 "Thickest mudstone below lignite in blocks.");
-        ROCK_WAVELENGTH = decimal(b, "wavelength", d.rock().wavelength(), 1.0, 5000.0,
+        Supplier<Double> rockWavelength = decimal(b, "wavelength", d.rock().wavelength(), 1.0, 5000.0,
                 "Size of thick and thin zones in blocks.");
         b.pop();
+        Supplier<CoalParams.RockParams> rock = () -> new CoalParams.RockParams(
+                rockMinShale.get(), rockMaxShale.get(), rockMinBlackShale.get(), rockMaxBlackShale.get(),
+                rockMinFireclay.get(), rockMaxFireclay.get(), rockMinRoofMudstone.get(), rockMaxRoofMudstone.get(),
+                rockMinFloorMudstone.get(), rockMaxFloorMudstone.get(), rockWavelength.get());
 
         b.comment("Loose coal and coaly soil above a seam.").push("surface");
-        SURFACE_LOOSE_DENSITY = decimal(b, "looseDensity", d.surface().looseDensity(), 0.0, 1.0,
+        Supplier<Double> surfaceLooseDensity = decimal(b, "looseDensity", d.surface().looseDensity(), 0.0, 1.0,
                 "Share of outcrop columns with loose coal; 0 turns it off.");
-        SURFACE_LOOSE_MAX_HEIGHT = integer(b, "looseMaxHeight", d.surface().looseMaxHeight(), 0, 200,
+        Supplier<Integer> surfaceLooseMaxHeight = integer(b, "looseMaxHeight", d.surface().looseMaxHeight(), 0, 200,
                 "Height in blocks of an eroded seam above the ground up to which its coal lies around.");
-        SURFACE_SOIL_THRESHOLD = decimal(b, "soilThreshold", d.surface().soilThreshold(), -1.0, 1.0,
+        Supplier<Double> surfaceSoilThreshold = decimal(b, "soilThreshold", d.surface().soilThreshold(), -1.0, 1.0,
                 "Noise value (-1..1) above which the soil of an outcrop is coaly; 1 turns it off.");
-        SURFACE_SOIL_WAVELENGTH = decimal(b, "soilWavelength", d.surface().soilWavelength(), 1.0, 5000.0,
+        Supplier<Double> surfaceSoilWavelength = decimal(b, "soilWavelength", d.surface().soilWavelength(), 1.0, 5000.0,
                 "Size of coaly patches in blocks.");
-        SURFACE_SOIL_FRINGE = integer(b, "soilFringe", d.surface().soilFringe(), 0, 200,
+        Supplier<Integer> surfaceSoilFringe = integer(b, "soilFringe", d.surface().soilFringe(), 0, 200,
                 "Height in blocks of an eroded seam above the ground up to which coaly soil frays out.");
         b.pop();
+        Supplier<CoalParams.SurfaceParams> surface = () -> new CoalParams.SurfaceParams(
+                surfaceLooseDensity.get(), surfaceLooseMaxHeight.get(), surfaceSoilThreshold.get(),
+                surfaceSoilWavelength.get(), surfaceSoilFringe.get());
 
         b.comment("Sandstone with its roll front and the seam fires.").push("accessories");
-        ACC_SAND_MIN = integer(b, "sandMin", d.accessories().sandMin(), 0, 200,
+        Supplier<Integer> accSandMin = integer(b, "sandMin", d.accessories().sandMin(), 0, 200,
                 "Thinnest sandstone above a hard coal seam in blocks.");
-        ACC_SAND_MAX = integer(b, "sandMax", d.accessories().sandMax(), 0, 200,
+        Supplier<Integer> accSandMax = integer(b, "sandMax", d.accessories().sandMax(), 0, 200,
                 "Thickest sandstone above a hard coal seam in blocks.");
-        ACC_LIGNITE_SAND_MIN = integer(b, "ligniteSandMin", d.accessories().ligniteSandMin(), 0, 200,
+        Supplier<Integer> accLigniteSandMin = integer(b, "ligniteSandMin", d.accessories().ligniteSandMin(), 0, 200,
                 "Thinnest sandstone above a lignite seam in blocks.");
-        ACC_LIGNITE_SAND_MAX = integer(b, "ligniteSandMax", d.accessories().ligniteSandMax(), 0, 200,
+        Supplier<Integer> accLigniteSandMax = integer(b, "ligniteSandMax", d.accessories().ligniteSandMax(), 0, 200,
                 "Thickest sandstone above a lignite seam in blocks.");
-        ACC_SAND_COVER = decimal(b, "sandCover", d.accessories().sandCover(), 0.0, 1.0,
+        Supplier<Double> accSandCover = decimal(b, "sandCover", d.accessories().sandCover(), 0.0, 1.0,
                 "Share of the area with sandstone.");
-        ACC_SAND_WAVELENGTH = decimal(b, "sandWavelength", d.accessories().sandWavelength(), 1.0, 5000.0,
+        Supplier<Double> accSandWavelength = decimal(b, "sandWavelength", d.accessories().sandWavelength(), 1.0, 5000.0,
                 "Size of sandstone lenses in blocks.");
-        ACC_FRONT_MIN = decimal(b, "frontMin", d.accessories().frontMin(), 0.0, 1.0,
-                "Innermost position of the roll front: distance to the basin centre, 0 in the centre and 1 at the rim.");
-        ACC_FRONT_MAX = decimal(b, "frontMax", d.accessories().frontMax(), 0.0, 1.0,
-                "Outermost position of the roll front: distance to the basin centre, 0 in the centre and 1 at the rim.");
-        ACC_FRONT_BAND = integer(b, "frontBand", d.accessories().frontBand(), 1, 200,
+        Supplier<Double> accFrontMin = decimal(b, "frontMin", d.accessories().frontMin(), 0.0, 1.0,
+                "Innermost position of the roll front: distance to the basin centre," + " 0 in the centre and 1 at the"
+                        + " rim.");
+        Supplier<Double> accFrontMax = decimal(b, "frontMax", d.accessories().frontMax(), 0.0, 1.0,
+                "Outermost position of the roll front: distance to the basin centre," + " 0 in the centre and 1 at the"
+                        + " rim.");
+        Supplier<Integer> accFrontBand = integer(b, "frontBand", d.accessories().frontBand(), 1, 200,
                 "Width in blocks of the uranium band inside the roll front.");
-        ACC_FIRE_CELL = integer(b, "fireCell", d.accessories().fireCell(), 16, 10000,
+        Supplier<Integer> accFireCell = integer(b, "fireCell", d.accessories().fireCell(), 16, 10000,
                 "Grid cell size of seam fires in blocks.");
-        ACC_FIRE_CHANCE = decimal(b, "fireChance", d.accessories().fireChance(), 0.0, 1.0,
+        Supplier<Double> accFireChance = decimal(b, "fireChance", d.accessories().fireChance(), 0.0, 1.0,
                 "Probability that a cell holds a fire; 0 turns seam fires off.");
-        ACC_FIRE_MIN_RADIUS = integer(b, "fireMinRadius", d.accessories().fireMinRadius(), 1, 8,
+        Supplier<Integer> accFireMinRadius = integer(b, "fireMinRadius", d.accessories().fireMinRadius(), 1, 8,
                 "Smallest fire radius in blocks.");
-        ACC_FIRE_MAX_RADIUS = integer(b, "fireMaxRadius", d.accessories().fireMaxRadius(), 1, 8,
+        Supplier<Integer> accFireMaxRadius = integer(b, "fireMaxRadius", d.accessories().fireMaxRadius(), 1, 8,
                 "Largest fire radius in blocks.");
-        ACC_FIRE_DEPTH = integer(b, "fireDepth", d.accessories().fireDepth(), 1, 32,
+        Supplier<Integer> accFireDepth = integer(b, "fireDepth", d.accessories().fireDepth(), 1, 32,
                 "Blocks below the surface that burn.");
-        ACC_BLACKBAND_COVER = decimal(b, "blackbandCover", d.accessories().blackbandCover(), 0.0, 1.0,
+        Supplier<Double> accBlackbandCover = decimal(b, "blackbandCover", d.accessories().blackbandCover(), 0.0, 1.0,
                 "Share of the area where blackband ironstone lies on the topmost hard coal seam.");
-        ACC_RUST_DEPTH = integer(b, "rustDepth", d.accessories().rustDepth(), 0, 16,
+        Supplier<Integer> accRustDepth = integer(b, "rustDepth", d.accessories().rustDepth(), 0, 16,
                 "Blocks of shale below the soil that are rust-stained; 0 turns it off.");
         b.pop();
+        Supplier<CoalParams.AccessoryParams> accessories = () -> new CoalParams.AccessoryParams(
+                accSandMin.get(), accSandMax.get(), accLigniteSandMin.get(), accLigniteSandMax.get(),
+                accSandCover.get(), accSandWavelength.get(), accFrontMin.get(), accFrontMax.get(), accFrontBand.get(),
+                accFireCell.get(), accFireChance.get(), accFireMinRadius.get(), accFireMaxRadius.get(),
+                accFireDepth.get(), accBlackbandCover.get(), accRustDepth.get());
 
-        b.comment("Share of each mineral and the block placed while its ore is switched off.").push("minerals");
-        for (Mineral mineral : OreConfig.registry().deposits().get(OreConfig.COAL_BASIN).minerals()) {
-            ModConfigSpec.ConfigValue<String> replacement = b.comment("Block placed instead of " + mineral.ore()
-                    + " while " + mineral.ore() + " is not in enabledOres; empty keeps the rock of the zone.")
-                    .define(camelCase(mineral.ore()) + "Replacement", DEFAULT_REPLACEMENTS.getOrDefault(mineral.ore(), ""),
-                            OreConfig::isValidReplacement);
-            MINERAL_REPLACEMENTS.put(mineral.ore(), replacement::get);
-            if (!CoalOres.isAccessory(mineral.zones())) {
-                continue;
-            }
-            MINERAL_FRACTIONS.put(mineral.ore(), decimal(b, camelCase(mineral.ore()) + "Fraction", mineral.fraction(), 0.0, 1.0,
-                    "Share of rock blocks in " + mineral.zones() + " that become " + mineral.ore() + " ore."));
-        }
-        b.pop();
+        MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(OreConfig.COAL_BASIN),
+                mineral -> CoalOres.isAccessory(mineral.zones()), DEFAULT_REPLACEMENTS);
+        PARAMS = () -> new CoalParams(basin.get(), relief.get(), hardCoal.get(), lignite.get(), folded.get(),
+                fold.get(), seam.get(), rock.get(), surface.get(), accessories.get()).sanitized();
         SPEC = b.build();
     }
 
     private CoalConfig() {
     }
 
-    private static Supplier<Integer> integer(ModConfigSpec.Builder builder, String name, int value, int min, int max,
-            String comment) {
-        ModConfigSpec.IntValue config = builder.comment(comment).defineInRange(name, value, min, max);
-        return config::get;
-    }
-
-    private static Supplier<Double> decimal(ModConfigSpec.Builder builder, String name, double value, double min,
-            double max, String comment) {
-        ModConfigSpec.DoubleValue config = builder.comment(comment).defineInRange(name, value, min, max);
-        return config::get;
-    }
-
-    private static String camelCase(String id) {
-        StringBuilder name = new StringBuilder();
-        for (String part : id.split("_")) {
-            name.append(name.isEmpty() ? part : Character.toUpperCase(part.charAt(0)) + part.substring(1));
-        }
-        return name.toString();
-    }
-
     /**
-     * Reads the blocks placed instead of disabled ores.
+     * Defines the section of one basin type; all types share the same keys.
      *
-     * @return block id by ore id, empty to keep the rock
+     * @param b builder at the top level of the config
+     * @param name section name
+     * @param comment explanation written above the section
+     * @param d default values of the type
+     * @return reader of the current values of the type
      */
-    public static Map<String, String> replacements() {
-        Map<String, String> replacements = new HashMap<>();
-        MINERAL_REPLACEMENTS.forEach((ore, value) -> replacements.put(ore, value.get()));
-        return replacements;
-    }
-
-    /**
-     * Reads the configured shares of the minerals that accompany the coal.
-     *
-     * @return share by ore id
-     */
-    public static Map<String, Double> fractions() {
-        Map<String, Double> fractions = new HashMap<>();
-        MINERAL_FRACTIONS.forEach((ore, value) -> fractions.put(ore, value.get()));
-        return fractions;
+    private static Supplier<CoalParams.TypeParams> typeSection(ModConfigSpec.Builder b, String name, String comment,
+            CoalParams.TypeParams d) {
+        b.comment(comment).push(name);
+        Supplier<Integer> minDepth = integer(b, "minDepth", d.minDepth(), 1, 300,
+                "Smallest depth of the bowl in blocks.");
+        Supplier<Integer> maxDepth = integer(b, "maxDepth", d.maxDepth(), 1, 300,
+                "Largest depth of the bowl in blocks.");
+        Supplier<Integer> minSeams = integer(b, "minSeams", d.minSeams(), 1, 10, "Fewest seams.");
+        Supplier<Integer> maxSeams = integer(b, "maxSeams", d.maxSeams(), 1, 10, "Most seams.");
+        Supplier<Double> minThickness = decimal(b, "minThickness", d.minThickness(), 0.0, 200.0,
+                "Smallest seam thickness in blocks.");
+        Supplier<Double> maxThickness = decimal(b, "maxThickness", d.maxThickness(), 0.0, 200.0,
+                "Largest seam thickness in blocks.");
+        Supplier<Integer> minSpacing = integer(b, "minSpacing", d.minSpacing(), 0, 200,
+                "Smallest gap between two seams in blocks.");
+        Supplier<Integer> maxSpacing = integer(b, "maxSpacing", d.maxSpacing(), 0, 200,
+                "Largest gap between two seams in blocks.");
+        Supplier<Integer> maxFaults = integer(b, "maxFaults", d.maxFaults(), 0, 20, "Most faults.");
+        b.pop();
+        return () -> new CoalParams.TypeParams(minDepth.get(), maxDepth.get(), minSeams.get(), maxSeams.get(),
+                minThickness.get(), maxThickness.get(), minSpacing.get(), maxSpacing.get(), maxFaults.get());
     }
 
     /**
@@ -398,42 +256,6 @@ public final class CoalConfig {
      * @return parameters with contradicting values repaired
      */
     public static CoalParams params() {
-        return new CoalParams(
-                new CoalParams.BasinParams(BASIN_CELL_SIZE.get(), BASIN_CHANCE.get(), BASIN_JITTER.get(),
-                        BASIN_MIN_RADIUS.get(), BASIN_MAX_RADIUS.get(), BASIN_MIN_ASPECT.get(),
-                        BASIN_OUTLINE_NOISE.get(), BASIN_OUTLINE_WAVELENGTH.get(), BASIN_HARD_COAL_SHARE.get()),
-                new CoalParams.ReliefParams(RELIEF_MOUNTAIN_RELIEF.get(), RELIEF_FOOTHILL_RISE.get(),
-                        RELIEF_FOOTHILL_POINTS.get()),
-                new CoalParams.TypeParams(HARD_COAL_MIN_DEPTH.get(), HARD_COAL_MAX_DEPTH.get(),
-                        HARD_COAL_MIN_SEAMS.get(), HARD_COAL_MAX_SEAMS.get(), HARD_COAL_MIN_THICKNESS.get(),
-                        HARD_COAL_MAX_THICKNESS.get(), HARD_COAL_MIN_SPACING.get(), HARD_COAL_MAX_SPACING.get(),
-                        HARD_COAL_MAX_FAULTS.get()),
-                new CoalParams.TypeParams(LIGNITE_MIN_DEPTH.get(), LIGNITE_MAX_DEPTH.get(), LIGNITE_MIN_SEAMS.get(),
-                        LIGNITE_MAX_SEAMS.get(), LIGNITE_MIN_THICKNESS.get(), LIGNITE_MAX_THICKNESS.get(),
-                        LIGNITE_MIN_SPACING.get(), LIGNITE_MAX_SPACING.get(), LIGNITE_MAX_FAULTS.get()),
-                new CoalParams.TypeParams(FOLDED_MIN_DEPTH.get(), FOLDED_MAX_DEPTH.get(), FOLDED_MIN_SEAMS.get(),
-                        FOLDED_MAX_SEAMS.get(), FOLDED_MIN_THICKNESS.get(), FOLDED_MAX_THICKNESS.get(),
-                        FOLDED_MIN_SPACING.get(), FOLDED_MAX_SPACING.get(), FOLDED_MAX_FAULTS.get()),
-                new CoalParams.FoldParams(FOLD_MIN_AMPLITUDE.get(), FOLD_MAX_AMPLITUDE.get(),
-                        FOLD_MIN_WAVELENGTH.get(), FOLD_MAX_WAVELENGTH.get(), FOLD_CORE_SHARE.get()),
-                new CoalParams.SeamParams(SEAM_COVER.get(), SEAM_THICKNESS_BASE.get(), SEAM_THICKNESS_NOISE.get(),
-                        SEAM_THICKNESS_WAVELENGTH.get(), SEAM_PINCH_OUT.get(), SEAM_MIN_THICKNESS.get(),
-                        SEAM_WAVE_AMPLITUDE.get(), SEAM_WAVE_WAVELENGTH.get(), SEAM_SPLIT_THRESHOLD.get(),
-                        SEAM_SPLIT_WAVELENGTH.get(), SEAM_MAX_PARTING.get(), SEAM_MIN_THROW.get(),
-                        SEAM_MAX_THROW.get(), SEAM_FAULT_WAVE_AMPLITUDE.get(), SEAM_FAULT_WAVE_WAVELENGTH.get(),
-                        SEAM_OUTCROP_THRESHOLD.get(), SEAM_OUTCROP_WAVELENGTH.get()),
-                new CoalParams.RockParams(ROCK_MIN_SHALE.get(), ROCK_MAX_SHALE.get(), ROCK_MIN_BLACK_SHALE.get(),
-                        ROCK_MAX_BLACK_SHALE.get(), ROCK_MIN_FIRECLAY.get(), ROCK_MAX_FIRECLAY.get(),
-                        ROCK_MIN_ROOF_MUDSTONE.get(), ROCK_MAX_ROOF_MUDSTONE.get(), ROCK_MIN_FLOOR_MUDSTONE.get(),
-                        ROCK_MAX_FLOOR_MUDSTONE.get(), ROCK_WAVELENGTH.get()),
-                new CoalParams.SurfaceParams(SURFACE_LOOSE_DENSITY.get(), SURFACE_LOOSE_MAX_HEIGHT.get(),
-                        SURFACE_SOIL_THRESHOLD.get(), SURFACE_SOIL_WAVELENGTH.get(), SURFACE_SOIL_FRINGE.get()),
-                new CoalParams.AccessoryParams(ACC_SAND_MIN.get(), ACC_SAND_MAX.get(), ACC_LIGNITE_SAND_MIN.get(),
-                        ACC_LIGNITE_SAND_MAX.get(), ACC_SAND_COVER.get(), ACC_SAND_WAVELENGTH.get(),
-                        ACC_FRONT_MIN.get(), ACC_FRONT_MAX.get(), ACC_FRONT_BAND.get(), ACC_FIRE_CELL.get(),
-                        ACC_FIRE_CHANCE.get(), ACC_FIRE_MIN_RADIUS.get(), ACC_FIRE_MAX_RADIUS.get(),
-                        ACC_FIRE_DEPTH.get(),
-                        ACC_BLACKBAND_COVER.get(), ACC_RUST_DEPTH.get()))
-                .sanitized();
+        return PARAMS.get();
     }
 }

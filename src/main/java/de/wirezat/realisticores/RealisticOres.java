@@ -6,6 +6,7 @@ import de.wirezat.realisticores.coal.PlacePieces;
 import de.wirezat.realisticores.indicator.ModPan;
 import de.wirezat.realisticores.indicator.TrailEffects;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
+import de.wirezat.realisticores.kimberlite.KimberliteConfig;
 import de.wirezat.realisticores.press.ModPress;
 import de.wirezat.realisticores.survey.SurveyEvents;
 import net.neoforged.bus.api.IEventBus;
