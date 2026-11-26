@@ -50,6 +50,7 @@ public final class KimberliteCarver {
             CraterSite site = Kimberlite.craterSite(seed, pipe, probe);
             int waterY = crater.hasLake(site.wet()) ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
             double reach = shape.reach(pipe);
+            PipeShape.Outline outline = shape.outline(pipe);
             for (int localX = 0; localX < 16; localX++) {
                 for (int localZ = 0; localZ < 16; localZ++) {
                     int x = minX + localX;
@@ -60,7 +61,7 @@ public final class KimberliteCarver {
                         continue;
                     }
                     int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
-                    double surfaceWall = shape.normalizedDistance(pipe, x, surfaceY, z);
+                    double surfaceWall = shape.normalizedDistance(outline, x, surfaceY, z);
                     int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY(), surfaceY) : surfaceY;
                     boolean bowl = floorY < surfaceY;
                     BlockState topSoil = null;
@@ -76,22 +77,23 @@ public final class KimberliteCarver {
                         fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
                     }
                     boolean overgrown = topSoil != null && !shape.isOutcrop(x, z);
-                    carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
+                    carveBody(chunk, pos, outline, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
                             ores, overgrown ? topSoil : null, subSoil);
                 }
             }
         }
     }
 
-    private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, Pipe pipe, int x, int z,
-            int bottomY, int groundY, boolean bowl, PipeShape shape, List<OreBlock> ores,
+    private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, PipeShape.Outline outline,
+            int x, int z, int bottomY, int groundY, boolean bowl, PipeShape shape, List<OreBlock> ores,
             BlockState topSoil, BlockState subSoil) {
+        Pipe pipe = outline.pipe();
         FaciesSelector facies = Kimberlite.facies();
         int floorLayers = Kimberlite.params().crater().floorLayers();
         boolean outcrop = shape.isOutcrop(x, z);
         int topY = Math.min(chunk.getMaxBuildHeight() - 1, groundY);
         for (int y = bottomY; y <= topY; y++) {
-            double wallDistance = shape.normalizedDistance(pipe, x, y, z);
+            double wallDistance = shape.normalizedDistance(outline, x, y, z);
             if (wallDistance > 1.0) {
                 continue;
             }

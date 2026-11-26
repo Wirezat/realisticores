@@ -36,7 +36,7 @@ class FieldGeneratorTest {
             int reach = (int) Math.ceil(shape.reach(pipe));
             for (int x = pipe.x() - reach; x <= pipe.x() + reach; x++) {
                 for (int z = pipe.z() - reach; z <= pipe.z() + reach; z++) {
-                    if (shape.contains(pipe, x, 75, z)) {
+                    if (shape.normalizedDistance(shape.outline(pipe), x, 75, z) <= 1.0) {
                         int chunkX = x & ~15;
                         int chunkZ = z & ~15;
                         assertTrue(generator.pipesNear(seed, chunkX, chunkZ, chunkX + 15, chunkZ + 15).contains(pipe));

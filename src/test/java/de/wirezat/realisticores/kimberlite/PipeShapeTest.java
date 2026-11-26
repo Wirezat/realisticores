@@ -12,7 +12,7 @@ class PipeShapeTest {
         for (double distance = 0; distance < SHAPE.reach(pipe) + 2; distance += 0.25) {
             int x = pipe.x() + (int) Math.round(Math.cos(angle) * distance);
             int z = pipe.z() + (int) Math.round(Math.sin(angle) * distance);
-            if (!SHAPE.contains(pipe, x, y, z)) {
+            if (SHAPE.normalizedDistance(SHAPE.outline(pipe), x, y, z) > 1.0) {
                 return distance;
             }
         }

@@ -33,44 +33,56 @@ public final class PipeShape {
     }
 
     /**
-     * Checks whether a block position lies inside the pipe.
+     * Fixed outline of one pipe: orientation, stretch and wall noise.
      *
      * @param pipe the pipe
-     * @param x world X of the block
-     * @param y world Y of the block
-     * @param z world Z of the block
-     * @return true if the position is inside the irregular outline
+     * @param seed seed of the wall noise
+     * @param cos cosine of the long axis angle
+     * @param sin sine of the long axis angle
+     * @param aspect ratio of short to long axis
+     * @param wavelength size of the large wall bumps in blocks
      */
-    public boolean contains(Pipe pipe, int x, int y, int z) {
-        return normalizedDistance(pipe, x, y, z) <= 1.0;
+    public record Outline(Pipe pipe, long seed, double cos, double sin, double aspect, double wavelength) {
+    }
+
+    /**
+     * Derives the outline of a pipe; compute it once per pipe and reuse it for all its blocks.
+     *
+     * @param pipe the pipe
+     * @return its outline
+     */
+    public Outline outline(Pipe pipe) {
+        long seed = SplitMix64.hash(SHAPE_SALT, pipe.x(), pipe.z());
+        SplitMix64 rng = new SplitMix64(seed);
+        double angle = rng.nextDouble() * Math.PI;
+        double aspect = rng.nextDouble(params.minAspect(), 1.0);
+        double wavelength = Math.max(params.wallMinWavelength(), pipe.diameter() * params.wallWavelengthFactor());
+        return new Outline(pipe, seed, Math.cos(angle), Math.sin(angle), aspect, wavelength);
     }
 
     /**
      * Gives the distance from the pipe axis relative to the local wall.
      *
-     * @param pipe the pipe
+     * @param outline outline of the pipe
      * @param x world X of the block
      * @param y world Y of the block
      * @param z world Z of the block
      * @return 0 at the axis, 1 at the wall, above 1 outside the pipe
      */
-    public double normalizedDistance(Pipe pipe, int x, int y, int z) {
-        long shapeSeed = SplitMix64.hash(SHAPE_SALT, pipe.x(), pipe.z());
-        SplitMix64 rng = new SplitMix64(shapeSeed);
-        double angle = rng.nextDouble() * Math.PI;
-        double aspect = rng.nextDouble(params.minAspect(), 1.0);
+    public double normalizedDistance(Outline outline, int x, int y, int z) {
+        Pipe pipe = outline.pipe();
         double dx = x - pipe.x();
         double dz = z - pipe.z();
-        double along = dx * Math.cos(angle) + dz * Math.sin(angle);
-        double across = (-dx * Math.sin(angle) + dz * Math.cos(angle)) / aspect;
+        double along = dx * outline.cos() + dz * outline.sin();
+        double across = (-dx * outline.sin() + dz * outline.cos()) / outline.aspect();
         double distance = Math.hypot(along, across);
-        double wavelength = Math.max(params.wallMinWavelength(), pipe.diameter() * params.wallWavelengthFactor());
+        double wavelength = outline.wavelength();
         double stretch = params.wallVerticalStretch();
         double fine = wavelength * params.wallFineScale();
         double noise = (1.0 - params.wallFineShare())
-                * ValueNoise.sample3(shapeSeed, x / wavelength, y / (wavelength * stretch), z / wavelength)
+                * ValueNoise.sample3(outline.seed(), x / wavelength, y / (wavelength * stretch), z / wavelength)
                 + params.wallFineShare()
-                * ValueNoise.sample3(shapeSeed + 1, x / fine, y / (fine * stretch), z / fine);
+                * ValueNoise.sample3(outline.seed() + 1, x / fine, y / (fine * stretch), z / fine);
         double radius = profile.radiusAt(pipe, y) * (1.0 + params.wallNoiseStrength() * noise);
         return radius <= 0.0 ? Double.MAX_VALUE : distance / radius;
     }
