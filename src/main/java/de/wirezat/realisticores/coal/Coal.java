@@ -1,28 +1,25 @@
 package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.OreConfig;
+import de.wirezat.realisticores.worldgen.Memo;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
 /** Shared generator objects of coal basin generation, rebuilt whenever the config changes. */
 public final class Coal {
     private static final int MAX_CANDIDATES = 300;
+    private static final int CACHE_LIMIT = 4096;
 
     private static volatile State state;
 
     private Coal() {
     }
 
-    private record BasinKey(long seed, Basin basin) {
-    }
-
     private record State(CoalParams params, CoalOres.Seams seams, BasinGenerator generator, SeamModel model,
-            SurfaceHint surface, Accessories accessories, ConcurrentMap<BasinKey, Optional<ResolvedBasin>> basins) {
+            SurfaceHint surface, Accessories accessories, Memo<Basin, Optional<ResolvedBasin>> basins) {
     }
 
     private static State state() {
@@ -31,7 +28,7 @@ public final class Coal {
             CoalParams params = CoalConfig.params();
             current = new State(params, CoalOres.Seams.of(OreConfig.resolved().minerals(CoalBasin.ID)),
                     new BasinGenerator(params), new SeamModel(params),
-                    new SurfaceHint(params.surface()), new Accessories(params.accessories()), new ConcurrentHashMap<>());
+                    new SurfaceHint(params.surface()), new Accessories(params.accessories()), new Memo<>(CACHE_LIMIT));
             state = current;
         }
         return current;
@@ -101,7 +98,7 @@ public final class Coal {
     public static List<ResolvedBasin> basinsNear(long seed, TerrainProbe probe, int minX, int minZ, int maxX,
             int maxZ) {
         State current = state();
-        return resolved(current, seed, probe, current.generator().basinsNear(seed, minX, minZ, maxX, maxZ).stream())
+        return resolved(current, probe, current.generator().basinsNear(seed, minX, minZ, maxX, maxZ).stream())
                 .toList();
     }
 
@@ -124,11 +121,11 @@ public final class Coal {
                 .filter(basin -> type == BasinType.FOLDED || basin.rolledType() == type)
                 .sorted(Comparator.comparingDouble(basin -> Math.hypot(basin.x() - x, basin.z() - z)))
                 .limit(MAX_CANDIDATES);
-        return resolved(current, seed, probe, candidates).filter(basin -> basin.type() == type).findFirst();
+        return resolved(current, probe, candidates).filter(basin -> basin.type() == type).findFirst();
     }
 
-    private static Stream<ResolvedBasin> resolved(State current, long seed, TerrainProbe probe, Stream<Basin> basins) {
-        return basins.flatMap(basin -> current.basins().computeIfAbsent(new BasinKey(seed, basin),
+    private static Stream<ResolvedBasin> resolved(State current, TerrainProbe probe, Stream<Basin> basins) {
+        return basins.flatMap(basin -> current.basins().get(basin,
                 key -> resolve(basin, probe, current.params())).stream());
     }
 

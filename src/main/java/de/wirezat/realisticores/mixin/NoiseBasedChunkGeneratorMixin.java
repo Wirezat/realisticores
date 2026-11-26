@@ -31,13 +31,14 @@ public abstract class NoiseBasedChunkGeneratorMixin {
     @Inject(method = "buildSurface(Lnet/minecraft/server/level/WorldGenRegion;"
             + "Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/level/levelgen/RandomState;"
             + "Lnet/minecraft/world/level/chunk/ChunkAccess;)V", at = @At("TAIL"))
+    @SuppressWarnings("deprecation")
     private void realisticores$carveDeposits(WorldGenRegion level, StructureManager structureManager,
             RandomState random, ChunkAccess chunk, CallbackInfo ci) {
         if (level.getLevel().dimension() != Level.OVERWORLD) {
             return;
         }
         NoiseBasedChunkGenerator generator = (NoiseBasedChunkGenerator) (Object) this;
-        TerrainProbe probe = new LevelTerrainProbe(level.getLevel(), generator);
+        TerrainProbe probe = new LevelTerrainProbe(generator, level, random);
         OreConfig.Resolved config = OreConfig.resolved();
         for (DepositType deposit : Deposits.ALL) {
             if (config.active(deposit.id())) {

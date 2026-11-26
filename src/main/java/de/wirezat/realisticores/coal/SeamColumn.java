@@ -12,13 +12,4 @@ import java.util.List;
  * @param radius mean radius of that basin in blocks
  */
 public record SeamColumn(Rank rank, List<Layer> layers, double edge, long basinSeed, double radius) {
-    /**
-     * Creates a column without position in its basin.
-     *
-     * @param rank rank of the coal in the column
-     * @param layers layers from bottom to top without overlap
-     */
-    public SeamColumn(Rank rank, List<Layer> layers) {
-        this(rank, layers, 0.0, 0L, 1.0);
-    }
 }

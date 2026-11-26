@@ -81,7 +81,7 @@ public final class TrailEffects {
 
     private static void emit(Trail trail, Plume.GuidePoint point) {
         BlockPos column = BlockPos.containing(point.x(), 0, point.z());
-        if (!trail.level.hasChunkAt(column)) {
+        if (!trail.level.isLoaded(column)) {
             return;
         }
         double y = trail.level.getHeight(Heightmap.Types.MOTION_BLOCKING, column.getX(), column.getZ())

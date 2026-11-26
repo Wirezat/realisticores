@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test;
 
 class CoalOresTest {
     private static ActiveMineral mineral(String ore, Rank rank, String block) {
-        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block, true);
+        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block, true, Map.of());
     }
 
     private static ActiveMineral replaced(String ore, Rank rank, String block) {
-        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block, false);
+        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block, false, Map.of());
     }
 
     @Test
@@ -33,7 +33,7 @@ class CoalOresTest {
 
     @Test
     void accessoryMineralsTakeNoRank() {
-        ActiveMineral pyrite = new ActiveMineral("pyrite", List.of("BLACK_SHALE"), 0.03, false, "m:pyrite_ore", true);
+        ActiveMineral pyrite = new ActiveMineral("pyrite", List.of("BLACK_SHALE"), 0.03, false, "m:pyrite_ore", true, Map.of());
         assertEquals(Map.of(Rank.LIGNITE, "m:lignite"),
                 CoalOres.blocks(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
         assertEquals(List.of(pyrite), CoalOres.accessories(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));

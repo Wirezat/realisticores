@@ -213,7 +213,7 @@ public class PanItem extends Item {
     }
 
     @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return ENCHANTABILITY;
     }
 

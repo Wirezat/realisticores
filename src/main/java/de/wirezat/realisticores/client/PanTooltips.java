@@ -37,7 +37,7 @@ public final class PanTooltips {
         if (!event.getItemStack().is(ModItems.IRON_PAN.get())) {
             return;
         }
-        event.getItemStack().getEnchantments().keySet().forEach(holder -> holder.unwrapKey()
+        event.getItemStack().getTagEnchantments().keySet().forEach(holder -> holder.unwrapKey()
                 .map(LINES::get)
                 .ifPresent(key -> event.getToolTip().add(Component.translatable(key).withStyle(ChatFormatting.GRAY))));
     }

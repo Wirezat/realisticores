@@ -14,7 +14,7 @@ class SurfaceHintTest {
     private static final int SAMPLES = 40000;
 
     private static SeamColumn column(Rank rank, Layer... layers) {
-        return new SeamColumn(rank, List.of(layers));
+        return new SeamColumn(rank, List.of(layers), 0.0, 0L, 1.0);
     }
 
     private static SeamColumn seamAt(Rank rank, int minY) {

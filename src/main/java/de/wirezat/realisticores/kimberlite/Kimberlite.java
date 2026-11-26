@@ -1,12 +1,11 @@
 package de.wirezat.realisticores.kimberlite;
 
 import de.wirezat.realisticores.worldgen.TerrainProbe;
+import de.wirezat.realisticores.worldgen.Memo;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ForkJoinPool;
 
 /** Shared generator objects of kimberlite generation, rebuilt whenever the config changes. */
@@ -15,6 +14,7 @@ public final class Kimberlite {
             new ForkJoinPool(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
 
     private static final int SPOT_SEARCH_MARGIN = 300;
+    private static final int CACHE_LIMIT = 4096;
     private static final double[] SPOT_DISTANCES = {250.0, 150.0};
 
     private static volatile State state;
@@ -22,12 +22,9 @@ public final class Kimberlite {
     private Kimberlite() {
     }
 
-    private record PipeKey(long seed, Pipe pipe) {
-    }
-
     private record State(KimberliteParams params, FieldGenerator generator, PipeProfile profile, FaciesSelector facies,
-            Crater crater, PipeGrade grade, PipeShape shape, ConcurrentMap<PipeKey, PlumePath> plumes,
-            ConcurrentMap<PipeKey, Double> factors, ConcurrentMap<PipeKey, CraterSite> sites) {
+            Crater crater, PipeGrade grade, PipeShape shape, Memo<Pipe, PlumePath> plumes,
+            Memo<Pipe, Double> factors, Memo<Pipe, CraterSite> sites) {
     }
 
     private static State state() {
@@ -37,7 +34,7 @@ public final class Kimberlite {
             PipeProfile profile = new PipeProfile(params.pipe());
             current = new State(params, new FieldGenerator(params), profile, new FaciesSelector(params),
                     new Crater(params.crater()), new PipeGrade(params.grade()), new PipeShape(params.pipe(), profile),
-                    new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), new ConcurrentHashMap<>());
+                    new Memo<>(CACHE_LIMIT), new Memo<>(CACHE_LIMIT), new Memo<>(CACHE_LIMIT));
             state = current;
         }
         return current;
@@ -114,14 +111,13 @@ public final class Kimberlite {
     /**
      * Gives the terrain facts around a pipe's crater, measuring them on first use.
      *
-     * @param seed world seed
      * @param pipe the pipe
      * @param probe terrain and climate source
      * @return the site of the crater
      */
-    public static CraterSite craterSite(long seed, Pipe pipe, TerrainProbe probe) {
+    public static CraterSite craterSite(Pipe pipe, TerrainProbe probe) {
         State current = state();
-        return current.sites().computeIfAbsent(new PipeKey(seed, pipe),
+        return current.sites().get(pipe,
                 key -> CraterSite.measure(pipe, probe, current.params().crater().ringPoints()));
     }
 
@@ -145,7 +141,7 @@ public final class Kimberlite {
         return CompletableFuture.supplyAsync(() -> current.generator()
                 .pipesNear(seed, minX - reach, minZ - reach, maxX + reach, maxZ + reach).parallelStream()
                 .filter(pipe -> distanceToArea(pipe, minX, minZ, maxX, maxZ)
-                        <= params.maxLength() * plumeFactor(current, seed, pipe, probe) + pipe.diameter())
+                        <= params.maxLength() * plumeFactor(current, pipe, probe) + pipe.diameter())
                 .map(pipe -> plume(current, seed, pipe, probe, seaLevel))
                 .toList(), TRACERS);
     }
@@ -215,13 +211,13 @@ public final class Kimberlite {
     }
 
     private static PlumePath plume(State current, long seed, Pipe pipe, TerrainProbe probe, int seaLevel) {
-        return current.plumes().computeIfAbsent(new PipeKey(seed, pipe), key -> Plume.trace(pipe,
+        return current.plumes().get(pipe, key -> Plume.trace(pipe,
                 Plume.fallbackAngle(seed, pipe, current.params().field().cellSize()), probe, seaLevel,
                 current.params().plume()));
     }
 
-    private static double plumeFactor(State current, long seed, Pipe pipe, TerrainProbe probe) {
-        return current.factors().computeIfAbsent(new PipeKey(seed, pipe),
+    private static double plumeFactor(State current, Pipe pipe, TerrainProbe probe) {
+        return current.factors().get(pipe,
                 key -> Plume.lengthFactor(pipe, probe, current.params().plume()));
     }
 }

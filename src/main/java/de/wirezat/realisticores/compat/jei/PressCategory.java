@@ -31,6 +31,8 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
             ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "textures/gui/crystal_press.png");
     private static final int ORIGIN_X = 12;
     private static final int ORIGIN_Y = 11;
+    private static final int WIDTH = 156;
+    private static final int HEIGHT = 63;
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -46,7 +48,7 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
      * @param helper JEI drawing helper
      */
     public PressCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, ORIGIN_X, ORIGIN_Y, 156, 63);
+        this.background = helper.createDrawable(TEXTURE, ORIGIN_X, ORIGIN_Y, WIDTH, HEIGHT);
         this.icon = helper.createDrawableItemLike(ModBlocks.CRYSTAL_PRESS.get());
         IDrawableStatic flameSprite = helper.createDrawable(TEXTURE, 210, 34, 14, 14);
         this.flame = helper.createAnimatedDrawable(flameSprite, 300, IDrawableAnimated.StartDirection.TOP, true);
@@ -68,8 +70,13 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
     }
 
     @Override
@@ -92,6 +99,7 @@ public class PressCategory implements IRecipeCategory<PressRecipe> {
 
     @Override
     public void draw(PressRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+        background.draw(graphics);
         upperAnvil.draw(graphics, 78 - ORIGIN_X, 18 - ORIGIN_Y);
         lowerAnvil.draw(graphics, 78 - ORIGIN_X, 51 - ORIGIN_Y);
         crystal.draw(graphics, 85 - ORIGIN_X, 36 - ORIGIN_Y);

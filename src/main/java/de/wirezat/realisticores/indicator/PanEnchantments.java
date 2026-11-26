@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
 /** Enchantments that change how a pan works, and the helper that reads their levels. */
@@ -29,7 +28,7 @@ public final class PanEnchantments {
      */
     public static int level(Level level, ResourceKey<Enchantment> key, ItemStack stack) {
         return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key)
-                .map(holder -> EnchantmentHelper.getItemEnchantmentLevel(holder, stack)).orElse(0);
+                .map(stack::getEnchantmentLevel).orElse(0);
     }
 
     /**

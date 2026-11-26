@@ -4,24 +4,29 @@ import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraft.world.level.levelgen.RandomState;
 
 /** Reads the original terrain of a loaded world from its chunk generator. */
 public final class LevelTerrainProbe implements TerrainProbe {
-    private final ServerLevel level;
     private final NoiseBasedChunkGenerator generator;
+    private final LevelHeightAccessor heights;
+    private final RandomState random;
 
     /**
      * Creates a probe.
      *
-     * @param level the world to read
-     * @param generator its noise chunk generator
+     * @param generator noise chunk generator of the world
+     * @param heights height range of the world
+     * @param random random state of the generator
      */
-    public LevelTerrainProbe(ServerLevel level, NoiseBasedChunkGenerator generator) {
-        this.level = level;
+    public LevelTerrainProbe(NoiseBasedChunkGenerator generator, LevelHeightAccessor heights, RandomState random) {
         this.generator = generator;
+        this.heights = heights;
+        this.random = random;
     }
 
     /**
@@ -32,13 +37,13 @@ public final class LevelTerrainProbe implements TerrainProbe {
      */
     public static Optional<TerrainProbe> of(ServerLevel level) {
         return level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator
-                ? Optional.of(new LevelTerrainProbe(level, generator)) : Optional.empty();
+                ? Optional.of(new LevelTerrainProbe(generator, level, level.getChunkSource().randomState()))
+                : Optional.empty();
     }
 
     @Override
     public int terrainHeight(int x, int z) {
-        return generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level,
-                level.getChunkSource().randomState()) - 1;
+        return generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, heights, random) - 1;
     }
 
     @Override
@@ -53,6 +58,6 @@ public final class LevelTerrainProbe implements TerrainProbe {
 
     private Holder<Biome> biomeAt(int x, int y, int z) {
         return generator.getBiomeSource().getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y),
-                QuartPos.fromBlock(z), level.getChunkSource().randomState().sampler());
+                QuartPos.fromBlock(z), random.sampler());
     }
 }

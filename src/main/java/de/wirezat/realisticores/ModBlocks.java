@@ -4,11 +4,11 @@ import de.wirezat.realisticores.coal.BurningSeamBlock;
 import de.wirezat.realisticores.coal.CoalPiecesBlock;
 import de.wirezat.realisticores.coal.CoalyDirtBlock;
 import de.wirezat.realisticores.coal.CoalyGrassBlock;
-import de.wirezat.realisticores.ore.DepositRegistry;
 import de.wirezat.realisticores.ore.OreDefinition;
 import de.wirezat.realisticores.press.CrystalPressBlock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -87,10 +87,11 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> MUDSTONE = register("mudstone",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
                     .strength(1.0F, 3.0F));
-    public static final DeferredBlock<BurningSeamBlock> BURNING_COAL_SEAM = registerBurning("burning_coal_seam",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE));
-    public static final DeferredBlock<BurningSeamBlock> BURNING_LIGNITE_SEAM = registerBurning("burning_lignite_seam",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE).strength(1.5F, 2.0F));
+    public static final DeferredBlock<BurningSeamBlock> BURNING_COAL_SEAM = withItem("burning_coal_seam", BurningSeamBlock::new,
+            burning(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE)));
+    public static final DeferredBlock<BurningSeamBlock> BURNING_LIGNITE_SEAM = withItem("burning_lignite_seam", BurningSeamBlock::new,
+            burning(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE)
+                    .strength(1.5F, 2.0F)));
     public static final DeferredBlock<Block> CLINKER = register("clinker",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_RED).strength(2.0F, 5.0F));
     public static final DeferredBlock<Block> LIGNITE_BLOCK = register("lignite_block",
@@ -117,11 +118,11 @@ public final class ModBlocks {
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.TERRACOTTA_WHITE)
                     .sound(SoundType.CALCITE));
 
-    public static final DeferredBlock<Block> SANDSTONE_URANIUM_ORE = registerOre("sandstone_uranium_ore", 1, 4,
+    public static final DeferredBlock<Block> SANDSTONE_URANIUM_ORE = registerOre("sandstone_uranium_ore", "uranium",
             BlockBehaviour.Properties.ofFullCopy(Blocks.SANDSTONE).strength(3.0F, 3.0F));
-    public static final DeferredBlock<Block> BLACK_SHALE_PYRITE_ORE = registerOre("black_shale_pyrite_ore", 0, 2,
+    public static final DeferredBlock<Block> BLACK_SHALE_PYRITE_ORE = registerOre("black_shale_pyrite_ore", "pyrite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_BLACK).strength(1.5F, 4.0F));
-    public static final DeferredBlock<Block> SAL_AMMONIAC_CRUST = registerOre("sal_ammoniac_crust", 0, 1,
+    public static final DeferredBlock<Block> SAL_AMMONIAC_CRUST = registerOre("sal_ammoniac_crust", "sal_ammoniac",
             BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE).mapColor(MapColor.TERRACOTTA_WHITE));
 
     public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
@@ -131,38 +132,44 @@ public final class ModBlocks {
     public static final DeferredBlock<CoalPiecesBlock> ANTHRACITE_PIECES =
             registerPieces("anthracite_pieces", MapColor.COLOR_BLACK, ModItems.ANTHRACITE);
 
-    public static final DeferredBlock<Block> COALY_DIRT = registerDirt("coaly_dirt", MapColor.COLOR_GRAY);
-    public static final DeferredBlock<Block> LIGNITIC_DIRT = registerDirt("lignitic_dirt", MapColor.PODZOL);
-    public static final DeferredBlock<CoalyGrassBlock> COALY_GRASS_BLOCK =
-            registerGrass("coaly_grass_block", MapColor.COLOR_GRAY, COALY_DIRT, 0x626248);
-    public static final DeferredBlock<CoalyGrassBlock> LIGNITIC_GRASS_BLOCK =
-            registerGrass("lignitic_grass_block", MapColor.PODZOL, LIGNITIC_DIRT, 0x8A6C3A);
+    public static final DeferredBlock<CoalyDirtBlock> COALY_DIRT = withItem("coaly_dirt", CoalyDirtBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).mapColor(MapColor.COLOR_GRAY));
+    public static final DeferredBlock<CoalyDirtBlock> LIGNITIC_DIRT = withItem("lignitic_dirt", CoalyDirtBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).mapColor(MapColor.PODZOL));
+    public static final DeferredBlock<CoalyGrassBlock> COALY_GRASS_BLOCK = withItem("coaly_grass_block",
+            props -> new CoalyGrassBlock(COALY_DIRT, 0x626248, props),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).mapColor(MapColor.COLOR_GRAY));
+    public static final DeferredBlock<CoalyGrassBlock> LIGNITIC_GRASS_BLOCK = withItem("lignitic_grass_block",
+            props -> new CoalyGrassBlock(LIGNITIC_DIRT, 0x8A6C3A, props),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).mapColor(MapColor.PODZOL));
 
-    public static final DeferredBlock<CrystalPressBlock> CRYSTAL_PRESS = registerPress();
+    public static final DeferredBlock<CrystalPressBlock> CRYSTAL_PRESS = withItem("crystal_press",
+            CrystalPressBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.BLAST_FURNACE)
+                    .lightLevel(state -> state.getValue(CrystalPressBlock.LIT) ? 13 : 0));
 
     private ModBlocks() {
     }
 
+    private static <B extends Block> DeferredBlock<B> withItem(String name,
+            Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
+        DeferredBlock<B> block = BLOCKS.registerBlock(name, factory, properties);
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
+        return block;
+    }
+
     private static DeferredBlock<Block> register(String name, BlockBehaviour.Properties properties) {
-        DeferredBlock<Block> block = BLOCKS.registerSimpleBlock(name, properties);
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
-        return block;
+        return withItem(name, Block::new, properties);
     }
 
-    private static DeferredBlock<CrystalPressBlock> registerPress() {
-        DeferredBlock<CrystalPressBlock> block = BLOCKS.registerBlock("crystal_press", CrystalPressBlock::new,
-                BlockBehaviour.Properties.ofFullCopy(Blocks.BLAST_FURNACE)
-                        .lightLevel(state -> state.getValue(CrystalPressBlock.LIT) ? 13 : 0));
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem("crystal_press", block));
-        return block;
+    private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
+        OreDefinition ore = OreConfig.registry().ores().get(oreId);
+        return withItem(name, props -> new DropExperienceBlock(UniformInt.of(ore.xpMin(), ore.xpMax()), props),
+                properties);
     }
 
-    private static DeferredBlock<BurningSeamBlock> registerBurning(String name, BlockBehaviour.Properties properties) {
-        DeferredBlock<BurningSeamBlock> block = BLOCKS.registerBlock(name, BurningSeamBlock::new,
-                properties.lightLevel(state -> 10).hasPostProcess((state, level, pos) -> true)
-                        .emissiveRendering((state, level, pos) -> true));
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
-        return block;
+    private static BlockBehaviour.Properties burning(BlockBehaviour.Properties properties) {
+        return properties.lightLevel(state -> 10).hasPostProcess((state, level, pos) -> true)
+                .emissiveRendering((state, level, pos) -> true);
     }
 
     private static DeferredBlock<CoalPiecesBlock> registerPieces(String name, MapColor color,
@@ -170,38 +177,6 @@ public final class ModBlocks {
         return BLOCKS.registerBlock(name, props -> new CoalPiecesBlock(item, props),
                 BlockBehaviour.Properties.of().mapColor(color).sound(SoundType.STONE).instabreak().noCollission()
                         .noOcclusion().pushReaction(PushReaction.DESTROY));
-    }
-
-    private static DeferredBlock<Block> registerDirt(String name, MapColor color) {
-        DeferredBlock<Block> block = BLOCKS.registerBlock(name, CoalyDirtBlock::new,
-                BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).mapColor(color));
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
-        return block;
-    }
-
-    private static DeferredBlock<CoalyGrassBlock> registerGrass(String name, MapColor color,
-            DeferredBlock<Block> soil, int tint) {
-        DeferredBlock<CoalyGrassBlock> block = BLOCKS.registerBlock(name,
-                props -> new CoalyGrassBlock(soil, tint, props),
-                BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).mapColor(color));
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
-        return block;
-    }
-
-    private static DeferredBlock<Block> registerOre(String name, int minXp, int maxXp,
-            BlockBehaviour.Properties properties) {
-        DeferredBlock<Block> block = BLOCKS.registerBlock(name,
-                props -> new DropExperienceBlock(UniformInt.of(minXp, maxXp), props), properties);
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
-        return block;
-    }
-
-    private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
-        OreDefinition ore = DepositRegistry.load().ores().get(oreId);
-        DeferredBlock<Block> block = BLOCKS.registerBlock(name,
-                props -> new DropExperienceBlock(UniformInt.of(ore.xpMin(), ore.xpMax()), props), properties);
-        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
-        return block;
     }
 
     /**

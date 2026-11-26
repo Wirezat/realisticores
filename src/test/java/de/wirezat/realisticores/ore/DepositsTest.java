@@ -17,7 +17,7 @@ class DepositsTest {
     @Test
     void aMineralInAnUnknownZoneIsRejected() {
         DepositRegistry registry = new DepositRegistry(Map.of(), Map.of(KimberlitePipe.ID,
-                new Deposit(KimberlitePipe.ID, List.of(new Mineral("diamond", List.of("BRECIA"), 0.01, true)))));
+                new Deposit(KimberlitePipe.ID, List.of(new Mineral("diamond", List.of("BRECIA"), 0.01, true, Map.of())))));
         assertThrows(IllegalStateException.class, () -> Deposits.validate(registry, List.of(KimberlitePipe.INSTANCE)));
     }
 }
