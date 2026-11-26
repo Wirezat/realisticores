@@ -3,7 +3,6 @@ package de.wirezat.realisticores.ore;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 
 /**
  * One subcommand of {@code /locate realisticores}.
@@ -18,12 +17,12 @@ public record LocateTarget(String name, Search search) {
         /**
          * Runs the search on a background thread.
          *
-         * @param level the world
+         * @param seed world seed
          * @param probe reader for the original terrain
          * @param origin position of the command source
          * @param limit largest search radius in blocks
          * @return centre of the deposit, Y has no meaning; empty if none lies within the limit
          */
-        Optional<BlockPos> nearest(ServerLevel level, TerrainProbe probe, BlockPos origin, int limit);
+        Optional<BlockPos> nearest(long seed, TerrainProbe probe, BlockPos origin, int limit);
     }
 }

@@ -57,8 +57,8 @@ public final class KimberlitePipe implements DepositType {
 
     @Override
     public List<LocateTarget> locateTargets() {
-        return List.of(new LocateTarget(ID, (level, probe, origin, limit) -> Kimberlite.generator()
-                .nearestPipe(level.getSeed(), origin.getX(), origin.getZ(), limit)
+        return List.of(new LocateTarget(ID, (seed, probe, origin, limit) -> Kimberlite.generator()
+                .nearestPipe(seed, origin.getX(), origin.getZ(), limit)
                 .map(pipe -> new BlockPos(pipe.x(), 0, pipe.z()))));
     }
 

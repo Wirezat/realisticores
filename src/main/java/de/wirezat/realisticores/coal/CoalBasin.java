@@ -69,7 +69,7 @@ public final class CoalBasin implements DepositType {
      * @return the target
      */
     private static LocateTarget target(String name, BasinType type) {
-        return new LocateTarget(name, (level, probe, origin, limit) -> Coal.nearest(level.getSeed(), probe, type,
+        return new LocateTarget(name, (seed, probe, origin, limit) -> Coal.nearest(seed, probe, type,
                 origin.getX(), origin.getZ(), Math.min(SEARCH_LIMIT, limit))
                 .map(found -> new BlockPos(found.basin().x(), 0, found.basin().z())));
     }

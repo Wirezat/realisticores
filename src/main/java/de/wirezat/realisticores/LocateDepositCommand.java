@@ -60,7 +60,7 @@ public final class LocateDepositCommand {
         int limit = OreConfig.commandSearchLimit();
         CompletableFuture.supplyAsync(() -> level.dimension() == Level.OVERWORLD
                 && OreConfig.resolved().active(deposit.id())
-                ? LevelTerrainProbe.of(level).flatMap(probe -> search.nearest(level, probe, origin, limit))
+                ? LevelTerrainProbe.of(level).flatMap(probe -> search.nearest(level.getSeed(), probe, origin, limit))
                 : Optional.<BlockPos>empty(), Surveys.executor())
                 .thenAcceptAsync(found -> found.ifPresentOrElse(pos -> success(source, title, origin, pos),
                         () -> source.sendFailure(
