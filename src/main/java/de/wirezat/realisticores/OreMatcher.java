@@ -54,6 +54,12 @@ public final class OreMatcher {
         return false;
     }
 
+    /**
+     * Tells whether a block state is in the ore list.
+     *
+     * @param state target state of an ore feature
+     * @return true if the block or one of its tags is listed
+     */
     private boolean matches(BlockState state) {
         if (blocks.contains(state.getBlock())) {
             return true;

@@ -49,6 +49,15 @@ public class LooseCoalFeature extends Feature<NoneFeatureConfiguration> {
         return placed;
     }
 
+    /**
+     * Lays loose coal on top of a column.
+     *
+     * @param level the world
+     * @param column the column
+     * @param x world X
+     * @param z world Z
+     * @return true if coal was placed
+     */
     private static boolean placePieces(WorldGenLevel level, SeamColumn column, int x, int z) {
         BlockPos pos = new BlockPos(x, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z), z);
         int pieces = Coal.surface().pieces(level.getSeed(), column, pos.getY() - 1, x, z);

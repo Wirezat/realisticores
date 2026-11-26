@@ -43,11 +43,25 @@ final class SoilTint {
         }
     }
 
+    /**
+     * Gives the lower half of a double plant.
+     *
+     * @param state state of the plant block
+     * @param pos position of the plant block
+     * @return position of the lower half
+     */
     @Nullable
     private static BlockPos root(BlockState state, @Nullable BlockPos pos) {
         return pos != null && state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
     }
 
+    /**
+     * Gives the colour of a grass plant from the soil below it.
+     *
+     * @param level world being drawn
+     * @param pos position of the plant
+     * @return tint of coaly grass below, else the biome grass colour
+     */
     private static int plant(@Nullable BlockAndTintGetter level, @Nullable BlockPos pos) {
         if (level == null || pos == null) {
             return GrassColor.getDefaultColor();

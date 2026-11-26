@@ -85,14 +85,34 @@ public class PanItem extends Item {
         return pan.getOrDefault(ModPan.WATER, SimpleFluidContent.EMPTY).getAmount();
     }
 
+    /**
+     * Sets the water of a pan.
+     *
+     * @param pan the pan
+     * @param amount water in millibuckets
+     */
     private static void setWater(ItemStack pan, int amount) {
         pan.set(ModPan.WATER, SimpleFluidContent.copyOf(new FluidStack(Fluids.WATER, amount)));
     }
 
+    /**
+     * Tells whether a pan holds water for one wash.
+     *
+     * @param pan the pan
+     * @return true from one wash worth of water
+     */
     private static boolean hasWater(ItemStack pan) {
         return water(pan) >= WASH_COST;
     }
 
+    /**
+     * Tells whether a player can fill a pan from the water source they look at.
+     *
+     * @param level the world
+     * @param player the player
+     * @param pan the pan
+     * @return true if the pan is not full and the player looks at reachable water
+     */
     private static boolean canDip(Level level, Player player, ItemStack pan) {
         if (water(pan) >= CAPACITY) {
             return false;
@@ -103,6 +123,11 @@ public class PanItem extends Item {
                 && level.mayInteract(player, hit.getBlockPos());
     }
 
+    /**
+     * Plays the sound of filling a pan.
+     *
+     * @param player the player who fills it
+     */
     private static void playFill(Player player) {
         player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F);
     }
@@ -131,6 +156,17 @@ public class PanItem extends Item {
         return handler.getContainer();
     }
 
+    /**
+     * Pours a container into a pan in an inventory slot on right click.
+     *
+     * @param pan the pan
+     * @param source the container
+     * @param slot slot of the click
+     * @param action kind of click
+     * @param player the clicking player
+     * @param replaceSource puts the emptied container back, false if it could not
+     * @return true if water was poured
+     */
     private static boolean pour(ItemStack pan, ItemStack source, Slot slot, ClickAction action, Player player,
             Predicate<ItemStack> replaceSource) {
         if (action != ClickAction.SECONDARY || source.is(pan.getItem()) || !slot.allowModification(player)) {
@@ -158,6 +194,13 @@ public class PanItem extends Item {
         });
     }
 
+    /**
+     * Finds the block a player pans.
+     *
+     * @param level the world
+     * @param player the player
+     * @return the block the player looks at, ignoring fluids
+     */
     private BlockHitResult target(Level level, Player player) {
         return getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
     }
@@ -275,6 +318,19 @@ public class PanItem extends Item {
         return slotChanged || !newStack.is(oldStack.getItem());
     }
 
+    /**
+     * Finishes a wash on the server thread: breaks the block, adds the grains to the pan, hands out full items and
+     * plays the feedback.
+     *
+     * @param level the world
+     * @param player the player
+     * @param pos the washed block
+     * @param id id of the pan
+     * @param result the measurement
+     * @param keepBlock true with silk touch, which keeps the block
+     * @param fortune fortune level
+     * @param reach length of the trail sense guide in blocks, 0 without it
+     */
     private static void collect(ServerLevel level, ServerPlayer player, BlockPos pos, UUID id,
             Measurement result, boolean keepBlock, int fortune, double reach) {
         if (!level.getServer().isSameThread()) {
@@ -312,6 +368,12 @@ public class PanItem extends Item {
         }
     }
 
+    /**
+     * Plays one chime per indicator mineral in a wash, one after the other.
+     *
+     * @param player the player
+     * @param grains grains of the wash
+     */
     private static void chime(ServerPlayer player, Grains grains) {
         int delay = 0;
         for (Indicator indicator : Indicators.all()) {
@@ -324,12 +386,25 @@ public class PanItem extends Item {
         }
     }
 
+    /**
+     * Plays one loud chime to a player.
+     *
+     * @param player the player
+     * @param pitch pitch of the mineral
+     */
     private static void playChime(ServerPlayer player, float pitch) {
         for (int layer = 0; layer < CHIME_LAYERS; layer++) {
             player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, CHIME_VOLUME, pitch);
         }
     }
 
+    /**
+     * Finds a pan by its id in the cursor or the inventory of a player.
+     *
+     * @param player the player
+     * @param id id of the pan
+     * @return the pan, empty if the player no longer holds it
+     */
     private static ItemStack findPan(ServerPlayer player, UUID id) {
         ItemStack carried = player.containerMenu.getCarried();
         if (id.equals(carried.get(ModPan.ID))) {
@@ -344,6 +419,13 @@ public class PanItem extends Item {
         return ItemStack.EMPTY;
     }
 
+    /**
+     * Gives items to a player, dropping what does not fit.
+     *
+     * @param player the player
+     * @param mineral the item
+     * @param count number of items, nothing for 0
+     */
     private static void give(ServerPlayer player, Item mineral, int count) {
         if (count > 0) {
             ItemStack stack = new ItemStack(mineral, count);

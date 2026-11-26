@@ -45,10 +45,24 @@ public final class PipeProfile {
         return pipe.diameter() / 2.0 * Math.max(1.0, params.craterWidening());
     }
 
+    /**
+     * Clamps a value to the unit range.
+     *
+     * @param value the value
+     * @return the value between 0 and 1
+     */
     private static double clamp(double value) {
         return Math.min(1.0, Math.max(0.0, value));
     }
 
+    /**
+     * Interpolates between two values.
+     *
+     * @param a value at 0
+     * @param b value at 1
+     * @param t position, 0 to 1
+     * @return the interpolated value
+     */
     private static double lerp(double a, double b, double t) {
         return a + (b - a) * t;
     }

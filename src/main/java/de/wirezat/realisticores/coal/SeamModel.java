@@ -106,6 +106,13 @@ public final class SeamModel {
         return ValueNoise.sample2(seed ^ OUTCROP_SALT, x, z, wavelength) > params.seam().outcropThreshold();
     }
 
+    /**
+     * Gives the coal rank at a position of a basin.
+     *
+     * @param basin the basin
+     * @param edge distance to the centre, 0 in the centre and 1 at the rim
+     * @return the rank; folded basins hold anthracite in their core
+     */
     private Rank rank(ResolvedBasin basin, double edge) {
         return switch (basin.type()) {
             case LIGNITE -> Rank.LIGNITE;
@@ -114,6 +121,17 @@ public final class SeamModel {
         };
     }
 
+    /**
+     * Adds one seam with its partings and host rocks to the claims of a column.
+     *
+     * @param claims claims of the column
+     * @param resolved the basin
+     * @param index index of the seam, 0 at the bottom
+     * @param bottom Y of the seam floor
+     * @param edge distance to the centre in basin units
+     * @param x world X
+     * @param z world Z
+     */
     private void claimSeam(List<Layer> claims, ResolvedBasin resolved, int index, int bottom, double edge, int x,
             int z) {
         CoalParams.SeamParams s = params.seam();
@@ -165,6 +183,17 @@ public final class SeamModel {
         claimSandstone(claims, basin, index, top + 1 + bank + black + roof, false, x, z);
     }
 
+    /**
+     * Adds a sandstone lens above a seam where the sandstone noise allows one.
+     *
+     * @param claims claims of the column
+     * @param basin the basin
+     * @param index index of the seam
+     * @param bottom Y of the lens floor
+     * @param lignite true above lignite
+     * @param x world X
+     * @param z world Z
+     */
     private void claimSandstone(List<Layer> claims, Basin basin, int index, int bottom, boolean lignite, int x,
             int z) {
         CoalParams.AccessoryParams a = params.accessories();
@@ -175,18 +204,42 @@ public final class SeamModel {
         claim(claims, bottom, thickness, Rock.SANDSTONE);
     }
 
+    /**
+     * Adds a layer to the claims, skipping empty ones.
+     *
+     * @param claims claims of the column
+     * @param minY Y of the layer floor
+     * @param height thickness in blocks
+     * @param rock rock of the layer
+     */
     private static void claim(List<Layer> claims, int minY, int height, Rock rock) {
         if (height > 0) {
             claims.add(new Layer(minY, minY + height - 1, rock));
         }
     }
 
+    /**
+     * Draws the thickness of a host rock from noise.
+     *
+     * @param basin the basin
+     * @param salt salt of the rock
+     * @param x world X
+     * @param z world Z
+     * @param range thinnest and thickest layer in blocks
+     * @return thickness in blocks
+     */
     private int hull(Basin basin, int salt, int x, int z, IntRange range) {
         double share = (noise(basin, salt, x, z, params.rock().wavelength()) + 1.0) / 2.0;
         int span = range.max() - range.min();
         return range.min() + Math.min(span, (int) (share * (span + 1)));
     }
 
+    /**
+     * Merges the claims of a column into layers; where claims overlap, the rock listed first in {@link Rock} wins.
+     *
+     * @param claims claims of the column
+     * @return layers from bottom to top
+     */
     private static List<Layer> withoutOverlap(List<Layer> claims) {
         int minY = claims.stream().mapToInt(Layer::minY).min().orElseThrow();
         int maxY = claims.stream().mapToInt(Layer::maxY).max().orElseThrow();
@@ -212,6 +265,16 @@ public final class SeamModel {
         return layers;
     }
 
+    /**
+     * Samples the noise of a basin.
+     *
+     * @param basin the basin
+     * @param salt salt of the noise
+     * @param x world X
+     * @param z world Z
+     * @param wavelength size of the features in blocks
+     * @return noise value in [-1, 1)
+     */
     private static double noise(Basin basin, int salt, double x, double z, double wavelength) {
         return ValueNoise.sample2(SplitMix64.hash(basin.seed(), salt, 0), x, z, wavelength);
     }

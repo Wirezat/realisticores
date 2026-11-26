@@ -80,6 +80,12 @@ public final class CoalOres {
         return zones.stream().noneMatch(CoalOres::isRank);
     }
 
+    /**
+     * Tells whether a zone is a coal rank.
+     *
+     * @param zone zone name
+     * @return true for HARD_COAL, LIGNITE and ANTHRACITE
+     */
     private static boolean isRank(String zone) {
         return Arrays.stream(Rank.values()).anyMatch(rank -> rank.name().equals(zone));
     }

@@ -66,15 +66,34 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
         this.content = texts(tooltip.content(), format);
     }
 
+    /**
+     * Names a sprite of the pan tooltip.
+     *
+     * @param name sprite name
+     * @return sprite id in the GUI atlas
+     */
     private static ResourceLocation sprite(String name) {
         return ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "pan/" + name);
     }
 
+    /**
+     * Formats the grams of every indicator mineral.
+     *
+     * @param grains grains to show
+     * @param format number format of the client language
+     * @return one text per indicator mineral
+     */
     private static List<String> texts(Grains grains, NumberFormat format) {
         return MINERALS.stream()
                 .map(mineral -> I18n.get(GRAMS_KEY, format.format(grains.get(mineral.id()) / 10.0))).toList();
     }
 
+    /**
+     * Gives the width of one icon column.
+     *
+     * @param font font of the tooltip
+     * @return width in pixels, fitting the widest text
+     */
     private int columnWidth(Font font) {
         int widest = Stream.concat(last.stream(), content.stream()).mapToInt(font::width).max().orElse(0);
         return ICON_SIZE + TEXT_GAP + widest + COLUMN_GAP;
@@ -97,6 +116,16 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
         drawText(font, I18n.get(WATER_KEY, water), x, y + WATER_TOP, WATER_COLOR, matrix, buffers);
     }
 
+    /**
+     * Draws the texts of one row next to the icons.
+     *
+     * @param font font of the tooltip
+     * @param x left edge in pixels
+     * @param y top edge in pixels
+     * @param matrix text matrix
+     * @param buffers buffer of the text
+     * @param texts one text per column
+     */
     private void drawRow(Font font, int x, int y, Matrix4f matrix, MultiBufferSource.BufferSource buffers,
             List<String> texts) {
         for (int i = 0; i < texts.size(); i++) {
@@ -105,6 +134,17 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
         }
     }
 
+    /**
+     * Draws one shadowed text.
+     *
+     * @param font font of the tooltip
+     * @param text the text
+     * @param x left edge in pixels
+     * @param y top edge in pixels
+     * @param color colour as 0xAARRGGBB
+     * @param matrix text matrix
+     * @param buffers buffer of the text
+     */
     private static void drawText(Font font, String text, int x, int y, int color, Matrix4f matrix,
             MultiBufferSource.BufferSource buffers) {
         font.drawInBatch(text, x, y, color, true, matrix, buffers, Font.DisplayMode.NORMAL, 0,
@@ -123,6 +163,17 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
         }
     }
 
+    /**
+     * Draws the symbol of a row and one icon per indicator mineral.
+     *
+     * @param font font of the tooltip
+     * @param x left edge in pixels
+     * @param y top edge in pixels
+     * @param graphics graphics to draw with
+     * @param symbol symbol at the start of the row
+     * @param minerals minerals to show
+     * @param tone grade tone of the lead indicators
+     */
     private void drawIcons(Font font, int x, int y, GuiGraphics graphics, ResourceLocation symbol,
             List<Indicator> minerals, GradeTone tone) {
         graphics.blitSprite(symbol, x, y + (ICON_SIZE - SYMBOL_SIZE) / 2, SYMBOL_SIZE, SYMBOL_SIZE);

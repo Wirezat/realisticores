@@ -50,6 +50,12 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
         return new DepositRegistry(Collections.unmodifiableMap(ores), Collections.unmodifiableMap(deposits));
     }
 
+    /**
+     * Reads the minerals of a deposit file.
+     *
+     * @param array the minerals array
+     * @return the minerals
+     */
     private static List<Mineral> minerals(JsonArray array) {
         List<Mineral> minerals = new ArrayList<>();
         for (JsonElement element : array) {
@@ -68,6 +74,12 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
         return List.copyOf(minerals);
     }
 
+    /**
+     * Reads the indicator minerals of a deposit file.
+     *
+     * @param array the indicators array
+     * @return the indicators, lead first
+     */
     private static List<Indicator> indicators(JsonArray array) {
         List<Indicator> indicators = new ArrayList<>();
         for (JsonElement element : array) {
@@ -79,6 +91,12 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
         return List.copyOf(indicators);
     }
 
+    /**
+     * Reads a JSON resource of the mod.
+     *
+     * @param path path inside the mod jar
+     * @return the parsed object
+     */
     private static JsonObject read(String path) {
         try (InputStream stream = DepositRegistry.class.getResourceAsStream(path)) {
             if (stream == null) {

@@ -97,22 +97,46 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         return inventory;
     }
 
+    /**
+     * Tells whether a stack is the material of any press recipe.
+     *
+     * @param stack the stack
+     * @return true if a recipe takes it as material
+     */
     private boolean acceptsMaterial(ItemStack stack) {
         return level != null && level.getRecipeManager().getAllRecipesFor(ModPress.PRESS_TYPE.get()).stream()
                 .anyMatch(holder -> holder.value().material().test(stack));
     }
 
+    /**
+     * Tells whether a stack is the catalyst of any press recipe.
+     *
+     * @param stack the stack
+     * @return true if a recipe takes it as catalyst
+     */
     private boolean acceptsCatalyst(ItemStack stack) {
         return level != null && level.getRecipeManager().getAllRecipesFor(ModPress.PRESS_TYPE.get()).stream()
                 .anyMatch(holder -> holder.value().catalyst().test(stack));
     }
 
+    /**
+     * Finds the recipe matching the material and catalyst slots.
+     *
+     * @param level the world
+     * @return the recipe, empty if none matches
+     */
     private Optional<RecipeHolder<PressRecipe>> currentRecipe(Level level) {
         PressInput input = new PressInput(inventory.getStackInSlot(MATERIAL_SLOT),
                 inventory.getStackInSlot(CATALYST_SLOT));
         return recipeCheck.getRecipeFor(input, level);
     }
 
+    /**
+     * Tells whether the result of a run fits into the output slot.
+     *
+     * @param recipe the recipe
+     * @return true if the slot is empty or can take the crystals of the run
+     */
     private boolean outputFits(PressRecipe recipe) {
         ItemStack output = inventory.getStackInSlot(OUTPUT_SLOT);
         if (output.isEmpty()) {
@@ -162,6 +186,9 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         }
     }
 
+    /**
+     * Puts a fresh seed crystal to work between two runs once the old one is worn out.
+     */
     private void loadSeed() {
         PressSeed seed = PressSeed.of(inventory.getStackInSlot(SEED_SLOT));
         if (seed != null && seeds.wantsSeed(cycle.progress())) {
@@ -170,6 +197,11 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         }
     }
 
+    /**
+     * Finishes a run: consumes material and catalyst and adds the crystals to the output.
+     *
+     * @param recipe the recipe
+     */
     private void craft(PressRecipe recipe) {
         inventory.getStackInSlot(MATERIAL_SLOT).shrink(recipe.materialCount());
         inventory.getStackInSlot(CATALYST_SLOT).shrink(1);

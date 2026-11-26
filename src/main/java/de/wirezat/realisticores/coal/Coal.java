@@ -22,6 +22,11 @@ public final class Coal {
             SurfaceHint surface, Accessories accessories, Memo<Basin, Optional<ResolvedBasin>> basins) {
     }
 
+    /**
+     * Gives the shared generator objects, building them from the config on first use.
+     *
+     * @return the current state
+     */
     private static State state() {
         State current = state;
         if (current == null) {
@@ -124,11 +129,27 @@ public final class Coal {
         return resolved(current, probe, candidates).filter(basin -> basin.type() == type).findFirst();
     }
 
+    /**
+     * Measures the terrain of basins, caching each one.
+     *
+     * @param current current state
+     * @param probe terrain source
+     * @param basins basins to measure
+     * @return the basins outside high mountains
+     */
     private static Stream<ResolvedBasin> resolved(State current, TerrainProbe probe, Stream<Basin> basins) {
         return basins.flatMap(basin -> current.basins().get(basin,
                 key -> resolve(basin, probe, current.params())).stream());
     }
 
+    /**
+     * Measures the terrain of a basin and lays out its seams.
+     *
+     * @param basin the basin
+     * @param probe terrain source
+     * @param params generation settings
+     * @return the basin with its type and layout, empty in high mountains
+     */
     private static Optional<ResolvedBasin> resolve(Basin basin, TerrainProbe probe, CoalParams params) {
         BasinSite site = BasinSite.measure(basin, probe, params.relief());
         if (site.mountain(params.relief())) {

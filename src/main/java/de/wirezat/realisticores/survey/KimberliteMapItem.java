@@ -86,6 +86,13 @@ public class KimberliteMapItem extends Item {
     private record Survey(int x, int z, byte[] outlines) {
     }
 
+    /**
+     * Prepares the map of a trail point in the background.
+     *
+     * @param level the world
+     * @param spot the trail point
+     * @return the rounded point and the water outlines around it
+     */
     private static Survey survey(ServerLevel level, Plume.Spot spot) {
         int x = (int) Math.round(spot.x());
         int z = (int) Math.round(spot.z());
@@ -95,16 +102,34 @@ public class KimberliteMapItem extends Item {
                 BiomePreview.colors(level, snap(x) - halfSize, snap(z) - halfSize, blocksPerPixel));
     }
 
+    /**
+     * Rounds a coordinate down to a whole map pixel.
+     *
+     * @param block world coordinate
+     * @return the coordinate of the pixel corner
+     */
     private static int snap(int block) {
         int blocksPerPixel = 1 << MAP_SCALE;
         return Math.floorDiv(block, blocksPerPixel) * blocksPerPixel;
     }
 
+    /**
+     * Plays the sound of a map that found nothing.
+     *
+     * @param player the player
+     */
     private static void playNothingFound(ServerPlayer player) {
         player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN,
                 SoundSource.PLAYERS, 1.0F, 0.6F);
     }
 
+    /**
+     * Swaps one empty kimberlite map of a player for the filled map.
+     *
+     * @param level the world
+     * @param player the player
+     * @param survey the surveyed point
+     */
     private void hand(ServerLevel level, ServerPlayer player, Survey survey) {
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {

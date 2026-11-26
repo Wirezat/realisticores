@@ -38,6 +38,12 @@ public final class SurveyEvents {
     private SurveyEvents() {
     }
 
+    /**
+     * Names a loot table that is injected into vanilla chests.
+     *
+     * @param name table name
+     * @return key of the table
+     */
     private static ResourceKey<LootTable> injection(String name) {
         return ResourceKey.create(Registries.LOOT_TABLE,
                 ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "inject/" + name));
@@ -69,6 +75,12 @@ public final class SurveyEvents {
         }
     }
 
+    /**
+     * Creates a pool that rolls a nested loot table once.
+     *
+     * @param table the nested table
+     * @return the pool
+     */
     private static LootPool pool(ResourceKey<LootTable> table) {
         return LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                 .add(NestedLootTable.lootTableReference(table)).build();

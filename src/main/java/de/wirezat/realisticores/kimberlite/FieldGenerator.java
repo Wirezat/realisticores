@@ -82,6 +82,16 @@ public final class FieldGenerator {
         return result;
     }
 
+    /**
+     * Tries to place one pipe in a field, keeping the minimum spacing.
+     *
+     * @param seed world seed
+     * @param rng random stream of the field
+     * @param centerX field centre X
+     * @param centerZ field centre Z
+     * @param radius field radius in blocks
+     * @param placed pipes placed so far, the new pipe is added here
+     */
     private void placePipe(long seed, SplitMix64 rng, int centerX, int centerZ, int radius, List<Pipe> placed) {
         KimberliteParams.FieldParams f = params.field();
         KimberliteParams.PipeParams p = params.pipe();
@@ -131,6 +141,17 @@ public final class FieldGenerator {
     private record Candidate<T>(T value, double distance) {
     }
 
+    /**
+     * Searches the field cells ring by ring around a position for the nearest candidate.
+     *
+     * @param seed world seed
+     * @param x world X
+     * @param z world Z
+     * @param maxRadius search limit in blocks
+     * @param slack how far a candidate may lie from its field centre in blocks
+     * @param measure finds the candidate of a field and its distance
+     * @return the nearest candidate, empty if none lies within the limit
+     */
     private <T> Optional<T> nearest(long seed, int x, int z, int maxRadius, int slack,
             Function<Field, Optional<Candidate<T>>> measure) {
         int cell = params.field().cellSize();

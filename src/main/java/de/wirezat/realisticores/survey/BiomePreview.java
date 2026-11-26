@@ -45,6 +45,14 @@ final class BiomePreview {
         return colors;
     }
 
+    /**
+     * Gives the map colour of one pixel from the water around it.
+     *
+     * @param water water flags of all pixels
+     * @param x pixel column
+     * @param z pixel row
+     * @return packed map colour, 0 for an empty pixel
+     */
     private static byte color(boolean[] water, int x, int z) {
         int neighbours = 0;
         for (int dz = -1; dz <= 1; dz++) {
@@ -65,6 +73,13 @@ final class BiomePreview {
                 : neighbours > 1 ? MapColor.Brightness.LOW : MapColor.Brightness.LOWEST);
     }
 
+    /**
+     * Gives the brightness of the hatching inside water, like the vanilla explorer map.
+     *
+     * @param x pixel column
+     * @param z pixel row
+     * @return the brightness
+     */
     private static MapColor.Brightness hatching(int x, int z) {
         return switch ((x + (int) (Mth.sin(z) * 7.0F)) / 8 % 5) {
             case 0, 4 -> MapColor.Brightness.LOW;

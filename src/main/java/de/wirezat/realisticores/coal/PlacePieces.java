@@ -43,6 +43,14 @@ public final class PlacePieces {
                         ItemInteractionResult.sidedSuccess(event.getLevel().isClientSide)));
     }
 
+    /**
+     * Places loose coal or adds a piece to it, like placing a block item.
+     *
+     * @param block the loose coal block
+     * @param context the placement
+     * @param player the placing player
+     * @return true if a piece was placed
+     */
     private static boolean place(CoalPiecesBlock block, BlockPlaceContext context, Player player) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();

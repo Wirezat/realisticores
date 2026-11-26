@@ -61,6 +61,15 @@ public final class ValueNoise {
         return sample3(seed, x / wavelength, y / wavelength, z / wavelength);
     }
 
+    /**
+     * Samples 2D noise on one integer layer of the 3D lattice.
+     *
+     * @param seed noise seed
+     * @param x X in noise units
+     * @param z Z in noise units
+     * @param layer layer index
+     * @return noise value in [-1, 1)
+     */
     private static double sample2Layer(long seed, double x, double z, int layer) {
         int x0 = (int) Math.floor(x);
         int z0 = (int) Math.floor(z);
@@ -71,14 +80,37 @@ public final class ValueNoise {
         return lerp(top, bottom, tz);
     }
 
+    /**
+     * Gives the random value of one lattice point.
+     *
+     * @param seed noise seed
+     * @param x lattice X
+     * @param z lattice Z
+     * @param layer lattice layer
+     * @return value in [-1, 1)
+     */
     private static double lattice(long seed, int x, int z, int layer) {
         return (SplitMix64.hash(seed + SplitMix64.mix(layer), x, z) >>> 11) * 0x1.0p-52 - 1.0;
     }
 
+    /**
+     * Eases a fraction with a smoothstep curve.
+     *
+     * @param t fraction from 0 to 1
+     * @return the eased fraction
+     */
     private static double smooth(double t) {
         return t * t * (3.0 - 2.0 * t);
     }
 
+    /**
+     * Interpolates between two values.
+     *
+     * @param a value at 0
+     * @param b value at 1
+     * @param t position, 0 to 1
+     * @return the interpolated value
+     */
     private static double lerp(double a, double b, double t) {
         return a + (b - a) * t;
     }

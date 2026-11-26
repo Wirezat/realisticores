@@ -48,6 +48,12 @@ public final class MineralConfig {
         return config;
     }
 
+    /**
+     * Checks a replacement entry.
+     *
+     * @param entry config value
+     * @return true for an empty string or a block id
+     */
     private static boolean isValidReplacement(Object entry) {
         return entry instanceof String text && (text.isEmpty() || ResourceLocation.tryParse(text) != null);
     }

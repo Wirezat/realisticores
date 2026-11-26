@@ -60,6 +60,11 @@ public class PressEmiRecipe implements EmiRecipe {
         return List.of(seeds());
     }
 
+    /**
+     * Lists the seed crystals as one ingredient.
+     *
+     * @return all seed crystals
+     */
     private static EmiIngredient seeds() {
         return EmiIngredient.of(PressSeed.all().stream().map(EmiStack::of).toList());
     }

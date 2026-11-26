@@ -58,6 +58,11 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
      */
     public record TypeParams(IntRange depth, IntRange seams, DoubleRange thickness, IntRange spacing,
             int maxFaults) {
+        /**
+         * Repairs ranges whose upper bound lies below the lower bound.
+         *
+         * @return a copy with ordered ranges
+         */
         private TypeParams sanitized() {
             return new TypeParams(depth.ordered(), seams.ordered(), thickness.ordered(), spacing.ordered(), maxFaults);
         }
@@ -213,6 +218,20 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                         4, 40, 0.4, new IntRange(3, 6), 6, 0.3, 2));
     }
 
+    /**
+     * Creates the settings of a basin type from plain bounds.
+     *
+     * @param minDepth smallest bowl depth
+     * @param maxDepth largest bowl depth
+     * @param minSeams fewest seams
+     * @param maxSeams most seams
+     * @param minThickness thinnest seam
+     * @param maxThickness thickest seam
+     * @param minSpacing smallest gap between seams
+     * @param maxSpacing largest gap between seams
+     * @param maxFaults most faults
+     * @return the settings
+     */
     private static TypeParams typeParams(int minDepth, int maxDepth, int minSeams, int maxSeams, double minThickness,
             double maxThickness, int minSpacing, int maxSpacing, int maxFaults) {
         return new TypeParams(new IntRange(minDepth, maxDepth), new IntRange(minSeams, maxSeams),

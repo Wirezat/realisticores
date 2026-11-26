@@ -114,6 +114,14 @@ public final class Plume {
                 Arrays.copyOf(lengths, count), factor);
     }
 
+    /**
+     * Reads the terrain height at a point of a trail.
+     *
+     * @param probe terrain source
+     * @param x world X
+     * @param z world Z
+     * @return Y of the top solid block
+     */
     private static double height(TerrainProbe probe, double x, double z) {
         return probe.terrainHeight((int) Math.round(x), (int) Math.round(z));
     }
@@ -152,6 +160,15 @@ public final class Plume {
         return densities;
     }
 
+    /**
+     * Gives how dense a mineral is, given the nearest point of the trail.
+     *
+     * @param path trail of the pipe
+     * @param nearest nearest point of the trail to the position
+     * @param params trail settings
+     * @param indicator spread of the mineral
+     * @return density from 0 to 1
+     */
     private static double density(PlumePath path, Nearest nearest, KimberliteParams.PlumeParams params,
             KimberliteParams.IndicatorParams indicator) {
         double outside = Math.max(0.0, nearest.distance() - path.pipe().diameter() / 2.0);
@@ -240,6 +257,14 @@ public final class Plume {
     private record Nearest(int segment, double fraction, double distance, double length) {
     }
 
+    /**
+     * Finds the point of a trail nearest to a position.
+     *
+     * @param path the trail
+     * @param x world X
+     * @param z world Z
+     * @return segment, position on it, distance and length along the trail
+     */
     private static Nearest nearest(PlumePath path, double x, double z) {
         int segment = -1;
         double fraction = 0.0;

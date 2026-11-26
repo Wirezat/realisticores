@@ -56,6 +56,14 @@ public final class LevelTerrainProbe implements TerrainProbe {
         return biomeAt(x, y, z).value().hasPrecipitation();
     }
 
+    /**
+     * Reads the biome the generator places at a position.
+     *
+     * @param x world X
+     * @param y world Y
+     * @param z world Z
+     * @return the biome
+     */
     private Holder<Biome> biomeAt(int x, int y, int z) {
         return generator.getBiomeSource().getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y),
                 QuartPos.fromBlock(z), random.sampler());

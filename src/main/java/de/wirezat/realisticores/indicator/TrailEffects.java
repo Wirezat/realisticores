@@ -29,6 +29,13 @@ public final class TrailEffects {
         private final List<GuidePoint> points;
         private int age;
 
+        /**
+         * Starts a trail.
+         *
+         * @param player the player who sees it
+         * @param level the world of the trail
+         * @param points guide points from the panned spot toward the source
+         */
         Run(ServerPlayer player, ServerLevel level, List<GuidePoint> points) {
             this.player = player;
             this.level = level;
@@ -38,7 +45,8 @@ public final class TrailEffects {
 
     /**
      * Starts a trail for a player; a ghostly flame appears at one point after the other, half a second apart,
-     * leading from the player toward the source; each flame stays lit for several steps. A new trail replaces the running trail of the same player.
+     * leading from the player toward the source; each flame stays lit for several steps. A new trail replaces the
+     * running trail of the same player.
      *
      * @param player the player who sees the trail
      * @param level the world of the trail
@@ -78,6 +86,12 @@ public final class TrailEffects {
         }
     }
 
+    /**
+     * Shows one flame of a trail above the ground.
+     *
+     * @param trail the trail
+     * @param point point of the flame
+     */
     private static void emit(Run trail, GuidePoint point) {
         BlockPos column = BlockPos.containing(point.x(), 0, point.z());
         if (!trail.level.isLoaded(column)) {

@@ -61,6 +61,13 @@ public final class CoalBasin implements DepositType {
                 target("anthracite", BasinType.FOLDED));
     }
 
+    /**
+     * Creates the locate target of one basin type.
+     *
+     * @param name subcommand name
+     * @param type wanted basin type
+     * @return the target
+     */
     private static LocateTarget target(String name, BasinType type) {
         return new LocateTarget(name, (level, probe, origin, limit) -> Coal.nearest(level.getSeed(), probe, type,
                 origin.getX(), origin.getZ(), Math.min(SEARCH_LIMIT, limit))

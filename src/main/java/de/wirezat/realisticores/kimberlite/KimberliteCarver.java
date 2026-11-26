@@ -80,6 +80,23 @@ public final class KimberliteCarver {
         }
     }
 
+    /**
+     * Writes the pipe rock of one column, with soil on an overgrown crater floor.
+     *
+     * @param chunk the chunk
+     * @param seed world seed
+     * @param pos reusable position
+     * @param outline outline of the pipe
+     * @param x world X
+     * @param z world Z
+     * @param bottomY lowest Y of the pipe
+     * @param groundY Y of the ground or the crater floor
+     * @param bowl true inside the crater bowl
+     * @param shape shape of the pipes
+     * @param ores ore blocks of the pipe
+     * @param topSoil top soil block, null for bare rock
+     * @param subSoil soil block below the top
+     */
     private static void carveBody(ChunkAccess chunk, long seed, BlockPos.MutableBlockPos pos,
             PipeShape.Outline outline, int x, int z, int bottomY, int groundY, boolean bowl, PipeShape shape, List<OreBlock> ores,
             BlockState topSoil, BlockState subSoil) {
@@ -111,6 +128,17 @@ public final class KimberliteCarver {
         }
     }
 
+    /**
+     * Clears the crater bowl of a column and fills it with water up to the lake level.
+     *
+     * @param chunk the chunk
+     * @param pos reusable position
+     * @param x world X
+     * @param z world Z
+     * @param floorY Y of the crater floor
+     * @param surfaceY Y of the original surface
+     * @param waterY Y of the lake surface, {@link Integer#MIN_VALUE} without a lake
+     */
     private static void fillBowl(ChunkAccess chunk, BlockPos.MutableBlockPos pos, int x, int z, int floorY,
             int surfaceY, int waterY) {
         int topY = Math.min(chunk.getMaxBuildHeight() - 1, Math.max(surfaceY, waterY));
@@ -129,11 +157,30 @@ public final class KimberliteCarver {
     private record OreBlock(ActiveMineral mineral, BlockState block) {
     }
 
+    /**
+     * Resolves the blocks of the pipe's minerals once per chunk.
+     *
+     * @param minerals active minerals of the pipe
+     * @return minerals with their block; minerals whose block is missing are left out
+     */
     private static List<OreBlock> oreBlocks(List<ActiveMineral> minerals) {
         return minerals.stream().flatMap(mineral -> BlockIds.state(mineral.block())
                 .map(block -> new OreBlock(mineral, block)).stream()).toList();
     }
 
+    /**
+     * Rolls whether a rock block becomes one of the pipe's ores.
+     *
+     * @param seed world seed
+     * @param ores ore blocks of the pipe
+     * @param pipe the pipe
+     * @param rock rock type of the block
+     * @param x world X
+     * @param y world Y
+     * @param z world Z
+     * @param rockBlock block of the rock
+     * @return the first ore whose roll hits, else the rock block
+     */
     private static BlockState mineralBlock(long seed, List<OreBlock> ores, Pipe pipe, Facies rock, int x, int y, int z,
             BlockState rockBlock) {
         for (OreBlock ore : ores) {
@@ -151,6 +198,12 @@ public final class KimberliteCarver {
         return rockBlock;
     }
 
+    /**
+     * Gives the block of a rock type.
+     *
+     * @param rock the rock type, not HOST
+     * @return its block
+     */
     private static BlockState blockFor(Facies rock) {
         return switch (rock) {
             case KIMBERLITE -> ModBlocks.KIMBERLITE.get().defaultBlockState();
@@ -163,6 +216,12 @@ public final class KimberliteCarver {
         };
     }
 
+    /**
+     * Tells whether a block is loose soil.
+     *
+     * @param state the block
+     * @return true for dirt, sand and gravel
+     */
     private static boolean isSoil(BlockState state) {
         return state.is(BlockTags.DIRT) || state.is(BlockTags.SAND) || state.is(Blocks.GRAVEL);
     }

@@ -72,6 +72,12 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
         sprite(graphics, 114, 36, 176, 56, menu.arrowProgress(ARROW_WIDTH), 15);
     }
 
+    /**
+     * Draws the glowing chamber, the rods, the anvils and the growing crystal.
+     *
+     * @param graphics graphics to draw with
+     * @param offset how far the anvils have closed in pixels
+     */
     private void renderChamber(GuiGraphics graphics, int offset) {
         if (menu.isLit()) {
             float heat = 0.9F + 0.1F * (float) Math.sin(Util.getMillis() / PULSE_MILLIS);
@@ -89,6 +95,17 @@ public class CrystalPressScreen extends AbstractContainerScreen<CrystalPressMenu
         }
     }
 
+    /**
+     * Draws a part of the press texture relative to the screen origin, skipping empty parts.
+     *
+     * @param graphics graphics to draw with
+     * @param x left edge on the screen
+     * @param y top edge on the screen
+     * @param u left edge in the texture
+     * @param v top edge in the texture
+     * @param width width in pixels
+     * @param height height in pixels
+     */
     private void sprite(GuiGraphics graphics, int x, int y, int u, int v, int width, int height) {
         if (width > 0 && height > 0) {
             graphics.blit(TEXTURE, leftPos + x, topPos + y, u, v, width, height);

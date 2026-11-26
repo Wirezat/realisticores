@@ -150,6 +150,14 @@ public final class ModBlocks {
     private ModBlocks() {
     }
 
+    /**
+     * Registers a block with a plain block item and lists the item for the creative tab.
+     *
+     * @param name block id
+     * @param factory creates the block from its properties
+     * @param properties block properties
+     * @return the registered block
+     */
     private static <B extends Block> DeferredBlock<B> withItem(String name,
             Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
         DeferredBlock<B> block = BLOCKS.registerBlock(name, factory, properties);
@@ -157,21 +165,50 @@ public final class ModBlocks {
         return block;
     }
 
+    /**
+     * Registers a plain block with its block item.
+     *
+     * @param name block id
+     * @param properties block properties
+     * @return the registered block
+     */
     private static DeferredBlock<Block> register(String name, BlockBehaviour.Properties properties) {
         return withItem(name, Block::new, properties);
     }
 
+    /**
+     * Registers an ore block that drops the experience of its ore data, with its block item.
+     *
+     * @param name block id
+     * @param oreId ore id in the shipped ore data
+     * @param properties block properties
+     * @return the registered block
+     */
     private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
         OreDefinition ore = OreConfig.registry().ores().get(oreId);
         return withItem(name, props -> new DropExperienceBlock(UniformInt.of(ore.xpMin(), ore.xpMax()), props),
                 properties);
     }
 
+    /**
+     * Makes a block glow like a burning seam.
+     *
+     * @param properties properties of the seam
+     * @return the same properties, lit and emissive
+     */
     private static BlockBehaviour.Properties burning(BlockBehaviour.Properties properties) {
         return properties.lightLevel(state -> 10).hasPostProcess((state, level, pos) -> true)
                 .emissiveRendering((state, level, pos) -> true);
     }
 
+    /**
+     * Registers loose coal lying on the ground; it has no block item, the coal item places it.
+     *
+     * @param name block id
+     * @param color map colour
+     * @param item coal item it drops and is placed with
+     * @return the registered block
+     */
     private static DeferredBlock<CoalPiecesBlock> registerPieces(String name, MapColor color,
             Supplier<? extends Item> item) {
         return BLOCKS.registerBlock(name, props -> new CoalPiecesBlock(item, props),

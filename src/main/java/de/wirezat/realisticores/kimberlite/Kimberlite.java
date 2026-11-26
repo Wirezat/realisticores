@@ -27,6 +27,11 @@ public final class Kimberlite {
             Memo<Pipe, Double> factors, Memo<Pipe, CraterSite> sites) {
     }
 
+    /**
+     * Gives the shared generator objects, building them from the config on first use.
+     *
+     * @return the current state
+     */
     private static State state() {
         State current = state;
         if (current == null) {
@@ -184,18 +189,45 @@ public final class Kimberlite {
         }, TRACERS);
     }
 
+    /**
+     * Picks one of several spots.
+     *
+     * @param spots the spots
+     * @param pick random number
+     * @return the picked spot
+     */
     private static Plume.Spot choose(List<Plume.Spot> spots, int pick) {
         return spots.get(Math.floorMod(pick, spots.size()));
     }
 
+    /**
+     * Gives the smallest coordinate of a path.
+     *
+     * @param values coordinates
+     * @return the smallest, rounded toward zero
+     */
     private static int minOf(double[] values) {
         return (int) Arrays.stream(values).min().orElseThrow();
     }
 
+    /**
+     * Gives the largest coordinate of a path.
+     *
+     * @param values coordinates
+     * @return the largest, rounded toward zero
+     */
     private static int maxOf(double[] values) {
         return (int) Arrays.stream(values).max().orElseThrow();
     }
 
+    /**
+     * Lists the pipes near a trail.
+     *
+     * @param current current state
+     * @param seed world seed
+     * @param path the trail
+     * @return pipes within the search margin of the trail's bounding box
+     */
     private static List<Pipe> pipesAround(State current, long seed, PlumePath path) {
         int minX = minOf(path.xs()) - SPOT_SEARCH_MARGIN;
         int minZ = minOf(path.zs()) - SPOT_SEARCH_MARGIN;
@@ -204,18 +236,46 @@ public final class Kimberlite {
         return current.generator().pipesNear(seed, minX, minZ, maxX, maxZ);
     }
 
+    /**
+     * Measures the distance from a pipe centre to a rectangle.
+     *
+     * @param pipe the pipe
+     * @param minX west edge in blocks
+     * @param minZ north edge in blocks
+     * @param maxX east edge in blocks
+     * @param maxZ south edge in blocks
+     * @return distance in blocks, 0 inside
+     */
     private static double distanceToArea(Pipe pipe, int minX, int minZ, int maxX, int maxZ) {
         double dx = Math.max(0, Math.max(minX - pipe.x(), pipe.x() - maxX));
         double dz = Math.max(0, Math.max(minZ - pipe.z(), pipe.z() - maxZ));
         return Math.hypot(dx, dz);
     }
 
+    /**
+     * Gives the trail of a pipe, tracing it on first use.
+     *
+     * @param current current state
+     * @param seed world seed
+     * @param pipe the pipe
+     * @param probe terrain and climate source
+     * @param seaLevel Y of the sea surface
+     * @return the trail
+     */
     private static PlumePath plume(State current, long seed, Pipe pipe, TerrainProbe probe, int seaLevel) {
         return current.plumes().get(pipe, key -> Plume.trace(pipe,
                 Plume.fallbackAngle(seed, pipe, current.params().field().cellSize()), probe, seaLevel,
                 current.params().plume()));
     }
 
+    /**
+     * Gives the climate length factor of a pipe, measuring it on first use.
+     *
+     * @param current current state
+     * @param pipe the pipe
+     * @param probe terrain and climate source
+     * @return the factor
+     */
     private static double plumeFactor(State current, Pipe pipe, TerrainProbe probe) {
         return current.factors().get(pipe,
                 key -> Plume.lengthFactor(pipe, probe, current.params().plume()));

@@ -74,6 +74,12 @@ public final class CoalCarver {
     private record Accent(String ore, BlockState block, double fraction) {
     }
 
+    /**
+     * Resolves the blocks of the minerals that accompany the coal, by zone.
+     *
+     * @param minerals accompanying minerals
+     * @return block, ore and share by zone name; minerals whose block is missing are left out
+     */
     private static Map<String, Accent> accents(List<ActiveMineral> minerals) {
         Map<String, Accent> accents = new HashMap<>();
         for (ActiveMineral mineral : minerals) {
@@ -85,6 +91,19 @@ public final class CoalCarver {
         return accents;
     }
 
+    /**
+     * Writes the layers of one column.
+     *
+     * @param chunk the chunk
+     * @param seed world seed
+     * @param x world X
+     * @param z world Z
+     * @param surfaceY Y of the surface
+     * @param column layers of the column
+     * @param seam seam block, empty to keep the rock
+     * @param outcrop true if the seam shows through the soil
+     * @param accents blocks of the accompanying minerals
+     */
     private static void write(ChunkAccess chunk, long seed, int x, int z, int surfaceY, SeamColumn column,
             Optional<BlockState> seam, boolean outcrop, Map<String, Accent> accents) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -107,6 +126,19 @@ public final class CoalCarver {
         }
     }
 
+    /**
+     * Picks the block of one layer at a position.
+     *
+     * @param seed world seed
+     * @param rock rock of the layer
+     * @param seam seam block
+     * @param sand state of the sandstone relative to the roll front
+     * @param accents blocks of the accompanying minerals
+     * @param x world X
+     * @param y world Y
+     * @param z world Z
+     * @return the block to place
+     */
     private static BlockState layerBlock(long seed, Rock rock, Optional<BlockState> seam, Accessories.Sand sand,
             Map<String, Accent> accents, int x, int y, int z) {
         return switch (rock) {
@@ -135,11 +167,31 @@ public final class CoalCarver {
         };
     }
 
+    /**
+     * Places clay ironstone nests in shale or mudstone.
+     *
+     * @param seed world seed
+     * @param ironstone ironstone accent, null while siderite is off
+     * @param rock the rock
+     * @param x world X
+     * @param y world Y
+     * @param z world Z
+     * @return ironstone inside a nest, else the rock
+     */
     private static BlockState nodule(long seed, Accent ironstone, BlockState rock, int x, int y, int z) {
         return ironstone != null && Coal.accessories().ironstone(seed, ironstone.fraction(), x, y, z)
                 ? ironstone.block() : rock;
     }
 
+    /**
+     * Finds the top of the bedrock below the soil of a column.
+     *
+     * @param chunk the chunk
+     * @param x world X
+     * @param z world Z
+     * @param surfaceY Y of the surface
+     * @return Y of the highest stone block, {@link Integer#MAX_VALUE} if the soil is deeper than the search
+     */
     private static int rockTop(ChunkAccess chunk, int x, int z, int surfaceY) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int y = surfaceY; y > surfaceY - SOIL_SEARCH; y--) {
@@ -150,12 +202,35 @@ public final class CoalCarver {
         return Integer.MAX_VALUE;
     }
 
+    /**
+     * Tells whether an outcropping seam of a column is on fire.
+     *
+     * @param chunk the chunk
+     * @param seed world seed
+     * @param column the column
+     * @param x world X
+     * @param z world Z
+     * @param surfaceY Y of the surface
+     * @return true for hard coal or lignite at the surface, dry and inside a fire patch
+     */
     private static boolean burns(ChunkAccess chunk, long seed, SeamColumn column, int x, int z, int surfaceY) {
         return column.rank() != Rank.ANTHRACITE && SurfaceHint.height(column, surfaceY).orElse(-1) == 0
                 && chunk.getFluidState(new BlockPos(x, surfaceY + 1, z)).isEmpty()
                 && Coal.accessories().onFire(seed, x, z);
     }
 
+    /**
+     * Sets the top of a column on fire: the seam burns, the rock around it turns to clinker with a crust on top.
+     *
+     * @param chunk the chunk
+     * @param seed world seed
+     * @param x world X
+     * @param z world Z
+     * @param surfaceY Y of the surface
+     * @param column the column
+     * @param seam seam block, empty if its coal is off
+     * @param crust crust accent, null while sal ammoniac is off
+     */
     private static void burn(ChunkAccess chunk, long seed, int x, int z, int surfaceY, SeamColumn column,
             Optional<BlockState> seam, Accent crust) {
         BlockState burning = (column.rank() == Rank.LIGNITE ? ModBlocks.BURNING_LIGNITE_SEAM
@@ -177,6 +252,12 @@ public final class CoalCarver {
         }
     }
 
+    /**
+     * Tells whether a block is one of the rocks the basin writes.
+     *
+     * @param state the block
+     * @return true for shale, mudstone, fireclay, ironstone and sandstone
+     */
     private static boolean isBasinRock(BlockState state) {
         return state.is(ModBlocks.SHALE.get()) || state.is(ModBlocks.BLACK_SHALE.get())
                 || state.is(ModBlocks.RUST_STAINED_SHALE.get()) || state.is(ModBlocks.BLACKBAND_IRONSTONE.get())
@@ -184,6 +265,15 @@ public final class CoalCarver {
                 || state.is(Blocks.SANDSTONE) || state.is(Blocks.RED_SANDSTONE);
     }
 
+    /**
+     * Turns the dirt and grass of a column into coaly soil.
+     *
+     * @param chunk the chunk
+     * @param x world X
+     * @param z world Z
+     * @param surfaceY Y of the surface
+     * @param lignite true above lignite
+     */
     private static void writeSoil(ChunkAccess chunk, int x, int z, int surfaceY, boolean lignite) {
         Block dirt = lignite ? ModBlocks.LIGNITIC_DIRT.get() : ModBlocks.COALY_DIRT.get();
         Block grass = lignite ? ModBlocks.LIGNITIC_GRASS_BLOCK.get() : ModBlocks.COALY_GRASS_BLOCK.get();
@@ -198,11 +288,26 @@ public final class CoalCarver {
         }
     }
 
+    /**
+     * Resolves the block of a seam.
+     *
+     * @param rank rank of the seam
+     * @param blocks block id by rank
+     * @param coal true if the coal of the rank is on
+     * @return the configured block, the mod's own seam if a switched-on coal names a missing block, empty to keep the
+     *     rock
+     */
     private static Optional<BlockState> seamBlock(Rank rank, Map<Rank, String> blocks, boolean coal) {
         Optional<Block> block = Optional.ofNullable(blocks.get(rank)).flatMap(BlockIds::block);
         return (coal ? Optional.of(block.orElseGet(() -> ownSeam(rank))) : block).map(Block::defaultBlockState);
     }
 
+    /**
+     * Gives the mod's own seam block of a rank.
+     *
+     * @param rank the rank
+     * @return the seam block
+     */
     private static Block ownSeam(Rank rank) {
         return switch (rank) {
             case HARD_COAL -> ModBlocks.COAL_SEAM.get();

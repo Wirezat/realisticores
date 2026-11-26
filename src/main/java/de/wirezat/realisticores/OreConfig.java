@@ -93,6 +93,12 @@ public final class OreConfig {
         return REGISTRY;
     }
 
+    /**
+     * Checks an entry of the suppressed ore list.
+     *
+     * @param entry config value
+     * @return true for a block id or a block tag id prefixed with {@code #}
+     */
     private static boolean isValidSuppression(Object entry) {
         if (!(entry instanceof String text)) {
             return false;
@@ -100,10 +106,22 @@ public final class OreConfig {
         return ResourceLocation.tryParse(text.startsWith("#") ? text.substring(1) : text) != null;
     }
 
+    /**
+     * Checks an ore id of the config.
+     *
+     * @param entry config value
+     * @return true for lower case letters, digits and underscores
+     */
     private static boolean isValidOreId(Object entry) {
         return entry instanceof String text && text.matches("[a-z0-9_]+");
     }
 
+    /**
+     * Checks an entry of the block override list.
+     *
+     * @param entry config value
+     * @return true for {@code ore=block} with a valid ore id and block id
+     */
     private static boolean isValidOverride(Object entry) {
         if (!(entry instanceof String text)) {
             return false;

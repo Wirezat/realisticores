@@ -67,6 +67,14 @@ public class CoalyGrassBlock extends GrassBlock {
         }
     }
 
+    /**
+     * Tells whether grass survives on a block, like vanilla grass.
+     *
+     * @param state state of the grass block
+     * @param level the world
+     * @param pos position of the grass block
+     * @return true if light reaches the block through what lies on it
+     */
     private static boolean canLive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos above = pos.above();
         BlockState cover = level.getBlockState(above);

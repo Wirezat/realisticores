@@ -20,6 +20,12 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 public class RealisticOres {
     public static final String MOD_ID = "realisticores";
 
+    /**
+     * Registers configs, registries and event listeners of the mod.
+     *
+     * @param modBus the mod event bus
+     * @param container the mod container
+     */
     public RealisticOres(IEventBus modBus, ModContainer container) {
         Deposits.validate(OreConfig.registry(), Deposits.ALL);
         container.registerConfig(ModConfig.Type.COMMON, OreConfig.SPEC, "realisticores/main.toml");
@@ -45,6 +51,9 @@ public class RealisticOres {
                 LocateDepositCommand.register(event.getDispatcher()));
     }
 
+    /**
+     * Drops the resolved config and the cached generator objects of every deposit.
+     */
     private static void invalidateConfig() {
         OreConfig.invalidate();
         Deposits.ALL.forEach(DepositType::invalidate);
