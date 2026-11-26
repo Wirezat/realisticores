@@ -36,12 +36,13 @@ public final class OreConfig {
      * @param matcher natural ore generation to suppress: the configured list plus the tag of every enabled ore
      * @param kimberlitePipeActive true if at least one ore of the kimberlite pipe is enabled
      * @param kimberliteMinerals enabled minerals of the kimberlite pipe with the block each one places
-     * @param coalBlocks block placed for each coal rank, empty if no ore of the coal basin is enabled
+     * @param coalBasinActive true if at least one ore of the coal basin is enabled
+     * @param coalBlocks block placed for each coal rank; a rank without block keeps the rock of its layer
      * @param coalRanks ranks whose coal is switched on; the others place their replacement
      * @param coalMinerals minerals that accompany the coal, with the block and share of each
      */
     public record Resolved(OreMatcher matcher, boolean kimberlitePipeActive, List<ActiveMineral> kimberliteMinerals,
-            Map<Rank, String> coalBlocks, Set<Rank> coalRanks, List<ActiveMineral> coalMinerals) {
+            boolean coalBasinActive, Map<Rank, String> coalBlocks, Set<Rank> coalRanks, List<ActiveMineral> coalMinerals) {
     }
 
     static {
@@ -123,16 +124,6 @@ public final class OreConfig {
     }
 
     /**
-     * Tells whether an ore is switched on.
-     *
-     * @param ore ore id
-     * @return true if the config enables the ore
-     */
-    public static boolean isEnabled(String ore) {
-        return ENABLED_ORES.get().contains(ore);
-    }
-
-    /**
      * Gives the config values resolved against the shipped ore data.
      *
      * @return the resolved setup, rebuilt after the config changed
@@ -176,10 +167,12 @@ public final class OreConfig {
                 .filter(id -> REGISTRY.ores().containsKey(id))
                 .forEach(id -> suppressedEntries.add("#" + REGISTRY.ores().get(id).tag()));
         Deposit pipe = REGISTRY.deposits().get(KIMBERLITE_PIPE);
-        List<ActiveMineral> coal = DepositSetup.activeMinerals(REGISTRY.deposits().get(COAL_BASIN), REGISTRY,
-                enabledOres, overrideBlocks, coalFractions, coalReplacements);
+        Deposit basin = REGISTRY.deposits().get(COAL_BASIN);
+        List<ActiveMineral> coal = DepositSetup.activeMinerals(basin, REGISTRY, enabledOres, overrideBlocks,
+                coalFractions, coalReplacements);
         return new Resolved(new OreMatcher(suppressedEntries), DepositSetup.isActive(pipe, enabledOres),
                 DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions, replacements),
-                CoalOres.blocks(coal), CoalOres.coalRanks(coal), CoalOres.accessories(coal));
+                DepositSetup.isActive(basin, enabledOres), CoalOres.blocks(coal), CoalOres.coalRanks(coal),
+                CoalOres.accessories(coal));
     }
 }

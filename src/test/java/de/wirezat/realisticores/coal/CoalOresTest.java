@@ -1,7 +1,6 @@
 package de.wirezat.realisticores.coal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.wirezat.realisticores.ore.ActiveMineral;
@@ -38,13 +37,6 @@ class CoalOresTest {
         assertEquals(Map.of(Rank.LIGNITE, "m:lignite"),
                 CoalOres.blocks(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
         assertEquals(List.of(pyrite), CoalOres.accessories(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
-    }
-
-    @Test
-    void basinGeneratesOnlyWithAnOreItCanHold() {
-        assertTrue(CoalOres.generates(BasinType.FOLDED, Set.of(Rank.ANTHRACITE)));
-        assertFalse(CoalOres.generates(BasinType.HARD_COAL, Set.of(Rank.ANTHRACITE)));
-        assertFalse(CoalOres.generates(BasinType.LIGNITE, Set.of(Rank.HARD_COAL, Rank.ANTHRACITE)));
     }
 
     @Test

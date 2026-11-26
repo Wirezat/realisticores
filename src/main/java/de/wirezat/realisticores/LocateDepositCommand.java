@@ -52,9 +52,9 @@ public final class LocateDepositCommand {
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal(RealisticOres.MOD_ID)
                         .then(target("kimberlite_pipe", LocateDepositCommand::nearestPipe))
-                        .then(target("hard_coal", basin(BasinType.HARD_COAL, "coal")))
-                        .then(target("lignite", basin(BasinType.LIGNITE, "lignite")))
-                        .then(target("anthracite", basin(BasinType.FOLDED, "anthracite")))));
+                        .then(target("hard_coal", basin(BasinType.HARD_COAL)))
+                        .then(target("lignite", basin(BasinType.LIGNITE)))
+                        .then(target("anthracite", basin(BasinType.FOLDED)))));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> target(String name, Search search) {
@@ -104,9 +104,9 @@ public final class LocateDepositCommand {
         return nearest.map(pipe -> new BlockPos(pipe.x(), 0, pipe.z()));
     }
 
-    private static Search basin(BasinType type, String ore) {
+    private static Search basin(BasinType type) {
         return (level, origin) -> {
-            if (level.dimension() != Level.OVERWORLD || !OreConfig.isEnabled(ore)
+            if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().coalBasinActive()
                     || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
                 return Optional.empty();
             }

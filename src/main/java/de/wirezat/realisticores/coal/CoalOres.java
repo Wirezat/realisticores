@@ -64,19 +64,4 @@ public final class CoalOres {
     private static boolean isRank(String zone) {
         return Arrays.stream(Rank.values()).anyMatch(rank -> rank.name().equals(zone));
     }
-
-    /**
-     * Tells whether a basin holds any coal.
-     *
-     * @param type type of the basin
-     * @param ranks ranks that have a block
-     * @return true if at least one rank of the basin has a block
-     */
-    public static boolean generates(BasinType type, Set<Rank> ranks) {
-        return switch (type) {
-            case HARD_COAL -> ranks.contains(Rank.HARD_COAL);
-            case LIGNITE -> ranks.contains(Rank.LIGNITE);
-            case FOLDED -> ranks.contains(Rank.HARD_COAL) || ranks.contains(Rank.ANTHRACITE);
-        };
-    }
 }

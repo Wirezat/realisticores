@@ -4,7 +4,6 @@ import de.wirezat.realisticores.kimberlite.TerrainProbe;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -85,18 +84,17 @@ public final class Coal {
      *
      * @param seed world seed
      * @param probe terrain source
-     * @param ranks ranks that have a block
      * @param minX west edge of the area in blocks
      * @param minZ north edge of the area in blocks
      * @param maxX east edge of the area in blocks
      * @param maxZ south edge of the area in blocks
-     * @return basins outside high mountains that hold at least one of the ranks
+     * @return basins outside high mountains
      */
-    public static List<ResolvedBasin> basinsNear(long seed, TerrainProbe probe, Set<Rank> ranks, int minX, int minZ,
-            int maxX, int maxZ) {
+    public static List<ResolvedBasin> basinsNear(long seed, TerrainProbe probe, int minX, int minZ, int maxX,
+            int maxZ) {
         State current = state();
         return resolved(current, seed, probe, current.generator().basinsNear(seed, minX, minZ, maxX, maxZ).stream())
-                .filter(basin -> CoalOres.generates(basin.type(), ranks)).toList();
+                .toList();
     }
 
     /**
