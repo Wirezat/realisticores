@@ -5,6 +5,9 @@
     "#c:ores/graphite",
     "#c:ores/coal",
     "#c:ores/lignite_coal",
-    "#c:ores/anthracite"
+    "#c:ores/anthracite",
+    "#c:ores/uranium",
+    "#c:ores/pyrite",
+    "#c:ores/sal_ammoniac"
   ]
 }

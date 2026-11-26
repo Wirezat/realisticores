@@ -91,6 +91,13 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> ANTHRACITE_BLOCK =
             register("anthracite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
 
+    public static final DeferredBlock<Block> SANDSTONE_URANIUM_ORE = registerOre("sandstone_uranium_ore", 1, 4,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.SANDSTONE).strength(3.0F, 3.0F));
+    public static final DeferredBlock<Block> BLACK_SHALE_PYRITE_ORE = registerOre("black_shale_pyrite_ore", 0, 2,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_BLACK).strength(1.5F, 4.0F));
+    public static final DeferredBlock<Block> SAL_AMMONIAC_CRUST = registerOre("sal_ammoniac_crust", 0, 1,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE).mapColor(MapColor.TERRACOTTA_WHITE));
+
     public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
             registerPieces("coal_pieces", MapColor.COLOR_BLACK, () -> Items.COAL);
     public static final DeferredBlock<CoalPiecesBlock> LIGNITE_PIECES =
@@ -143,6 +150,14 @@ public final class ModBlocks {
         DeferredBlock<CoalyGrassBlock> block = BLOCKS.registerBlock(name,
                 props -> new CoalyGrassBlock(soil, tint, props),
                 BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).mapColor(color));
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
+        return block;
+    }
+
+    private static DeferredBlock<Block> registerOre(String name, int minXp, int maxXp,
+            BlockBehaviour.Properties properties) {
+        DeferredBlock<Block> block = BLOCKS.registerBlock(name,
+                props -> new DropExperienceBlock(UniformInt.of(minXp, maxXp), props), properties);
         BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
         return block;
     }

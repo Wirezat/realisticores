@@ -72,5 +72,11 @@
   "block.realisticores.coaly_dirt": "Kohlige Erde",
   "block.realisticores.coaly_grass_block": "Kohliger Grasblock",
   "block.realisticores.lignitic_dirt": "Braunkohlige Erde",
-  "block.realisticores.lignitic_grass_block": "Braunkohliger Grasblock"
+  "block.realisticores.lignitic_grass_block": "Braunkohliger Grasblock",
+  "block.realisticores.sandstone_uranium_ore": "Uranerz im Sandstein",
+  "block.realisticores.black_shale_pyrite_ore": "Pyriterz im Schwarzschiefer",
+  "block.realisticores.sal_ammoniac_crust": "Salmiakkruste",
+  "item.realisticores.raw_uranium": "Rohuran",
+  "item.realisticores.pyrite": "Pyrit",
+  "item.realisticores.sal_ammoniac": "Salmiak"
 }

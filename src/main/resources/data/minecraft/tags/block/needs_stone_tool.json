@@ -10,6 +10,7 @@
     "realisticores:chromite_block",
     "realisticores:ilmenite_block",
     "realisticores:anthracite_seam",
-    "realisticores:anthracite_block"
+    "realisticores:anthracite_block",
+    "realisticores:black_shale_pyrite_ore"
   ]
 }

@@ -24,6 +24,9 @@
     "realisticores:black_shale",
     "realisticores:mudstone",
     "realisticores:lignite_block",
-    "realisticores:anthracite_block"
+    "realisticores:anthracite_block",
+    "realisticores:sandstone_uranium_ore",
+    "realisticores:black_shale_pyrite_ore",
+    "realisticores:sal_ammoniac_crust"
   ]
 }
