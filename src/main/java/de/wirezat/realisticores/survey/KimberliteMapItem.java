@@ -3,6 +3,7 @@ package de.wirezat.realisticores.survey;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.kimberlite.Field;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
+import de.wirezat.realisticores.kimberlite.KimberlitePipe;
 import de.wirezat.realisticores.kimberlite.Pipe;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
@@ -54,7 +55,7 @@ public class KimberliteMapItem extends Item {
         if (!(level instanceof ServerLevel server) || !(player instanceof ServerPlayer reader)) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
-        Optional<Field> field = level.dimension() == Level.OVERWORLD && OreConfig.resolved().kimberlitePipeActive()
+        Optional<Field> field = level.dimension() == Level.OVERWORLD && OreConfig.resolved().active(KimberlitePipe.ID)
                 ? Kimberlite.generator().nearestField(server.getSeed(), player.getBlockX(), player.getBlockZ(),
                         MAX_SEARCH)
                 : Optional.empty();

@@ -3,6 +3,7 @@ package de.wirezat.realisticores.indicator;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.KimberliteParams;
+import de.wirezat.realisticores.kimberlite.KimberlitePipe;
 import de.wirezat.realisticores.kimberlite.PipeGrade;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
@@ -42,7 +43,7 @@ public final class PanYield {
      */
     public static CompletableFuture<Measurement> measure(ServerLevel level, BlockPos pos) {
         Optional<TerrainProbe> probe = LevelTerrainProbe.of(level);
-        if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
+        if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().active(KimberlitePipe.ID)
                 || probe.isEmpty()) {
             return CompletableFuture.completedFuture(Measurement.NONE);
         }

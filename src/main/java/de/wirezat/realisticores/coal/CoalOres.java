@@ -14,6 +14,25 @@ public final class CoalOres {
     }
 
     /**
+     * What the coal basin places, derived from its active minerals.
+     *
+     * @param blocks block id by rank, the ore or its replacement; ranks without either keep the rock of their layer
+     * @param coal ranks whose coal is switched on; the others place their replacement
+     * @param accessories minerals that accompany the coal, with the block and share of each
+     */
+    public record Seams(Map<Rank, String> blocks, Set<Rank> coal, List<ActiveMineral> accessories) {
+        /**
+         * Derives the seams from the active minerals of the coal basin.
+         *
+         * @param active minerals of the coal basin, enabled or replaced
+         * @return what the basin places
+         */
+        public static Seams of(List<ActiveMineral> active) {
+            return new Seams(CoalOres.blocks(active), coalRanks(active), CoalOres.accessories(active));
+        }
+    }
+
+    /**
      * Maps the ranks to the blocks of the enabled ores.
      *
      * @param active enabled minerals of the coal basin

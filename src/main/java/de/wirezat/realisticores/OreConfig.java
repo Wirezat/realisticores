@@ -1,13 +1,11 @@
 package de.wirezat.realisticores;
 
-import de.wirezat.realisticores.coal.CoalConfig;
-import de.wirezat.realisticores.coal.CoalOres;
-import de.wirezat.realisticores.coal.Rank;
-import de.wirezat.realisticores.kimberlite.KimberliteConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.Deposit;
 import de.wirezat.realisticores.ore.DepositRegistry;
 import de.wirezat.realisticores.ore.DepositSetup;
+import de.wirezat.realisticores.ore.DepositType;
+import de.wirezat.realisticores.ore.Deposits;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +17,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 /** Common config: which ores this mod places, which block each uses, and which natural ores are suppressed. */
 public final class OreConfig {
-    public static final String KIMBERLITE_PIPE = "kimberlite_pipe";
-    public static final String COAL_BASIN = "coal_basin";
     public static final ModConfigSpec SPEC;
 
     private static final ModConfigSpec.ConfigValue<List<? extends String>> SUPPRESSED_ORES;
@@ -35,15 +31,29 @@ public final class OreConfig {
      * Config values resolved against the shipped ore data.
      *
      * @param matcher natural ore generation to suppress: the configured list plus the tag of every enabled ore
-     * @param kimberlitePipeActive true if at least one ore of the kimberlite pipe is enabled
-     * @param kimberliteMinerals enabled minerals of the kimberlite pipe with the block each one places
-     * @param coalBasinActive true if at least one ore of the coal basin is enabled
-     * @param coalBlocks block placed for each coal rank; a rank without block keeps the rock of its layer
-     * @param coalRanks ranks whose coal is switched on; the others place their replacement
-     * @param coalMinerals minerals that accompany the coal, with the block and share of each
+     * @param active ids of the deposits with at least one enabled ore
+     * @param minerals minerals of each active deposit with the block each one places, by deposit id
      */
-    public record Resolved(OreMatcher matcher, boolean kimberlitePipeActive, List<ActiveMineral> kimberliteMinerals,
-            boolean coalBasinActive, Map<Rank, String> coalBlocks, Set<Rank> coalRanks, List<ActiveMineral> coalMinerals) {
+    public record Resolved(OreMatcher matcher, Set<String> active, Map<String, List<ActiveMineral>> minerals) {
+        /**
+         * Tells whether a deposit generates.
+         *
+         * @param deposit deposit id
+         * @return true if at least one of its ores is enabled
+         */
+        public boolean active(String deposit) {
+            return active.contains(deposit);
+        }
+
+        /**
+         * Gives the minerals a deposit places.
+         *
+         * @param deposit deposit id
+         * @return enabled ores and replacements of disabled ones, empty while the deposit is inactive
+         */
+        public List<ActiveMineral> minerals(String deposit) {
+            return minerals.getOrDefault(deposit, List.of());
+        }
     }
 
     static {
@@ -59,9 +69,7 @@ public final class OreConfig {
                 .comment("Ores this mod places in its deposits. A deposit generates as soon as at least one of",
                         "its ores is enabled; with none of its ores enabled a deposit does not exist at all.")
                 .defineListAllowEmpty("enabledOres",
-                        List.of("diamond", "bort", "peridot", "graphite", "coal", "lignite", "anthracite", "uranium",
-                                "pyrite", "sal_ammoniac", "siderite"),
-                        () -> "peridot", OreConfig::isValidOreId);
+                        List.copyOf(REGISTRY.ores().keySet()), () -> "peridot", OreConfig::isValidOreId);
         ORE_OVERRIDES = builder
                 .comment("Replaces the block placed for an ore, as ore=block, e.g. peridot=othermod:peridot_ore.")
                 .defineListAllowEmpty("oreBlockOverrides", List.of(), () -> "peridot=othermod:peridot_ore",
@@ -122,9 +130,14 @@ public final class OreConfig {
     public static Resolved resolved() {
         Resolved resolved = cachedResolved;
         if (resolved == null) {
-            resolved = resolve(SUPPRESSED_ORES.get(), ENABLED_ORES.get(), ORE_OVERRIDES.get(),
-                    KimberliteConfig.MINERALS.fractions(), KimberliteConfig.MINERALS.replacements(),
-                    CoalConfig.MINERALS.fractions(), CoalConfig.MINERALS.replacements());
+            Map<String, Map<String, Double>> fractions = new HashMap<>();
+            Map<String, Map<String, String>> replacements = new HashMap<>();
+            for (DepositType type : Deposits.ALL) {
+                fractions.put(type.id(), type.minerals().fractions());
+                replacements.put(type.id(), type.minerals().replacements());
+            }
+            resolved = resolve(REGISTRY, SUPPRESSED_ORES.get(), ENABLED_ORES.get(), ORE_OVERRIDES.get(), fractions,
+                    replacements);
             cachedResolved = resolved;
         }
         return resolved;
@@ -144,9 +157,20 @@ public final class OreConfig {
         return resolved().matcher();
     }
 
-    private static Resolved resolve(List<? extends String> suppressed, List<? extends String> enabled,
-            List<? extends String> overrides, Map<String, Double> fractions, Map<String, String> replacements,
-            Map<String, Double> coalFractions, Map<String, String> coalReplacements) {
+    /**
+     * Resolves the config of all deposits against the ore data.
+     *
+     * @param registry the ores and deposits
+     * @param suppressed configured ore generation to suppress
+     * @param enabled ids of the enabled ores
+     * @param overrides entries {@code ore=block} that replace an ore's block
+     * @param fractions configured ore shares by deposit id, then ore id
+     * @param replacements configured replacement blocks by deposit id, then ore id
+     * @return the resolved setup
+     */
+    static Resolved resolve(DepositRegistry registry, List<? extends String> suppressed,
+            List<? extends String> enabled, List<? extends String> overrides,
+            Map<String, Map<String, Double>> fractions, Map<String, Map<String, String>> replacements) {
         Set<String> enabledOres = new HashSet<>(enabled);
         Map<String, String> overrideBlocks = new HashMap<>();
         for (String entry : overrides) {
@@ -155,15 +179,18 @@ public final class OreConfig {
         }
         List<String> suppressedEntries = new ArrayList<>(suppressed);
         enabledOres.stream()
-                .filter(id -> REGISTRY.ores().containsKey(id))
-                .forEach(id -> suppressedEntries.add("#" + REGISTRY.ores().get(id).tag()));
-        Deposit pipe = REGISTRY.deposits().get(KIMBERLITE_PIPE);
-        Deposit basin = REGISTRY.deposits().get(COAL_BASIN);
-        List<ActiveMineral> coal = DepositSetup.activeMinerals(basin, REGISTRY, enabledOres, overrideBlocks,
-                coalFractions, coalReplacements);
-        return new Resolved(new OreMatcher(suppressedEntries), DepositSetup.isActive(pipe, enabledOres),
-                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions, replacements),
-                DepositSetup.isActive(basin, enabledOres), CoalOres.blocks(coal), CoalOres.coalRanks(coal),
-                CoalOres.accessories(coal));
+                .filter(id -> registry.ores().containsKey(id))
+                .forEach(id -> suppressedEntries.add("#" + registry.ores().get(id).tag()));
+        Set<String> active = new HashSet<>();
+        Map<String, List<ActiveMineral>> minerals = new HashMap<>();
+        for (Deposit deposit : registry.deposits().values()) {
+            if (DepositSetup.isActive(deposit, enabledOres)) {
+                active.add(deposit.id());
+                minerals.put(deposit.id(), DepositSetup.activeMinerals(deposit, registry, enabledOres, overrideBlocks,
+                        fractions.getOrDefault(deposit.id(), Map.of()),
+                        replacements.getOrDefault(deposit.id(), Map.of())));
+            }
+        }
+        return new Resolved(new OreMatcher(suppressedEntries), Set.copyOf(active), Map.copyOf(minerals));
     }
 }

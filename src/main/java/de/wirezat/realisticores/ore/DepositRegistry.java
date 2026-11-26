@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,8 @@ import java.util.Map;
 /**
  * All ores and deposits shipped with the mod.
  *
- * @param ores ore definitions by id
- * @param deposits deposits by id
+ * @param ores ore definitions by id, in the order of the index
+ * @param deposits deposits by id, in the order of the index
  */
 public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Deposit> deposits) {
     private static final String ROOT = "/data/realisticores/";
@@ -44,7 +45,7 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
             JsonObject file = read(ROOT + "deposits/" + id.getAsString() + ".json");
             deposits.put(id.getAsString(), new Deposit(id.getAsString(), minerals(file.getAsJsonArray("minerals"))));
         }
-        return new DepositRegistry(Map.copyOf(ores), Map.copyOf(deposits));
+        return new DepositRegistry(Collections.unmodifiableMap(ores), Collections.unmodifiableMap(deposits));
     }
 
     private static List<Mineral> minerals(JsonArray array) {

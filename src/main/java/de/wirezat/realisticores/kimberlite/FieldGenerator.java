@@ -3,8 +3,10 @@ package de.wirezat.realisticores.kimberlite;
 import de.wirezat.realisticores.worldgen.Cells;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /** Derives kimberlite fields and their pipes deterministically from the world seed. */
 public final class FieldGenerator {
@@ -107,14 +109,37 @@ public final class FieldGenerator {
      * @return the nearest field with at least one pipe, empty if none lies within the limit
      */
     public Optional<Field> nearestField(long seed, int x, int z, int maxRadius) {
+        return nearest(seed, x, z, maxRadius, 0, field -> field.pipes().isEmpty() ? Optional.empty()
+                : Optional.of(new Candidate<>(field, Math.hypot(field.centerX() - x, field.centerZ() - z))));
+    }
+
+    /**
+     * Finds the pipe whose centre is nearest to a position.
+     *
+     * @param seed world seed
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param maxRadius search limit in blocks
+     * @return the nearest pipe, empty if none lies within the limit
+     */
+    public Optional<Pipe> nearestPipe(long seed, int x, int z, int maxRadius) {
+        return nearest(seed, x, z, maxRadius, params.field().maxRadius() + 1, field -> field.pipes().stream()
+                .map(pipe -> new Candidate<>(pipe, Math.hypot(pipe.x() - x, pipe.z() - z)))
+                .min(Comparator.comparingDouble(Candidate::distance)));
+    }
+
+    private record Candidate<T>(T value, double distance) {
+    }
+
+    private <T> Optional<T> nearest(long seed, int x, int z, int maxRadius, int slack,
+            Function<Field, Optional<Candidate<T>>> measure) {
         int cell = params.field().cellSize();
         int originX = Math.floorDiv(x, cell);
         int originZ = Math.floorDiv(z, cell);
-        int lastRing = maxRadius / cell + 1;
-        Field best = null;
-        double bestDistance = Double.MAX_VALUE;
+        int lastRing = (maxRadius + slack) / cell + 1;
+        Candidate<T> best = null;
         for (int ring = 0; ring <= lastRing; ring++) {
-            if (best != null && bestDistance <= (ring - 1) * (double) cell) {
+            if (best != null && best.distance() <= (ring - 1) * (double) cell - slack) {
                 break;
             }
             for (int cellX = originX - ring; cellX <= originX + ring; cellX++) {
@@ -122,17 +147,13 @@ public final class FieldGenerator {
                     if (Math.max(Math.abs(cellX - originX), Math.abs(cellZ - originZ)) != ring) {
                         continue;
                     }
-                    Optional<Field> field = fieldAt(seed, cellX, cellZ).filter(f -> !f.pipes().isEmpty());
-                    if (field.isPresent()) {
-                        double distance = Math.hypot(field.get().centerX() - x, field.get().centerZ() - z);
-                        if (distance < bestDistance) {
-                            bestDistance = distance;
-                            best = field.get();
-                        }
+                    Optional<Candidate<T>> found = fieldAt(seed, cellX, cellZ).flatMap(measure);
+                    if (found.isPresent() && (best == null || found.get().distance() < best.distance())) {
+                        best = found.get();
                     }
                 }
             }
         }
-        return bestDistance <= maxRadius ? Optional.ofNullable(best) : Optional.empty();
+        return best != null && best.distance() <= maxRadius ? Optional.of(best.value()) : Optional.empty();
     }
 }

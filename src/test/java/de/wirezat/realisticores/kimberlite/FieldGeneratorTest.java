@@ -3,6 +3,7 @@ package de.wirezat.realisticores.kimberlite;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,22 @@ class FieldGeneratorTest {
             }
         }
         assertEquals(expected, Math.hypot(nearest.orElseThrow().centerX() - 1234, nearest.get().centerZ() + 5678), 1e-9);
+    }
+
+    @Test
+    void nearestPipeIsTheClosestPipeWithinTheSearchLimit() {
+        FieldGenerator generator = new FieldGenerator(KimberliteParams.defaults());
+        long seed = 99L;
+        double expected = Double.MAX_VALUE;
+        for (int cellX = -20; cellX <= 20; cellX++) {
+            for (int cellZ = -20; cellZ <= 20; cellZ++) {
+                for (Pipe pipe : generator.fieldAt(seed, cellX, cellZ).map(Field::pipes).orElse(List.of())) {
+                    expected = Math.min(expected, Math.hypot(pipe.x() - 1234, pipe.z() + 5678));
+                }
+            }
+        }
+        Pipe nearest = generator.nearestPipe(seed, 1234, -5678, 40000).orElseThrow();
+        assertEquals(expected, Math.hypot(nearest.x() - 1234, nearest.z() + 5678), 1e-9);
     }
 
     @Test

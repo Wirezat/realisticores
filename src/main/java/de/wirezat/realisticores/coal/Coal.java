@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.coal;
 
+import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Comparator;
 import java.util.List;
@@ -20,7 +21,7 @@ public final class Coal {
     private record BasinKey(long seed, Basin basin) {
     }
 
-    private record State(CoalParams params, BasinGenerator generator, SeamModel model,
+    private record State(CoalParams params, CoalOres.Seams seams, BasinGenerator generator, SeamModel model,
             SurfaceHint surface, Accessories accessories, ConcurrentMap<BasinKey, Optional<ResolvedBasin>> basins) {
     }
 
@@ -28,7 +29,8 @@ public final class Coal {
         State current = state;
         if (current == null) {
             CoalParams params = CoalConfig.params();
-            current = new State(params, new BasinGenerator(params), new SeamModel(params),
+            current = new State(params, CoalOres.Seams.of(OreConfig.resolved().minerals(CoalBasin.ID)),
+                    new BasinGenerator(params), new SeamModel(params),
                     new SurfaceHint(params.surface()), new Accessories(params.accessories()), new ConcurrentHashMap<>());
             state = current;
         }
@@ -47,6 +49,15 @@ public final class Coal {
      */
     public static CoalParams params() {
         return state().params();
+    }
+
+    /**
+     * Returns what the basin places for the current ore selection.
+     *
+     * @return seam blocks, coal ranks and accompanying minerals
+     */
+    public static CoalOres.Seams seams() {
+        return state().seams();
     }
 
     /**

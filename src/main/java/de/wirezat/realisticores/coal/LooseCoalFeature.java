@@ -1,7 +1,6 @@
 package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ModBlocks;
-import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
@@ -29,7 +28,7 @@ public class LooseCoalFeature extends Feature<NoneFeatureConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
-        Set<Rank> ranks = OreConfig.resolved().coalRanks();
+        Set<Rank> ranks = Coal.seams().coal();
         Optional<TerrainProbe> probe = LevelTerrainProbe.of(level.getLevel());
         if (ranks.isEmpty() || level.getLevel().dimension() != Level.OVERWORLD || probe.isEmpty()) {
             return false;

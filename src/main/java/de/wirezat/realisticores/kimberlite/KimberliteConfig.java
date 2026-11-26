@@ -231,7 +231,7 @@ public final class KimberliteConfig {
                 new KimberliteParams.IndicatorParams(chromiteLength.get(), chromitePeak.get()),
                 new KimberliteParams.IndicatorParams(ilmeniteLength.get(), ilmenitePeak.get()));
 
-        MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(OreConfig.KIMBERLITE_PIPE),
+        MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(KimberlitePipe.ID),
                 mineral -> true, Map.of());
         PARAMS = () -> new KimberliteParams(craton.get(), field.get(), pipe.get(), facies.get(), crater.get(),
                 grade.get(), plume.get()).sanitized();

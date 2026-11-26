@@ -1,11 +1,11 @@
 package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ModBlocks;
-import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.BlockIds;
 import de.wirezat.realisticores.ore.MineralRoll;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +22,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 /** Writes the seams of coal basins, their host rocks and the coaly soil above them into a chunk. */
 public final class CoalCarver {
     private static final int SOIL_DEPTH = 4;
-    private static final String SANDSTONE = "SANDSTONE";
-    private static final String BLACK_SHALE = "BLACK_SHALE";
-    private static final String SEAM_FIRE = "SEAM_FIRE";
-    private static final String SHALE = "SHALE";
-    private static final String MUDSTONE = "MUDSTONE";
-    private static final String BLACKBAND = "BLACKBAND";
+    static final String SEAM_FIRE = "SEAM_FIRE";
     private static final int SOIL_SEARCH = 8;
 
     private CoalCarver() {
@@ -41,11 +36,6 @@ public final class CoalCarver {
      * @param probe reader for the original terrain
      */
     public static void carve(ChunkAccess chunk, long seed, TerrainProbe probe) {
-        OreConfig.Resolved config = OreConfig.resolved();
-        if (!config.coalBasinActive()) {
-            return;
-        }
-        Map<Rank, String> blocks = config.coalBlocks();
         ChunkPos chunkPos = chunk.getPos();
         int minX = chunkPos.getMinBlockX();
         int minZ = chunkPos.getMinBlockZ();
@@ -54,7 +44,12 @@ public final class CoalCarver {
             return;
         }
         SeamModel model = Coal.model();
-        Map<String, Accent> accents = accents(config.coalMinerals());
+        CoalOres.Seams seams = Coal.seams();
+        Map<String, Accent> accents = accents(seams.accessories());
+        Map<Rank, Optional<BlockState>> seamBlocks = new EnumMap<>(Rank.class);
+        for (Rank rank : Rank.values()) {
+            seamBlocks.put(rank, seamBlock(rank, seams.blocks(), seams.coal().contains(rank)));
+        }
         for (int localX = 0; localX < 16; localX++) {
             for (int localZ = 0; localZ < 16; localZ++) {
                 int x = minX + localX;
@@ -62,8 +57,8 @@ public final class CoalCarver {
                 Optional<SeamColumn> column = model.column(basins, x, z);
                 if (column.isPresent()) {
                     int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
-                    boolean coal = config.coalRanks().contains(column.get().rank());
-                    Optional<BlockState> seam = seamBlock(column.get().rank(), blocks, coal);
+                    boolean coal = seams.coal().contains(column.get().rank());
+                    Optional<BlockState> seam = seamBlocks.get(column.get().rank());
                     write(chunk, seed, x, z, surfaceY, column.get(), seam, model.isOutcrop(seed, x, z), accents);
                     if (burns(chunk, seed, column.get(), x, z, surfaceY)) {
                         burn(chunk, seed, x, z, surfaceY, column.get(), coal ? seam : Optional.empty(),
@@ -120,23 +115,23 @@ public final class CoalCarver {
                 if (sand == Accessories.Sand.OXIDIZED) {
                     yield Blocks.RED_SANDSTONE.defaultBlockState();
                 }
-                Accent uranium = accents.get(SANDSTONE);
+                Accent uranium = accents.get(Rock.SANDSTONE.name());
                 yield sand == Accessories.Sand.ORE_BAND && uranium != null
                         && MineralRoll.roll(seed, uranium.ore(), x, y, z) < uranium.fraction()
                         ? uranium.block() : Blocks.SANDSTONE.defaultBlockState();
             }
             case BLACK_SHALE -> {
-                Accent pyrite = accents.get(BLACK_SHALE);
+                Accent pyrite = accents.get(Rock.BLACK_SHALE.name());
                 yield pyrite != null && Coal.accessories().pyrite(seed, pyrite.fraction(), x, y, z)
                         ? pyrite.block() : ModBlocks.BLACK_SHALE.get().defaultBlockState();
             }
             case BLACKBAND -> {
-                Accent ironstone = accents.get(BLACKBAND);
+                Accent ironstone = accents.get(Rock.BLACKBAND.name());
                 yield ironstone != null ? ironstone.block() : ModBlocks.BLACK_SHALE.get().defaultBlockState();
             }
             case FIRECLAY -> ModBlocks.FIRECLAY.get().defaultBlockState();
-            case SHALE -> nodule(seed, accents.get(SHALE), ModBlocks.SHALE.get().defaultBlockState(), x, y, z);
-            case MUDSTONE -> nodule(seed, accents.get(MUDSTONE), ModBlocks.MUDSTONE.get().defaultBlockState(), x, y, z);
+            case SHALE -> nodule(seed, accents.get(Rock.SHALE.name()), ModBlocks.SHALE.get().defaultBlockState(), x, y, z);
+            case MUDSTONE -> nodule(seed, accents.get(Rock.MUDSTONE.name()), ModBlocks.MUDSTONE.get().defaultBlockState(), x, y, z);
         };
     }
 

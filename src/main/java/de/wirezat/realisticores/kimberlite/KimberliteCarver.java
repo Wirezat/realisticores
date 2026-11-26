@@ -30,10 +30,6 @@ public final class KimberliteCarver {
      * @param seaLevel sea level of the world
      */
     public static void carve(ChunkAccess chunk, long seed, TerrainProbe probe, int seaLevel) {
-        OreConfig.Resolved config = OreConfig.resolved();
-        if (!config.kimberlitePipeActive()) {
-            return;
-        }
         ChunkPos chunkPos = chunk.getPos();
         int minX = chunkPos.getMinBlockX();
         int minZ = chunkPos.getMinBlockZ();
@@ -41,7 +37,7 @@ public final class KimberliteCarver {
         if (pipes.isEmpty()) {
             return;
         }
-        List<OreBlock> ores = oreBlocks(config.kimberliteMinerals());
+        List<OreBlock> ores = oreBlocks(OreConfig.resolved().minerals(KimberlitePipe.ID));
         PipeShape shape = Kimberlite.shape();
         Crater crater = Kimberlite.crater();
         int bottomY = Math.max(chunk.getMinBuildHeight(), Kimberlite.params().pipe().bottomY());

@@ -1,12 +1,10 @@
 package de.wirezat.realisticores;
 
-import de.wirezat.realisticores.coal.Coal;
-import de.wirezat.realisticores.coal.CoalConfig;
 import de.wirezat.realisticores.coal.PlacePieces;
 import de.wirezat.realisticores.indicator.ModPan;
 import de.wirezat.realisticores.indicator.TrailEffects;
-import de.wirezat.realisticores.kimberlite.Kimberlite;
-import de.wirezat.realisticores.kimberlite.KimberliteConfig;
+import de.wirezat.realisticores.ore.DepositType;
+import de.wirezat.realisticores.ore.Deposits;
 import de.wirezat.realisticores.press.ModPress;
 import de.wirezat.realisticores.survey.SurveyEvents;
 import net.neoforged.bus.api.IEventBus;
@@ -23,10 +21,12 @@ public class RealisticOres {
     public static final String MOD_ID = "realisticores";
 
     public RealisticOres(IEventBus modBus, ModContainer container) {
+        Deposits.validate(OreConfig.registry(), Deposits.ALL);
         container.registerConfig(ModConfig.Type.COMMON, OreConfig.SPEC, "realisticores/main.toml");
-        container.registerConfig(ModConfig.Type.COMMON, KimberliteConfig.SPEC,
-                "realisticores/kimberlite_pipe/kimberlite_pipe.toml");
-        container.registerConfig(ModConfig.Type.COMMON, CoalConfig.SPEC, "realisticores/coal_basin/coal_basin.toml");
+        for (DepositType deposit : Deposits.ALL) {
+            container.registerConfig(ModConfig.Type.COMMON, deposit.spec(),
+                    "realisticores/" + deposit.id() + "/" + deposit.id() + ".toml");
+        }
         modBus.addListener((ModConfigEvent.Loading event) -> invalidateConfig());
         modBus.addListener((ModConfigEvent.Reloading event) -> invalidateConfig());
         ModBlocks.register(modBus);
@@ -36,8 +36,7 @@ public class RealisticOres {
         ModPress.register(modBus);
         ModPan.register(modBus);
         NeoForge.EVENT_BUS.addListener(TrailEffects::tick);
-        NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Kimberlite.invalidate());
-        NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Coal.invalidate());
+        NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> invalidateConfig());
         NeoForge.EVENT_BUS.addListener(PlacePieces::onUse);
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onTrades);
         NeoForge.EVENT_BUS.addListener(NaturalDiamondTrades::onTrades);
@@ -48,7 +47,6 @@ public class RealisticOres {
 
     private static void invalidateConfig() {
         OreConfig.invalidate();
-        Kimberlite.invalidate();
-        Coal.invalidate();
+        Deposits.ALL.forEach(DepositType::invalidate);
     }
 }

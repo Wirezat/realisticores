@@ -1,7 +1,8 @@
 package de.wirezat.realisticores.mixin;
 
-import de.wirezat.realisticores.coal.CoalCarver;
-import de.wirezat.realisticores.kimberlite.KimberliteCarver;
+import de.wirezat.realisticores.OreConfig;
+import de.wirezat.realisticores.ore.DepositType;
+import de.wirezat.realisticores.ore.Deposits;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import net.minecraft.server.level.WorldGenRegion;
@@ -18,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NoiseBasedChunkGenerator.class)
 public abstract class NoiseBasedChunkGeneratorMixin {
     /**
-     * Carves kimberlite pipes with their craters and then coal basins into overworld chunks after their surface is
-     * built.
+     * Carves every active deposit into overworld chunks after their surface is built, in the order of
+     * {@link Deposits#ALL}.
      *
      * @param level region the chunk is generated in
      * @param structureManager structure manager of the level
@@ -27,8 +28,9 @@ public abstract class NoiseBasedChunkGeneratorMixin {
      * @param chunk the chunk being generated
      * @param ci callback info
      */
-    @Inject(method = "buildSurface(Lnet/minecraft/server/level/WorldGenRegion;Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/level/levelgen/RandomState;Lnet/minecraft/world/level/chunk/ChunkAccess;)V",
-            at = @At("TAIL"))
+    @Inject(method = "buildSurface(Lnet/minecraft/server/level/WorldGenRegion;"
+            + "Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/level/levelgen/RandomState;"
+            + "Lnet/minecraft/world/level/chunk/ChunkAccess;)V", at = @At("TAIL"))
     private void realisticores$carveDeposits(WorldGenRegion level, StructureManager structureManager,
             RandomState random, ChunkAccess chunk, CallbackInfo ci) {
         if (level.getLevel().dimension() != Level.OVERWORLD) {
@@ -36,7 +38,11 @@ public abstract class NoiseBasedChunkGeneratorMixin {
         }
         NoiseBasedChunkGenerator generator = (NoiseBasedChunkGenerator) (Object) this;
         TerrainProbe probe = new LevelTerrainProbe(level.getLevel(), generator);
-        KimberliteCarver.carve(chunk, level.getSeed(), probe, generator.getSeaLevel());
-        CoalCarver.carve(chunk, level.getSeed(), probe);
+        OreConfig.Resolved config = OreConfig.resolved();
+        for (DepositType deposit : Deposits.ALL) {
+            if (config.active(deposit.id())) {
+                deposit.carve(chunk, level.getSeed(), probe, generator.getSeaLevel());
+            }
+        }
     }
 }

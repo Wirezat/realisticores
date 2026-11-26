@@ -208,7 +208,7 @@ public final class CoalConfig {
                 accFireCell.get(), accFireChance.get(), accFireMinRadius.get(), accFireMaxRadius.get(),
                 accFireDepth.get(), accBlackbandCover.get(), accRustDepth.get());
 
-        MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(OreConfig.COAL_BASIN),
+        MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(CoalBasin.ID),
                 mineral -> CoalOres.isAccessory(mineral.zones()), DEFAULT_REPLACEMENTS);
         PARAMS = () -> new CoalParams(basin.get(), relief.get(), hardCoal.get(), lignite.get(), folded.get(),
                 fold.get(), seam.get(), rock.get(), surface.get(), accessories.get()).sanitized();
