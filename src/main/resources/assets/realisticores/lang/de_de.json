@@ -122,5 +122,9 @@
   "trim_material.realisticores.malachite": "Malachit",
   "trim_material.realisticores.azurite": "Azurit",
   "trim_material.realisticores.chalcopyrite": "Kupferkies",
-  "trim_material.realisticores.molybdenite": "Molybdänit"
+  "trim_material.realisticores.molybdenite": "Molybdänit",
+  "block.realisticores.chalcocite_ore": "Chalkosinerz im Phyllit-Gestein",
+  "block.realisticores.chalcocite_block": "Chalkosinblock",
+  "item.realisticores.chalcocite": "Chalkosin",
+  "trim_material.realisticores.chalcocite": "Chalkosin"
 }

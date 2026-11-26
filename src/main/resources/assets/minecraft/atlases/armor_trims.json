@@ -59,7 +59,8 @@
         "realisticores_malachite": "realisticores:trims/color_palettes/malachite",
         "realisticores_azurite": "realisticores:trims/color_palettes/azurite",
         "realisticores_chalcopyrite": "realisticores:trims/color_palettes/chalcopyrite",
-        "realisticores_molybdenite": "realisticores:trims/color_palettes/molybdenite"
+        "realisticores_molybdenite": "realisticores:trims/color_palettes/molybdenite",
+        "realisticores_chalcocite": "realisticores:trims/color_palettes/chalcocite"
       }
     }
   ]

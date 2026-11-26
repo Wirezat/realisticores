@@ -22,6 +22,9 @@
     },
     {
       "item": "realisticores:breccia_chalcopyrite_ore"
+    },
+    {
+      "item": "realisticores:chalcocite_ore"
     }
   ],
   "result": {

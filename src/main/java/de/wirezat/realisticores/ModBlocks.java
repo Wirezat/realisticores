@@ -183,6 +183,11 @@ public final class ModBlocks {
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.GOLD));
     public static final DeferredBlock<Block> MOLYBDENITE_BLOCK = register("molybdenite_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_GRAY));
+    public static final DeferredBlock<Block> CHALCOCITE_ORE = registerOre("chalcocite_ore", "chalcocite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(2.0F, 4.0F));
+    public static final DeferredBlock<Block> CHALCOCITE_BLOCK = register("chalcocite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_BLACK));
 
     public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
             registerPieces("coal_pieces", MapColor.COLOR_BLACK, () -> Items.COAL);

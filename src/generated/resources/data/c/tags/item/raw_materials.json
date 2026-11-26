@@ -10,6 +10,7 @@
     "#c:raw_materials/copper",
     "#c:raw_materials/azurite",
     "#c:raw_materials/chalcopyrite",
-    "#c:raw_materials/molybdenite"
+    "#c:raw_materials/molybdenite",
+    "#c:raw_materials/chalcocite"
   ]
 }

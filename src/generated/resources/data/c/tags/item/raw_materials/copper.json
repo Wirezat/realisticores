@@ -2,6 +2,7 @@
   "values": [
     "realisticores:malachite",
     "realisticores:azurite",
-    "realisticores:chalcopyrite"
+    "realisticores:chalcopyrite",
+    "realisticores:chalcocite"
   ]
 }

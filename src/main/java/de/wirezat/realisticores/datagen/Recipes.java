@@ -62,11 +62,12 @@ final class Recipes extends RecipeProvider {
         smelt(output, Ingredient.of(ModItems.RAW_SIDERITE), Items.IRON_INGOT, "raw_siderite", ModItems.RAW_SIDERITE);
         Ingredient copperOres = Ingredient.of(ModBlocks.MALACHITE_ORE, ModBlocks.AZURITE_ORE,
                 ModBlocks.LEACHED_CHALCOPYRITE_ORE, ModBlocks.POTASSIC_CHALCOPYRITE_ORE,
-                ModBlocks.PHYLLIC_CHALCOPYRITE_ORE, ModBlocks.BRECCIA_CHALCOPYRITE_ORE);
+                ModBlocks.PHYLLIC_CHALCOPYRITE_ORE, ModBlocks.BRECCIA_CHALCOPYRITE_ORE, ModBlocks.CHALCOCITE_ORE);
         smelt(output, copperOres, Items.COPPER_INGOT, "porphyry_copper_ore", ModBlocks.POTASSIC_CHALCOPYRITE_ORE);
         smelt(output, Ingredient.of(ModItems.MALACHITE), Items.COPPER_INGOT, "malachite", ModItems.MALACHITE);
         smelt(output, Ingredient.of(ModItems.AZURITE), Items.COPPER_INGOT, "azurite", ModItems.AZURITE);
         smelt(output, Ingredient.of(ModItems.CHALCOPYRITE), Items.COPPER_INGOT, "chalcopyrite", ModItems.CHALCOPYRITE);
+        smelt(output, Ingredient.of(ModItems.CHALCOCITE), Items.COPPER_INGOT, "chalcocite", ModItems.CHALCOCITE);
         graphite(output, "c:storage_blocks/coal", 2, "graphite_from_coal_block");
         graphite(output, "c:storage_blocks/anthracite", 4, "graphite_from_anthracite_block");
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.IRON_PAN)

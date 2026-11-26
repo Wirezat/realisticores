@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/chalcocite_ore"
+      },
+      {
+        "model": "realisticores:block/chalcocite_ore_1"
+      },
+      {
+        "model": "realisticores:block/chalcocite_ore_2"
+      },
+      {
+        "model": "realisticores:block/chalcocite_ore_3"
+      }
+    ]
+  }
+}

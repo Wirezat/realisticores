@@ -122,5 +122,9 @@
   "trim_material.realisticores.malachite": "Malachite Material",
   "trim_material.realisticores.azurite": "Azurite Material",
   "trim_material.realisticores.chalcopyrite": "Chalcopyrite Material",
-  "trim_material.realisticores.molybdenite": "Molybdenite Material"
+  "trim_material.realisticores.molybdenite": "Molybdenite Material",
+  "block.realisticores.chalcocite_ore": "Chalcocite Ore in Phyllic Rock",
+  "block.realisticores.chalcocite_block": "Block of Chalcocite",
+  "item.realisticores.chalcocite": "Chalcocite",
+  "trim_material.realisticores.chalcocite": "Chalcocite Material"
 }

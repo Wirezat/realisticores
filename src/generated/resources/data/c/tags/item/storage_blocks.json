@@ -16,6 +16,7 @@
     "#c:storage_blocks/raw_malachite",
     "#c:storage_blocks/raw_azurite",
     "#c:storage_blocks/raw_chalcopyrite",
-    "#c:storage_blocks/raw_molybdenite"
+    "#c:storage_blocks/raw_molybdenite",
+    "#c:storage_blocks/raw_chalcocite"
   ]
 }

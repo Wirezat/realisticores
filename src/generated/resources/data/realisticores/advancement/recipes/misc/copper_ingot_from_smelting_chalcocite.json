@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chalcocite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:chalcocite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:copper_ingot_from_smelting_chalcocite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_chalcocite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:copper_ingot_from_smelting_chalcocite"
+    ]
+  }
+}

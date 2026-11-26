@@ -16,6 +16,7 @@
     "realisticores:malachite",
     "realisticores:azurite",
     "realisticores:chalcopyrite",
-    "realisticores:molybdenite"
+    "realisticores:molybdenite",
+    "realisticores:chalcocite"
   ]
 }

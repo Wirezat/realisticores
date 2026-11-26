@@ -104,7 +104,9 @@ final class Resources {
                     List.of("raw_materials/chalcopyrite", "raw_materials/copper"), ModBlocks.CHALCOPYRITE_BLOCK,
                     "raw_chalcopyrite", Tier.STONE, "#9A922E", 0.6F, List.of()),
             new Resource("molybdenite", ModItems.MOLYBDENITE, List.of("raw_materials/molybdenite"),
-                    ModBlocks.MOLYBDENITE_BLOCK, "raw_molybdenite", Tier.STONE, "#868C99", 0.2F, List.of()));
+                    ModBlocks.MOLYBDENITE_BLOCK, "raw_molybdenite", Tier.STONE, "#868C99", 0.2F, List.of()),
+            new Resource("chalcocite", ModItems.CHALCOCITE, List.of("raw_materials/chalcocite", "raw_materials/copper"),
+                    ModBlocks.CHALCOCITE_BLOCK, "raw_chalcocite", Tier.STONE, "#4F5578", 0.3F, List.of()));
 
     private static final List<String> IRONSTONE = List.of("ores/siderite", "ores/iron");
     private static final List<String> CHALCOPYRITE = List.of("ores/chalcopyrite", "ores/copper");
@@ -137,6 +139,8 @@ final class Resources {
             new Ore(ModBlocks.POTASSIC_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 3, CHALCOPYRITE, Tier.STONE, true),
             new Ore(ModBlocks.PHYLLIC_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 3, CHALCOPYRITE, Tier.STONE, true),
             new Ore(ModBlocks.BRECCIA_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 4, CHALCOPYRITE, Tier.STONE, true),
+            new Ore(ModBlocks.CHALCOCITE_ORE, ModItems.CHALCOCITE, 3, List.of("ores/chalcocite", "ores/copper"),
+                    Tier.STONE, true),
             new Ore(ModBlocks.PHYLLIC_PYRITE_ORE, ModItems.PYRITE, 2, List.of("ores/pyrite"), Tier.STONE, true),
             new Ore(ModBlocks.MOLYBDENITE_ORE, ModItems.MOLYBDENITE, 1, List.of("ores/molybdenite"), Tier.IRON,
                     true),
@@ -179,6 +183,6 @@ final class Resources {
                 ModBlocks.PERIDOT_BLOCK, ModBlocks.PYRITE_BLOCK, ModBlocks.PYROPE_BLOCK,
                 ModBlocks.RAW_SIDERITE_BLOCK, ModBlocks.RAW_URANIUM_BLOCK, ModBlocks.SAL_AMMONIAC_BLOCK,
                 ModBlocks.MALACHITE_BLOCK, ModBlocks.AZURITE_BLOCK, ModBlocks.CHALCOPYRITE_BLOCK,
-                ModBlocks.MOLYBDENITE_BLOCK);
+                ModBlocks.MOLYBDENITE_BLOCK, ModBlocks.CHALCOCITE_BLOCK);
     }
 }
