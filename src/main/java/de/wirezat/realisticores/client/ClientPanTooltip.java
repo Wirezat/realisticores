@@ -1,10 +1,11 @@
 package de.wirezat.realisticores.client;
 
-import de.wirezat.realisticores.ModItems;
 import de.wirezat.realisticores.RealisticOres;
+import de.wirezat.realisticores.indicator.GradeTone;
 import de.wirezat.realisticores.indicator.Grains;
+import de.wirezat.realisticores.indicator.Indicators;
 import de.wirezat.realisticores.indicator.PanTooltip;
-import de.wirezat.realisticores.indicator.PyropeTone;
+import de.wirezat.realisticores.ore.Indicator;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -17,15 +18,12 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.DeferredItem;
 import org.joml.Matrix4f;
 
 /** Draws the grains of a pan as two rows of icons and numbers, and its water as a bar across the tooltip. */
 public final class ClientPanTooltip implements ClientTooltipComponent {
-    private static final List<DeferredItem<Item>> MINERALS =
-            List.of(ModItems.PYROPE, ModItems.CHROMITE, ModItems.ILMENITE);
+    private static final List<Indicator> MINERALS = Indicators.all();
     private static final String GRAMS_KEY = "tooltip.realisticores.pan.grams";
     private static final String WATER_KEY = "tooltip.realisticores.pan.water";
     private static final ResourceLocation LAST_SYMBOL = sprite("measurement");
@@ -47,7 +45,7 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
 
     private final int water;
     private final int textWidth;
-    private final PyropeTone tone;
+    private final GradeTone tone;
     private final List<String> last;
     private final List<String> content;
 
@@ -73,8 +71,8 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
     }
 
     private static List<String> texts(Grains grains, NumberFormat format) {
-        return Stream.of(grains.pyrope(), grains.chromite(), grains.ilmenite())
-                .map(tenths -> I18n.get(GRAMS_KEY, format.format(tenths / 10.0))).toList();
+        return MINERALS.stream()
+                .map(mineral -> I18n.get(GRAMS_KEY, format.format(grains.get(mineral.id()) / 10.0))).toList();
     }
 
     private int columnWidth(Font font) {
@@ -116,7 +114,7 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics graphics) {
         drawIcons(font, x, y, graphics, LAST_SYMBOL, last.isEmpty() ? List.of() : MINERALS, tone);
-        drawIcons(font, x, y + ROW_HEIGHT, graphics, CONTENT_SYMBOL, MINERALS, PyropeTone.RED);
+        drawIcons(font, x, y + ROW_HEIGHT, graphics, CONTENT_SYMBOL, MINERALS, GradeTone.RED);
         int strokes = getWidth(font) / STROKE_SPACING;
         for (int i = 0; i < strokes; i++) {
             int left = x + i * STROKE_SPACING;
@@ -126,14 +124,15 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
     }
 
     private void drawIcons(Font font, int x, int y, GuiGraphics graphics, ResourceLocation symbol,
-            List<DeferredItem<Item>> minerals, PyropeTone pyropeTone) {
+            List<Indicator> minerals, GradeTone tone) {
         graphics.blitSprite(symbol, x, y + (ICON_SIZE - SYMBOL_SIZE) / 2, SYMBOL_SIZE, SYMBOL_SIZE);
         for (int i = 0; i < minerals.size(); i++) {
             int left = x + SYMBOL_WIDTH + i * columnWidth(font);
-            if (minerals.get(i) == ModItems.PYROPE && pyropeTone != PyropeTone.RED) {
-                graphics.blitSprite(sprite("pyrope_" + pyropeTone.getSerializedName()), left, y, ICON_SIZE, ICON_SIZE);
+            Indicator mineral = minerals.get(i);
+            if (Indicators.isLead(mineral) && tone != GradeTone.RED) {
+                graphics.blitSprite(sprite(mineral.id() + "_" + tone.getSerializedName()), left, y, ICON_SIZE, ICON_SIZE);
             } else {
-                graphics.renderFakeItem(new ItemStack(minerals.get(i).get()), left, y);
+                graphics.renderFakeItem(new ItemStack(Indicators.item(mineral)), left, y);
             }
         }
     }

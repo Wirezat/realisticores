@@ -1,6 +1,8 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.worldgen.IntRange;
+import java.util.List;
 
 /**
  * All tunable values of kimberlite generation.
@@ -139,24 +141,29 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * @param dryFactor trail length factor for pipes in dry biomes
      * @param oceanFactor trail length factor for pipes in oceans
      * @param maxSeaDepth depth in blocks below the sea surface at which a trail ends
-     * @param pyrope settings of pyrope garnet
-     * @param chromite settings of chromite
-     * @param ilmenite settings of ilmenite
+     * @param indicators spread of each indicator mineral, the lead indicator first
      */
     public record PlumeParams(double stepLength, double maxLength, double inertia, double flatSlope,
             double startWidth, double widthGrowth, double coldFactor, double dryFactor, double oceanFactor,
-            double maxSeaDepth,
-            IndicatorParams pyrope, IndicatorParams chromite,
-            IndicatorParams ilmenite) {
+            double maxSeaDepth, List<IndicatorParams> indicators) {
+        /**
+         * Gives the indicator that rates a trail: the strongest trail, map spots and the grade tone follow it.
+         *
+         * @return the first indicator
+         */
+        public IndicatorParams lead() {
+            return indicators.get(0);
+        }
     }
 
     /**
      * Spread of one indicator mineral.
      *
+     * @param id indicator id
      * @param length trail length in blocks over which the grains fall to 1/e
      * @param peak density of the mineral next to the pipe, 0 to 1; 1 is 100 g per wash
      */
-    public record IndicatorParams(double length, double peak) {
+    public record IndicatorParams(String id, double length, double peak) {
     }
 
     /**
@@ -202,7 +209,8 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
                 new CraterParams(0.08, new IntRange(4, 12), 3, 12, 8, 3, false),
                 new GradeParams(0.5, 0.35, 0.15, 40.0, 0.9),
                 new PlumeParams(32.0, 1800.0, 0.6, 0.05, 10.0, 0.08, 2.5, 0.6, 0.5, 30.0,
-                        new IndicatorParams(400.0, 0.6), new IndicatorParams(300.0, 0.4),
-                        new IndicatorParams(120.0, 0.5)));
+                        OreConfig.registry().deposits().get(KimberlitePipe.ID).indicators().stream()
+                                .map(indicator -> new IndicatorParams(indicator.id(), indicator.length(),
+                                        indicator.peak())).toList()));
     }
 }

@@ -1,53 +1,72 @@
 package de.wirezat.realisticores.indicator;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import io.netty.buffer.ByteBuf;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.IntUnaryOperator;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * Amounts of the indicator minerals in tenths: a measurement of one wash or what has collected in a pan.
+ * Amounts of indicator minerals in tenths: a measurement of one wash or what has collected in a pan.
  *
- * @param pyrope tenths of pyrope, 600 right at a pipe
- * @param chromite tenths of chromite
- * @param ilmenite tenths of ilmenite
+ * @param tenths tenths of grains by indicator id; minerals without grains are absent
  */
-public record Grains(int pyrope, int chromite, int ilmenite) {
-    public static final Grains NONE = new Grains(0, 0, 0);
+public record Grains(Map<String, Integer> tenths) {
+    public static final Grains NONE = new Grains(Map.of());
     public static final int PER_ITEM = 1000;
 
-    public static final Codec<Grains> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf("pyrope").forGetter(Grains::pyrope),
-            Codec.INT.fieldOf("chromite").forGetter(Grains::chromite),
-            Codec.INT.fieldOf("ilmenite").forGetter(Grains::ilmenite)).apply(instance, Grains::new));
-    public static final StreamCodec<ByteBuf, Grains> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, Grains::pyrope,
-            ByteBufCodecs.VAR_INT, Grains::chromite,
-            ByteBufCodecs.VAR_INT, Grains::ilmenite, Grains::new);
+    public static final Codec<Grains> CODEC =
+            Codec.unboundedMap(Codec.STRING, Codec.INT).xmap(Grains::new, Grains::tenths);
+    public static final StreamCodec<ByteBuf, Grains> STREAM_CODEC =
+            ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.VAR_INT)
+                    .map(Grains::new, grains -> new HashMap<>(grains.tenths()));
 
     private static final long SALT = 0x50414E5F4E4F4953L;
     private static final double NOISE = 0.05;
 
     /**
+     * Creates grains, leaving out minerals without grains.
+     *
+     * @param tenths tenths of grains by indicator id
+     */
+    public Grains {
+        Map<String, Integer> present = new HashMap<>();
+        tenths.forEach((id, amount) -> {
+            if (amount != 0) {
+                present.put(id, amount);
+            }
+        });
+        tenths = Map.copyOf(present);
+    }
+
+    /**
      * Turns grain densities into a measurement with a noise that is fixed per column.
      *
-     * @param pyrope density of pyrope from 0 to 1
-     * @param chromite density of chromite from 0 to 1
-     * @param ilmenite density of ilmenite from 0 to 1
+     * @param densities density from 0 to 1 by indicator id, in a fixed order
      * @param seed world seed
      * @param x world X in blocks
      * @param z world Z in blocks
      * @return the measured grains
      */
-    public static Grains measure(double pyrope, double chromite, double ilmenite, long seed, int x, int z) {
+    public static Grains measure(Map<String, Double> densities, long seed, int x, int z) {
         SplitMix64 random = new SplitMix64(SplitMix64.hash(seed ^ SALT, x, z));
-        return new Grains(noisy(pyrope, random), noisy(chromite, random), noisy(ilmenite, random));
+        Map<String, Integer> tenths = new HashMap<>();
+        densities.forEach((id, density) -> tenths.put(id,
+                (int) Math.round(density * PER_ITEM * (1.0 - NOISE + 2.0 * NOISE * random.nextDouble()))));
+        return new Grains(tenths);
     }
 
-    private static int noisy(double density, SplitMix64 random) {
-        return (int) Math.round(density * PER_ITEM * (1.0 - NOISE + 2.0 * NOISE * random.nextDouble()));
+    /**
+     * Gives the amount of one mineral.
+     *
+     * @param id indicator id
+     * @return tenths of grains, 0 if absent
+     */
+    public int get(String id) {
+        return tenths.getOrDefault(id, 0);
     }
 
     /**
@@ -59,8 +78,7 @@ public record Grains(int pyrope, int chromite, int ilmenite) {
      */
     public Grains gain(int fortune, boolean silkTouch) {
         double factor = (1.0 + 0.5 * fortune) * (silkTouch ? 0.5 : 1.0);
-        return new Grains((int) Math.round(pyrope * factor), (int) Math.round(chromite * factor),
-                (int) Math.round(ilmenite * factor));
+        return each(amount -> (int) Math.round(amount * factor));
     }
 
     /**
@@ -70,7 +88,9 @@ public record Grains(int pyrope, int chromite, int ilmenite) {
      * @return the sum per mineral
      */
     public Grains plus(Grains other) {
-        return new Grains(pyrope + other.pyrope, chromite + other.chromite, ilmenite + other.ilmenite);
+        Map<String, Integer> sum = new HashMap<>(tenths);
+        other.tenths.forEach((id, amount) -> sum.merge(id, amount, Integer::sum));
+        return new Grains(sum);
     }
 
     /**
@@ -79,7 +99,7 @@ public record Grains(int pyrope, int chromite, int ilmenite) {
      * @return number of whole items per mineral
      */
     public Grains whole() {
-        return new Grains(pyrope / PER_ITEM, chromite / PER_ITEM, ilmenite / PER_ITEM);
+        return each(amount -> amount / PER_ITEM);
     }
 
     /**
@@ -88,7 +108,16 @@ public record Grains(int pyrope, int chromite, int ilmenite) {
      * @return the rest per mineral in tenths
      */
     public Grains rest() {
-        return new Grains(pyrope % PER_ITEM, chromite % PER_ITEM, ilmenite % PER_ITEM);
+        return each(amount -> amount % PER_ITEM);
+    }
+
+    /**
+     * Gives the amount of all minerals together.
+     *
+     * @return tenths of grains
+     */
+    public int total() {
+        return tenths.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     /**
@@ -97,6 +126,18 @@ public record Grains(int pyrope, int chromite, int ilmenite) {
      * @return true if every mineral is zero
      */
     public boolean isEmpty() {
-        return equals(NONE);
+        return tenths.isEmpty();
+    }
+
+    /**
+     * Changes the amount of every mineral.
+     *
+     * @param change new amount from the old one
+     * @return the changed grains
+     */
+    private Grains each(IntUnaryOperator change) {
+        Map<String, Integer> changed = new HashMap<>();
+        tenths.forEach((id, amount) -> changed.put(id, change.applyAsInt(amount)));
+        return new Grains(changed);
     }
 }

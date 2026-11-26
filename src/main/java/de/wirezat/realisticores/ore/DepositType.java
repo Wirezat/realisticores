@@ -1,8 +1,10 @@
 package de.wirezat.realisticores.ore;
 
 import de.wirezat.realisticores.config.MineralConfig;
+import de.wirezat.realisticores.indicator.IndicatorSource;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -56,4 +58,13 @@ public interface DepositType {
      * @return search targets, one subcommand each
      */
     List<LocateTarget> locateTargets();
+
+    /**
+     * Gives the indicator grains this deposit sheds for the pan.
+     *
+     * @return the source of its grains, empty for deposits without indicator minerals
+     */
+    default Optional<IndicatorSource> indicators() {
+        return Optional.empty();
+    }
 }

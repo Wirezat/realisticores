@@ -1,7 +1,7 @@
 package de.wirezat.realisticores.kimberlite;
 
-import de.wirezat.realisticores.worldgen.TerrainProbe;
 import de.wirezat.realisticores.worldgen.Memo;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

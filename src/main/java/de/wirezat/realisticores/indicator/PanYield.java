@@ -1,21 +1,17 @@
 package de.wirezat.realisticores.indicator;
 
 import de.wirezat.realisticores.OreConfig;
-import de.wirezat.realisticores.kimberlite.Kimberlite;
-import de.wirezat.realisticores.kimberlite.KimberliteParams;
-import de.wirezat.realisticores.kimberlite.KimberlitePipe;
-import de.wirezat.realisticores.kimberlite.PipeGrade;
-import de.wirezat.realisticores.kimberlite.Plume;
-import de.wirezat.realisticores.kimberlite.PlumePath;
+import de.wirezat.realisticores.ore.DepositType;
+import de.wirezat.realisticores.ore.Deposits;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 /** Measures which indicator grains the sediment holds at a position. */
 public final class PanYield {
@@ -23,58 +19,34 @@ public final class PanYield {
     }
 
     /**
-     * Grains measured at one position.
-     *
-     * @param grains the measured grains
-     * @param source trail the grains belong to, or null without grains
-     * @param tone colour of the pyrope
-     */
-    public record Measurement(Grains grains, @Nullable PlumePath source, PyropeTone tone) {
-        private static final Measurement NONE = new Measurement(Grains.NONE, null, PyropeTone.PALE);
-
-    }
-
-    /**
      * Measures a position in the background; trails not traced yet can take seconds.
      *
      * @param level the world
      * @param pos the sediment block being panned
-     * @return future of the measurement
+     * @return future of the strongest measurement of all active deposits that shed indicator grains
      */
     public static CompletableFuture<Measurement> measure(ServerLevel level, BlockPos pos) {
         Optional<TerrainProbe> probe = LevelTerrainProbe.of(level);
-        if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().active(KimberlitePipe.ID)
-                || probe.isEmpty()) {
+        if (level.dimension() != Level.OVERWORLD || probe.isEmpty()) {
             return CompletableFuture.completedFuture(Measurement.NONE);
         }
-        KimberliteParams.PlumeParams params = Kimberlite.params().plume();
-        PipeGrade grade = Kimberlite.grade();
-        return Kimberlite.plumesReaching(level.getSeed(), probe.get(),
-                level.getSeaLevel(), pos.getX(), pos.getZ(), pos.getX(), pos.getZ())
-                .thenApply(paths -> combine(paths, params, grade, level.getSeed(), pos.getX(), pos.getZ()));
+        OreConfig.Resolved config = OreConfig.resolved();
+        List<CompletableFuture<Measurement>> measurements = Deposits.ALL.stream()
+                .filter(deposit -> config.active(deposit.id()))
+                .map(DepositType::indicators).flatMap(Optional::stream)
+                .map(source -> source.measure(level, probe.get(), pos)).toList();
+        return CompletableFuture.allOf(measurements.toArray(CompletableFuture[]::new))
+                .thenApply(done -> strongest(measurements.stream().map(CompletableFuture::join).toList()));
     }
 
     /**
-     * Measures the strongest trail at a position.
+     * Picks the measurement with the most grains.
      *
-     * @param paths trails that may reach the position
-     * @param params trail settings
-     * @param grade diamond grade of the pipes
-     * @param seed world seed
-     * @param x world X in blocks
-     * @param z world Z in blocks
-     * @return grains of the trail with the most pyrope there
+     * @param measurements one measurement per deposit kind
+     * @return the strongest one, {@link Measurement#NONE} without any
      */
-    static Measurement combine(List<PlumePath> paths, KimberliteParams.PlumeParams params, PipeGrade grade,
-            long seed, int x, int z) {
-        PlumePath source = Plume.strongest(paths, x, z, params);
-        if (source == null) {
-            return Measurement.NONE;
-        }
-        Grains grains = Grains.measure(Plume.density(source, x, z, params, params.pyrope()),
-                Plume.density(source, x, z, params, params.chromite()),
-                Plume.density(source, x, z, params, params.ilmenite()), seed, x, z);
-        return new Measurement(grains, grains.isEmpty() ? null : source,
-                PyropeTone.of(grade.pipeFactor(source.pipe()), grains.pyrope()));
+    static Measurement strongest(List<Measurement> measurements) {
+        return measurements.stream().max(Comparator.comparingInt(measurement -> measurement.grains().total()))
+                .orElse(Measurement.NONE);
     }
 }

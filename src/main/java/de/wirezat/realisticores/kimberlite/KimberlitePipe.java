@@ -1,11 +1,13 @@
 package de.wirezat.realisticores.kimberlite;
 
 import de.wirezat.realisticores.config.MineralConfig;
+import de.wirezat.realisticores.indicator.IndicatorSource;
 import de.wirezat.realisticores.ore.DepositType;
 import de.wirezat.realisticores.ore.LocateTarget;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
@@ -58,5 +60,10 @@ public final class KimberlitePipe implements DepositType {
         return List.of(new LocateTarget(ID, (level, probe, origin, limit) -> Kimberlite.generator()
                 .nearestPipe(level.getSeed(), origin.getX(), origin.getZ(), limit)
                 .map(pipe -> new BlockPos(pipe.x(), 0, pipe.z()))));
+    }
+
+    @Override
+    public Optional<IndicatorSource> indicators() {
+        return Optional.of(KimberliteIndicators.INSTANCE);
     }
 }

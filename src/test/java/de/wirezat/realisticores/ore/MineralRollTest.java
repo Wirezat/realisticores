@@ -28,7 +28,8 @@ class MineralRollTest {
     void anotherWorldRollsAnotherPatternAtTheSamePosition() {
         int same = 0;
         for (int x = 0; x < 1000; x++) {
-            if ((MineralRoll.roll(1L, "diamond", x, 10, 0) < 0.2) == (MineralRoll.roll(2L, "diamond", x, 10, 0) < 0.2)) {
+            boolean first = MineralRoll.roll(1L, "diamond", x, 10, 0) < 0.2;
+            if (first == MineralRoll.roll(2L, "diamond", x, 10, 0) < 0.2) {
                 same++;
             }
         }

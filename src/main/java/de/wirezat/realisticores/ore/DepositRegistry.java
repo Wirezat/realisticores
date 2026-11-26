@@ -26,7 +26,8 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
 
     /**
      * Loads the registry from the mod resources: the index {@code registry.json} names the ore files in
-     * {@code ores/} (block, tag and experience range) and the deposit files in {@code deposits/}.
+     * {@code ores/} (block, tag and experience range) and the deposit files in {@code deposits/} (minerals and
+     * indicator minerals).
      *
      * @return the registry
      * @throws IllegalStateException if a resource is missing or malformed
@@ -43,7 +44,8 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
         Map<String, Deposit> deposits = new LinkedHashMap<>();
         for (JsonElement id : index.getAsJsonArray("deposits")) {
             JsonObject file = read(ROOT + "deposits/" + id.getAsString() + ".json");
-            deposits.put(id.getAsString(), new Deposit(id.getAsString(), minerals(file.getAsJsonArray("minerals"))));
+            deposits.put(id.getAsString(), new Deposit(id.getAsString(), minerals(file.getAsJsonArray("minerals")),
+                    file.has("indicators") ? indicators(file.getAsJsonArray("indicators")) : List.of()));
         }
         return new DepositRegistry(Collections.unmodifiableMap(ores), Collections.unmodifiableMap(deposits));
     }
@@ -64,6 +66,17 @@ public record DepositRegistry(Map<String, OreDefinition> ores, Map<String, Depos
                     mineral.has("graded") && mineral.get("graded").getAsBoolean(), Map.copyOf(zoneBlocks)));
         }
         return List.copyOf(minerals);
+    }
+
+    private static List<Indicator> indicators(JsonArray array) {
+        List<Indicator> indicators = new ArrayList<>();
+        for (JsonElement element : array) {
+            JsonObject indicator = element.getAsJsonObject();
+            indicators.add(new Indicator(indicator.get("id").getAsString(), indicator.get("item").getAsString(),
+                    indicator.get("length").getAsDouble(), indicator.get("peak").getAsDouble(),
+                    indicator.get("pitch").getAsFloat()));
+        }
+        return List.copyOf(indicators);
     }
 
     private static JsonObject read(String path) {

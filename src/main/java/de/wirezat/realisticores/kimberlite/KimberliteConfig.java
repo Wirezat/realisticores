@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.kimberlite;
 
+import static de.wirezat.realisticores.config.ConfigValues.camelCase;
 import static de.wirezat.realisticores.config.ConfigValues.decimal;
 import static de.wirezat.realisticores.config.ConfigValues.flag;
 import static de.wirezat.realisticores.config.ConfigValues.integer;
@@ -7,6 +8,8 @@ import static de.wirezat.realisticores.config.ConfigValues.integer;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.config.MineralConfig;
 import de.wirezat.realisticores.worldgen.IntRange;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -212,25 +215,20 @@ public final class KimberliteConfig {
                 "Trail length factor for pipes in oceans; 0 leaves grains only at the pipe.");
         Supplier<Double> plumeMaxSeaDepth = decimal(b, "maxSeaDepth", d.plume().maxSeaDepth(), 0.0, 200.0,
                 "Depth in blocks below the sea surface at which a trail ends; trails run on over shallow sea floor.");
-        Supplier<Double> pyropeLength = decimal(b, "pyropeLength", d.plume().pyrope().length(), 10.0, 5000.0,
-                "Length in blocks over which pyrope garnet falls to 1/e.");
-        Supplier<Double> pyropePeak = decimal(b, "pyropePeak", d.plume().pyrope().peak(), 0.0, 1.0,
-                "Measured share of pyrope garnet next to the pipe; 1 is 100 g per wash.");
-        Supplier<Double> chromiteLength = decimal(b, "chromiteLength", d.plume().chromite().length(), 10.0, 5000.0,
-                "Length in blocks over which chromite falls to 1/e.");
-        Supplier<Double> chromitePeak = decimal(b, "chromitePeak", d.plume().chromite().peak(), 0.0, 1.0,
-                "Measured share of chromite next to the pipe; 1 is 100 g per wash.");
-        Supplier<Double> ilmeniteLength = decimal(b, "ilmeniteLength", d.plume().ilmenite().length(), 10.0, 5000.0,
-                "Length in blocks over which ilmenite falls to 1/e; it is heavy and stops early.");
-        Supplier<Double> ilmenitePeak = decimal(b, "ilmenitePeak", d.plume().ilmenite().peak(), 0.0, 1.0,
-                "Measured share of ilmenite next to the pipe; 1 is 100 g per wash.");
+        List<Supplier<KimberliteParams.IndicatorParams>> indicators = new ArrayList<>();
+        for (KimberliteParams.IndicatorParams indicator : d.plume().indicators()) {
+            String key = camelCase(indicator.id());
+            Supplier<Double> length = decimal(b, key + "Length", indicator.length(), 10.0, 5000.0,
+                    "Length in blocks over which " + indicator.id() + " falls to 1/e.");
+            Supplier<Double> peak = decimal(b, key + "Peak", indicator.peak(), 0.0, 1.0,
+                    "Measured share of " + indicator.id() + " next to the pipe; 1 is 100 g per wash.");
+            indicators.add(() -> new KimberliteParams.IndicatorParams(indicator.id(), length.get(), peak.get()));
+        }
         b.pop();
         Supplier<KimberliteParams.PlumeParams> plume = () -> new KimberliteParams.PlumeParams(plumeStepLength.get(),
                 plumeMaxLength.get(), plumeInertia.get(), plumeFlatSlope.get(), plumeStartWidth.get(),
                 plumeWidthGrowth.get(), plumeColdFactor.get(), plumeDryFactor.get(), plumeOceanFactor.get(),
-                plumeMaxSeaDepth.get(), new KimberliteParams.IndicatorParams(pyropeLength.get(), pyropePeak.get()),
-                new KimberliteParams.IndicatorParams(chromiteLength.get(), chromitePeak.get()),
-                new KimberliteParams.IndicatorParams(ilmeniteLength.get(), ilmenitePeak.get()));
+                plumeMaxSeaDepth.get(), indicators.stream().map(Supplier::get).toList());
 
         MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(KimberlitePipe.ID),
                 mineral -> true, Map.of());

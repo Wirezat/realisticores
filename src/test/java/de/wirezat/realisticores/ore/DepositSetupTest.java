@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class DepositSetupTest {
     private static final Deposit DEPOSIT = new Deposit("pipe",
             List.of(new Mineral("diamond", List.of("BRECCIA"), 0.01, true, Map.of()),
-                    new Mineral("peridot", List.of("PERIDOTITE"), 0.1, false, Map.of())));
+                    new Mineral("peridot", List.of("PERIDOTITE"), 0.1, false, Map.of())), List.of());
     private static final DepositRegistry REGISTRY = new DepositRegistry(
             Map.of("diamond", new OreDefinition("diamond", "mod:diamond_ore", "c:ores/diamond", 3, 7),
                     "peridot", new OreDefinition("peridot", "mod:peridot_ore", "c:ores/peridot", 2, 5)),
@@ -61,7 +61,7 @@ class DepositSetupTest {
     @Test
     void zoneBlocksApplyOnlyWhileTheOreIsEnabledWithoutOverride() {
         Deposit deposit = new Deposit("basin", List.of(new Mineral("siderite", List.of("SHALE", "MUDSTONE"), 0.04,
-                false, Map.of("MUDSTONE", "mod:mudstone_ore"))));
+                false, Map.of("MUDSTONE", "mod:mudstone_ore"))), List.of());
         DepositRegistry registry = new DepositRegistry(
                 Map.of("siderite", new OreDefinition("siderite", "mod:shale_ore", "c:ores/siderite", 0, 0)),
                 Map.of("basin", deposit));

@@ -4,5 +4,10 @@
     {"ore": "diamond", "zones": ["BRECCIA", "KIMBERLITE", "SERPENTINIZED", "VOLCANICLASTIC", "WEATHERED"], "fraction": 0.0015, "graded": true},
     {"ore": "bort", "zones": ["BRECCIA", "KIMBERLITE", "SERPENTINIZED", "VOLCANICLASTIC", "WEATHERED"], "fraction": 0.004, "graded": true},
     {"ore": "graphite", "zones": ["BRECCIA", "KIMBERLITE", "SERPENTINIZED", "PERIDOTITE"], "fraction": 0.004}
+  ],
+  "indicators": [
+    {"id": "pyrope", "item": "realisticores:pyrope", "length": 400.0, "peak": 0.6, "pitch": 0.8},
+    {"id": "chromite", "item": "realisticores:chromite", "length": 300.0, "peak": 0.4, "pitch": 1.0},
+    {"id": "ilmenite", "item": "realisticores:ilmenite", "length": 120.0, "peak": 0.5, "pitch": 1.3}
   ]
 }

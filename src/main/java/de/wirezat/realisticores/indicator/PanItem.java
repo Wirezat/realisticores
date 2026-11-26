@@ -1,7 +1,6 @@
 package de.wirezat.realisticores.indicator;
 
-import de.wirezat.realisticores.ModItems;
-import de.wirezat.realisticores.kimberlite.Plume;
+import de.wirezat.realisticores.ore.Indicator;
 import de.wirezat.realisticores.worldgen.Surveys;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,7 +39,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.registries.DeferredItem;
 
 /** The pan: washes sediment, measures its indicator grains and collects them. */
 public class PanItem extends Item {
@@ -53,7 +51,6 @@ public class PanItem extends Item {
     private static final int ENCHANTABILITY = 14;
     private static final double TRAIL_SPACING = 2.5;
     private static final int SPLASH_INTERVAL = 6;
-    private static final float[] CHIME_PITCHES = {0.8F, 1.0F, 1.3F};
     private static final int CHIME_DELAY_MILLIS = 400;
     private static final int CHIME_LAYERS = 4;
     private static final float CHIME_VOLUME = 5.0F;
@@ -198,7 +195,7 @@ public class PanItem extends Item {
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return Optional.of(new PanTooltip(water(stack) * 100 / CAPACITY, Optional.ofNullable(stack.get(ModPan.LAST)),
-                stack.getOrDefault(ModPan.TONE, PyropeTone.PALE), stack.getOrDefault(ModPan.CONTENT, Grains.NONE), 0));
+                stack.getOrDefault(ModPan.TONE, GradeTone.PALE), stack.getOrDefault(ModPan.CONTENT, Grains.NONE), 0));
     }
 
     @Override
@@ -279,7 +276,7 @@ public class PanItem extends Item {
     }
 
     private static void collect(ServerLevel level, ServerPlayer player, BlockPos pos, UUID id,
-            PanYield.Measurement result, boolean keepBlock, int fortune, double reach) {
+            Measurement result, boolean keepBlock, int fortune, double reach) {
         if (!level.getServer().isSameThread()) {
             return;
         }
@@ -301,26 +298,25 @@ public class PanItem extends Item {
             level.destroyBlock(pos, false, player);
         }
         Grains items = sum.whole();
-        give(player, ModItems.PYROPE, items.pyrope());
-        give(player, ModItems.CHROMITE, items.chromite());
-        give(player, ModItems.ILMENITE, items.ilmenite());
+        for (Indicator indicator : Indicators.all()) {
+            give(player, Indicators.item(indicator), items.get(indicator.id()));
+        }
         if (grains.isEmpty()) {
             level.playSound(null, player.blockPosition(), SoundEvents.MUD_PLACE, SoundSource.PLAYERS, 1.6F, 0.7F);
         } else {
             chime(player, grains);
         }
         if (reach > 0.0 && result.source() != null) {
-            TrailEffects.start(player, level, Plume.guide(result.source(), pos.getX() + 0.5, pos.getZ() + 0.5, reach,
+            TrailEffects.start(player, level, result.source().guide(pos.getX() + 0.5, pos.getZ() + 0.5, reach,
                     TRAIL_SPACING));
         }
     }
 
     private static void chime(ServerPlayer player, Grains grains) {
-        int[] amounts = {grains.pyrope(), grains.chromite(), grains.ilmenite()};
         int delay = 0;
-        for (int mineral = 0; mineral < amounts.length; mineral++) {
-            if (amounts[mineral] > 0) {
-                float pitch = CHIME_PITCHES[mineral];
+        for (Indicator indicator : Indicators.all()) {
+            if (grains.get(indicator.id()) > 0) {
+                float pitch = indicator.pitch();
                 CompletableFuture.runAsync(() -> playChime(player, pitch),
                         CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS, player.getServer()));
                 delay += CHIME_DELAY_MILLIS;
@@ -348,9 +344,9 @@ public class PanItem extends Item {
         return ItemStack.EMPTY;
     }
 
-    private static void give(ServerPlayer player, DeferredItem<Item> mineral, int count) {
+    private static void give(ServerPlayer player, Item mineral, int count) {
         if (count > 0) {
-            ItemStack stack = new ItemStack(mineral.get(), count);
+            ItemStack stack = new ItemStack(mineral, count);
             if (!player.getInventory().add(stack)) {
                 player.drop(stack, false);
             }

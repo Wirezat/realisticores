@@ -1,6 +1,5 @@
 package de.wirezat.realisticores.indicator;
 
-import de.wirezat.realisticores.kimberlite.Plume;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,18 +18,18 @@ public final class TrailEffects {
     private static final double HEIGHT_ABOVE_GROUND = 0.3;
     private static final double RISE_SPEED = 0.01;
 
-    private static final List<Trail> ACTIVE = new ArrayList<>();
+    private static final List<Run> ACTIVE = new ArrayList<>();
 
     private TrailEffects() {
     }
 
-    private static final class Trail {
+    private static final class Run {
         private final ServerPlayer player;
         private final ServerLevel level;
-        private final List<Plume.GuidePoint> points;
+        private final List<GuidePoint> points;
         private int age;
 
-        Trail(ServerPlayer player, ServerLevel level, List<Plume.GuidePoint> points) {
+        Run(ServerPlayer player, ServerLevel level, List<GuidePoint> points) {
             this.player = player;
             this.level = level;
             this.points = points;
@@ -45,10 +44,10 @@ public final class TrailEffects {
      * @param level the world of the trail
      * @param points guide points ordered from the panned spot toward the pipe
      */
-    public static void start(ServerPlayer player, ServerLevel level, List<Plume.GuidePoint> points) {
+    public static void start(ServerPlayer player, ServerLevel level, List<GuidePoint> points) {
         ACTIVE.removeIf(trail -> trail.player == player);
         if (!points.isEmpty()) {
-            ACTIVE.add(new Trail(player, level, points));
+            ACTIVE.add(new Run(player, level, points));
         }
     }
 
@@ -58,9 +57,9 @@ public final class TrailEffects {
      * @param event the server tick event
      */
     public static void tick(ServerTickEvent.Post event) {
-        Iterator<Trail> iterator = ACTIVE.iterator();
+        Iterator<Run> iterator = ACTIVE.iterator();
         while (iterator.hasNext()) {
-            Trail trail = iterator.next();
+            Run trail = iterator.next();
             int lastStep = (trail.points.size() - 1) * STEP_TICKS;
             if (trail.player.isRemoved() || trail.player.serverLevel() != trail.level
                     || trail.age > lastStep + LINGER_TICKS) {
@@ -79,7 +78,7 @@ public final class TrailEffects {
         }
     }
 
-    private static void emit(Trail trail, Plume.GuidePoint point) {
+    private static void emit(Run trail, GuidePoint point) {
         BlockPos column = BlockPos.containing(point.x(), 0, point.z());
         if (!trail.level.isLoaded(column)) {
             return;

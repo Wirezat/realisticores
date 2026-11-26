@@ -1,16 +1,19 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.indicator.GuidePoint;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 /** Traces the downhill trail of indicator grains from a pipe and tells how dense the grains are at a position. */
 public final class Plume {
     private static final long SALT = 0x504C554D455F4B49L;
-    private static final double SPOT_MIN_PYROPE = 0.02;
+    private static final double SPOT_MIN_LEAD = 0.02;
 
     private Plume() {
     }
@@ -127,7 +130,30 @@ public final class Plume {
      */
     public static double density(PlumePath path, double x, double z,
             KimberliteParams.PlumeParams params, KimberliteParams.IndicatorParams indicator) {
+        return density(path, nearest(path, x, z), params, indicator);
+    }
+
+    /**
+     * Gives how dense every indicator mineral is at a position.
+     *
+     * @param path trail of the pipe
+     * @param x world X in blocks
+     * @param z world Z in blocks
+     * @param params trail settings
+     * @return density from 0 to 1 by indicator id, in the order of the indicators
+     */
+    public static Map<String, Double> densities(PlumePath path, double x, double z,
+            KimberliteParams.PlumeParams params) {
         Nearest nearest = nearest(path, x, z);
+        Map<String, Double> densities = new LinkedHashMap<>();
+        for (KimberliteParams.IndicatorParams indicator : params.indicators()) {
+            densities.put(indicator.id(), density(path, nearest, params, indicator));
+        }
+        return densities;
+    }
+
+    private static double density(PlumePath path, Nearest nearest, KimberliteParams.PlumeParams params,
+            KimberliteParams.IndicatorParams indicator) {
         double outside = Math.max(0.0, nearest.distance() - path.pipe().diameter() / 2.0);
         double width = params.startWidth() + params.widthGrowth() * nearest.length();
         double decay = nearest.length() == 0.0 ? 1.0
@@ -145,7 +171,7 @@ public final class Plume {
     }
 
     /**
-     * Lists the trail points a map may mark: on land, rich enough in pyrope and away from every pipe.
+     * Lists the trail points a map may mark: on land, rich enough in the lead indicator and away from every pipe.
      *
      * @param path trail of the pipe
      * @param pipes all pipes near the trail
@@ -161,7 +187,7 @@ public final class Plume {
         for (int i = 0; i < path.xs().length; i++) {
             double x = path.xs()[i];
             double z = path.zs()[i];
-            if (density(path, x, z, params, params.pyrope()) >= SPOT_MIN_PYROPE
+            if (density(path, x, z, params, params.lead()) >= SPOT_MIN_LEAD
                     && pipes.stream().allMatch(pipe -> Math.hypot(x - pipe.x(), z - pipe.z())
                             >= minDistance + pipe.diameter() / 2.0)
                     && height(probe, x, z) >= seaLevel - 1) {
@@ -189,7 +215,7 @@ public final class Plume {
     }
 
     /**
-     * Gives the trail with the most pyrope at a position.
+     * Gives the trail with the most grains of the lead indicator at a position.
      *
      * @param paths trails that may reach the position
      * @param x world X in blocks
@@ -202,24 +228,13 @@ public final class Plume {
         double most = 0.0;
         PlumePath strongest = null;
         for (PlumePath path : paths) {
-            double pyrope = density(path, x, z, params, params.pyrope());
-            if (pyrope > most) {
-                most = pyrope;
+            double lead = density(path, x, z, params, params.lead());
+            if (lead > most) {
+                most = lead;
                 strongest = path;
             }
         }
         return strongest;
-    }
-
-    /**
-     * One point of the guide line toward a pipe.
-     *
-     * @param x world X in blocks
-     * @param z world Z in blocks
-     * @param dirX X part of the unit direction toward the pipe
-     * @param dirZ Z part of the unit direction toward the pipe
-     */
-    public record GuidePoint(double x, double z, double dirX, double dirZ) {
     }
 
     private record Nearest(int segment, double fraction, double distance, double length) {
