@@ -32,8 +32,8 @@ class CraterTest {
     void dryBiomesHoldNoLakeUnlessEnabled() {
         KimberliteParams.CraterParams d = KimberliteParams.defaults().crater();
         Crater dryOff = new Crater(d);
-        Crater dryOn = new Crater(new KimberliteParams.CraterParams(d.depthPerDiameter(), d.minDepth(), d.maxDepth(),
-                d.floorLayers(), d.ringPoints(), d.maxWallHeight(), d.soilLayers(), true));
+        Crater dryOn = new Crater(new KimberliteParams.CraterParams(d.depthPerDiameter(), d.depth(), d.floorLayers(),
+                d.ringPoints(), d.maxWallHeight(), d.soilLayers(), true));
         assertTrue(dryOff.hasLake(true));
         assertTrue(!dryOff.hasLake(false));
         assertTrue(dryOn.hasLake(false));

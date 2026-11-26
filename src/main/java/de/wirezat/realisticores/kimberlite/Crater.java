@@ -21,7 +21,7 @@ public final class Crater {
      */
     public int depth(Pipe pipe) {
         long depth = Math.round(pipe.diameter() * params.depthPerDiameter());
-        return (int) Math.max(params.minDepth(), Math.min(params.maxDepth(), depth));
+        return params.depth().clamp((int) depth);
     }
 
     /**

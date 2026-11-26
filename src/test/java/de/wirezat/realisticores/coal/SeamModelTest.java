@@ -88,7 +88,7 @@ class SeamModelTest {
     void neighbouringColumnsOfTheSmallestUnfaultedBasinTouch() {
         double root = Math.sqrt(PARAMS.basin().minAspect());
         for (BasinType type : BasinType.values()) {
-            Basin smallest = new Basin(0, 0, PARAMS.basin().minRadius() / root, PARAMS.basin().minRadius() * root, 0.4,
+            Basin smallest = new Basin(0, 0, PARAMS.basin().radius().min() / root, PARAMS.basin().radius().min() * root, 0.4,
                     type, 5L);
             BasinLayout l = BasinLayout.of(smallest, type, PARAMS);
             ResolvedBasin basin = new ResolvedBasin(smallest, type, 117, new BasinLayout(l.depth(),

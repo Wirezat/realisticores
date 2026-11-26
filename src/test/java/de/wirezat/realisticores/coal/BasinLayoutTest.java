@@ -32,7 +32,7 @@ class BasinLayoutTest {
         for (BasinType type : BasinType.values()) {
             CoalParams.TypeParams p = PARAMS.type(type);
             BasinLayout layout = layout(type);
-            assertTrue(layout.seams().size() <= p.maxSeams());
+            assertTrue(layout.seams().size() <= p.seams().max());
             assertTrue(layout.faults().size() <= p.maxFaults());
         }
     }

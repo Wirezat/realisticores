@@ -37,7 +37,7 @@ public final class BasinGenerator {
         }
         int x = Cells.center(rng, cellX, params.cellSize(), params.jitter());
         int z = Cells.center(rng, cellZ, params.cellSize(), params.jitter());
-        double radius = rng.nextDouble(params.minRadius(), params.maxRadius());
+        double radius = rng.nextDouble(params.radius().min(), params.radius().max());
         double root = Math.sqrt(rng.nextDouble(params.minAspect(), 1.0));
         double strike = rng.nextDouble() * Math.PI;
         BasinType type = rng.nextDouble() < params.hardCoalShare() ? BasinType.HARD_COAL : BasinType.LIGNITE;
@@ -56,7 +56,7 @@ public final class BasinGenerator {
      */
     public List<Basin> basinsNear(long seed, int minX, int minZ, int maxX, int maxZ) {
         double stretch = 1.0 / (1.0 - params.outlineNoise());
-        int reach = (int) Math.ceil(params.maxRadius() / Math.sqrt(params.minAspect()) * stretch
+        int reach = (int) Math.ceil(params.radius().max() / Math.sqrt(params.minAspect()) * stretch
                 + params.jitter() * params.cellSize());
         List<Basin> result = new ArrayList<>();
         Cells.around(minX, minZ, maxX, maxZ, reach, params.cellSize(), (cellX, cellZ) ->

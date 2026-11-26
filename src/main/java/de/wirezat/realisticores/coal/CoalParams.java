@@ -1,5 +1,8 @@
 package de.wirezat.realisticores.coal;
 
+import de.wirezat.realisticores.worldgen.DoubleRange;
+import de.wirezat.realisticores.worldgen.IntRange;
+
 /**
  * All tunable values of coal basin generation.
  *
@@ -24,15 +27,14 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
      * @param cellSize grid cell size in blocks; each cell holds at most one basin
      * @param chance probability that a cell holds a basin
      * @param jitter maximum offset of the centre from the cell centre, as a fraction of the cell size
-     * @param minRadius smallest mean radius in blocks
-     * @param maxRadius largest mean radius in blocks
+     * @param radius smallest and largest mean radius in blocks
      * @param minAspect smallest ratio of short to long axis
      * @param outlineNoise fraction of the radius the outline may deviate by noise
      * @param outlineWavelength size of the outline bumps in blocks
      * @param hardCoalShare share of basins with hard coal, the rest holds lignite
      */
-    public record BasinParams(int cellSize, double chance, double jitter, int minRadius, int maxRadius,
-            double minAspect, double outlineNoise, double outlineWavelength, double hardCoalShare) {
+    public record BasinParams(int cellSize, double chance, double jitter, IntRange radius, double minAspect,
+            double outlineNoise, double outlineWavelength, double hardCoalShare) {
     }
 
     /**
@@ -48,36 +50,27 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
     /**
      * Settings of one basin type.
      *
-     * @param minDepth smallest depth of the bowl in blocks
-     * @param maxDepth largest depth of the bowl in blocks
-     * @param minSeams fewest seams
-     * @param maxSeams most seams
-     * @param minThickness smallest seam thickness in blocks
-     * @param maxThickness largest seam thickness in blocks
-     * @param minSpacing smallest gap between two seams in blocks
-     * @param maxSpacing largest gap between two seams in blocks
+     * @param depth smallest and largest depth of the bowl in blocks
+     * @param seams fewest and most seams
+     * @param thickness smallest and largest seam thickness in blocks
+     * @param spacing smallest and largest gap between two seams in blocks
      * @param maxFaults most faults
      */
-    public record TypeParams(int minDepth, int maxDepth, int minSeams, int maxSeams, double minThickness,
-            double maxThickness, int minSpacing, int maxSpacing, int maxFaults) {
+    public record TypeParams(IntRange depth, IntRange seams, DoubleRange thickness, IntRange spacing,
+            int maxFaults) {
         private TypeParams sanitized() {
-            return new TypeParams(minDepth, Math.max(minDepth, maxDepth), minSeams, Math.max(minSeams, maxSeams),
-                    minThickness, Math.max(minThickness, maxThickness), minSpacing,
-                    Math.max(minSpacing, maxSpacing), maxFaults);
+            return new TypeParams(depth.ordered(), seams.ordered(), thickness.ordered(), spacing.ordered(), maxFaults);
         }
     }
 
     /**
      * Folds and core of folded basins.
      *
-     * @param minAmplitude smallest fold height in blocks
-     * @param maxAmplitude largest fold height in blocks
-     * @param minWavelength smallest distance between two folds in blocks
-     * @param maxWavelength largest distance between two folds in blocks
+     * @param amplitude smallest and largest fold height in blocks
+     * @param wavelength smallest and largest distance between two folds in blocks
      * @param coreShare part of the basin radius that holds anthracite
      */
-    public record FoldParams(double minAmplitude, double maxAmplitude, double minWavelength, double maxWavelength,
-            double coreShare) {
+    public record FoldParams(DoubleRange amplitude, DoubleRange wavelength, double coreShare) {
     }
 
     /**
@@ -94,8 +87,7 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
      * @param splitThreshold noise value (-1..1) above which a seam splits
      * @param splitWavelength size of split zones in blocks
      * @param maxParting thickest parting between two benches in blocks
-     * @param minThrow smallest shift at a fault in blocks
-     * @param maxThrow largest shift at a fault in blocks
+     * @param faultThrow smallest and largest shift at a fault in blocks
      * @param faultWaveAmplitude how far a fault line bends in blocks
      * @param faultWaveWavelength size of the bends in blocks
      * @param outcropThreshold noise value (-1..1) above which a seam shows through the soil
@@ -103,7 +95,7 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
      */
     public record SeamParams(double cover, double thicknessBase, double thicknessNoise, double thicknessWavelength,
             double pinchOut, double minThickness, double waveAmplitude, double waveWavelength,
-            double splitThreshold, double splitWavelength, int maxParting, double minThrow, double maxThrow,
+            double splitThreshold, double splitWavelength, int maxParting, DoubleRange faultThrow,
             double faultWaveAmplitude, double faultWaveWavelength, double outcropThreshold,
             double outcropWavelength) {
     }
@@ -111,21 +103,15 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
     /**
      * Thickness of the rocks around a seam.
      *
-     * @param minShale thinnest shale in blocks
-     * @param maxShale thickest shale in blocks
-     * @param minBlackShale thinnest black shale above a seam in blocks
-     * @param maxBlackShale thickest black shale above a seam in blocks
-     * @param minFireclay thinnest fireclay below a seam in blocks
-     * @param maxFireclay thickest fireclay below a seam in blocks
-     * @param minRoofMudstone thinnest mudstone above lignite in blocks
-     * @param maxRoofMudstone thickest mudstone above lignite in blocks
-     * @param minFloorMudstone thinnest mudstone below lignite in blocks
-     * @param maxFloorMudstone thickest mudstone below lignite in blocks
+     * @param shale thinnest and thickest shale in blocks
+     * @param blackShale thinnest and thickest black shale above a seam in blocks
+     * @param fireclay thinnest and thickest fireclay below a seam in blocks
+     * @param roofMudstone thinnest and thickest mudstone above lignite in blocks
+     * @param floorMudstone thinnest and thickest mudstone below lignite in blocks
      * @param wavelength size of thick and thin zones in blocks
      */
-    public record RockParams(int minShale, int maxShale, int minBlackShale, int maxBlackShale, int minFireclay,
-            int maxFireclay, int minRoofMudstone, int maxRoofMudstone, int minFloorMudstone, int maxFloorMudstone,
-            double wavelength) {
+    public record RockParams(IntRange shale, IntRange blackShale, IntRange fireclay, IntRange roofMudstone,
+            IntRange floorMudstone, double wavelength) {
     }
 
     /**
@@ -144,26 +130,22 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
     /**
      * Sandstone with its roll front and the seam fires.
      *
-     * @param sandMin thinnest sandstone above a hard coal seam in blocks
-     * @param sandMax thickest sandstone above a hard coal seam in blocks
-     * @param ligniteSandMin thinnest sandstone above a lignite seam in blocks
-     * @param ligniteSandMax thickest sandstone above a lignite seam in blocks
+     * @param sand thinnest and thickest sandstone above a hard coal seam in blocks
+     * @param ligniteSand thinnest and thickest sandstone above a lignite seam in blocks
      * @param sandCover share of the area with sandstone
      * @param sandWavelength size of sandstone lenses in blocks
-     * @param frontMin innermost position of the roll front, as distance to the centre in basin units
-     * @param frontMax outermost position of the roll front, as distance to the centre in basin units
+     * @param front innermost and outermost position of the roll front, as distance to the centre in basin units
      * @param frontBand width in blocks of the ore band inside the front
      * @param fireCell grid cell size of seam fires in blocks
      * @param fireChance probability that a cell holds a fire
-     * @param fireMinRadius smallest fire radius in blocks
-     * @param fireMaxRadius largest fire radius in blocks
+     * @param fireRadius smallest and largest fire radius in blocks
      * @param fireDepth blocks below the surface that burn
      * @param blackbandCover share of the area where blackband ironstone lies on the topmost hard coal seam
      * @param rustDepth blocks of shale below the soil that are rust-stained
      */
-    public record AccessoryParams(int sandMin, int sandMax, int ligniteSandMin, int ligniteSandMax, double sandCover,
-            double sandWavelength, double frontMin, double frontMax, int frontBand, int fireCell, double fireChance,
-            int fireMinRadius, int fireMaxRadius, int fireDepth, double blackbandCover, int rustDepth) {
+    public record AccessoryParams(IntRange sand, IntRange ligniteSand, double sandCover, double sandWavelength,
+            DoubleRange front, int frontBand, int fireCell, double fireChance, IntRange fireRadius, int fireDepth,
+            double blackbandCover, int rustDepth) {
     }
 
     /**
@@ -188,34 +170,25 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
     public CoalParams sanitized() {
         BasinParams b = basin;
         int largest = (int) (b.cellSize() * (1.5 - b.jitter()) * (1.0 - b.outlineNoise()) * Math.sqrt(b.minAspect()));
-        int minRadius = Math.min(b.minRadius(), largest);
-        FoldParams f = fold;
+        int minRadius = Math.min(b.radius().min(), largest);
+        IntRange radius = new IntRange(minRadius, Math.max(minRadius, Math.min(b.radius().max(), largest)));
         SeamParams s = seam;
         RockParams r = rock;
+        AccessoryParams a = accessories;
         return new CoalParams(
-                new BasinParams(b.cellSize(), b.chance(), b.jitter(), minRadius,
-                        Math.max(minRadius, Math.min(b.maxRadius(), largest)), b.minAspect(), b.outlineNoise(),
+                new BasinParams(b.cellSize(), b.chance(), b.jitter(), radius, b.minAspect(), b.outlineNoise(),
                         b.outlineWavelength(), b.hardCoalShare()),
                 relief, hardCoal.sanitized(), lignite.sanitized(), folded.sanitized(),
-                new FoldParams(f.minAmplitude(), Math.max(f.minAmplitude(), f.maxAmplitude()), f.minWavelength(),
-                        Math.max(f.minWavelength(), f.maxWavelength()), f.coreShare()),
+                new FoldParams(fold.amplitude().ordered(), fold.wavelength().ordered(), fold.coreShare()),
                 new SeamParams(s.cover(), s.thicknessBase(), s.thicknessNoise(), s.thicknessWavelength(),
                         s.pinchOut(), s.minThickness(), s.waveAmplitude(), s.waveWavelength(), s.splitThreshold(),
-                        s.splitWavelength(), s.maxParting(), s.minThrow(), Math.max(s.minThrow(), s.maxThrow()),
-                        s.faultWaveAmplitude(), s.faultWaveWavelength(), s.outcropThreshold(),
-                        s.outcropWavelength()),
-                new RockParams(r.minShale(), Math.max(r.minShale(), r.maxShale()), r.minBlackShale(),
-                        Math.max(r.minBlackShale(), r.maxBlackShale()), r.minFireclay(),
-                        Math.max(r.minFireclay(), r.maxFireclay()), r.minRoofMudstone(),
-                        Math.max(r.minRoofMudstone(), r.maxRoofMudstone()), r.minFloorMudstone(),
-                        Math.max(r.minFloorMudstone(), r.maxFloorMudstone()), r.wavelength()),
-                surface, new AccessoryParams(accessories.sandMin(), Math.max(accessories.sandMin(), accessories.sandMax()),
-                        accessories.ligniteSandMin(), Math.max(accessories.ligniteSandMin(), accessories.ligniteSandMax()),
-                        accessories.sandCover(), accessories.sandWavelength(), accessories.frontMin(),
-                        Math.max(accessories.frontMin(), accessories.frontMax()), accessories.frontBand(),
-                        accessories.fireCell(), accessories.fireChance(), accessories.fireMinRadius(),
-                        Math.max(accessories.fireMinRadius(), accessories.fireMaxRadius()), accessories.fireDepth(),
-                        accessories.blackbandCover(), accessories.rustDepth()));
+                        s.splitWavelength(), s.maxParting(), s.faultThrow().ordered(), s.faultWaveAmplitude(),
+                        s.faultWaveWavelength(), s.outcropThreshold(), s.outcropWavelength()),
+                new RockParams(r.shale().ordered(), r.blackShale().ordered(), r.fireclay().ordered(),
+                        r.roofMudstone().ordered(), r.floorMudstone().ordered(), r.wavelength()),
+                surface, new AccessoryParams(a.sand().ordered(), a.ligniteSand().ordered(), a.sandCover(),
+                        a.sandWavelength(), a.front().ordered(), a.frontBand(), a.fireCell(), a.fireChance(),
+                        a.fireRadius().ordered(), a.fireDepth(), a.blackbandCover(), a.rustDepth()));
     }
 
     /**
@@ -225,16 +198,24 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
      */
     public static CoalParams defaults() {
         return new CoalParams(
-                new BasinParams(2000, 0.9, 0.13, 400, 730, 0.6, 0.15, 250.0, 0.65),
+                new BasinParams(2000, 0.9, 0.13, new IntRange(400, 730), 0.6, 0.15, 250.0, 0.65),
                 new ReliefParams(100, 50, 2),
-                new TypeParams(40, 90, 1, 4, 1.0, 3.0, 5, 20, 4),
-                new TypeParams(15, 35, 1, 2, 3.0, 8.0, 5, 10, 1),
-                new TypeParams(60, 110, 2, 4, 1.0, 3.0, 8, 20, 4),
-                new FoldParams(10.0, 18.0, 200.0, 300.0, 0.55),
-                new SeamParams(6.0, 1.25, 0.6, 180.0, 0.1, 0.5, 6.0, 300.0, 0.4, 400.0, 3, 4.0, 10.0, 10.0, 200.0,
-                        -0.125, 14.0),
-                new RockParams(1, 2, 1, 2, 1, 2, 3, 5, 2, 4, 60.0),
+                typeParams(40, 90, 1, 4, 1.0, 3.0, 5, 20, 4),
+                typeParams(15, 35, 1, 2, 3.0, 8.0, 5, 10, 1),
+                typeParams(60, 110, 2, 4, 1.0, 3.0, 8, 20, 4),
+                new FoldParams(new DoubleRange(10.0, 18.0), new DoubleRange(200.0, 300.0), 0.55),
+                new SeamParams(6.0, 1.25, 0.6, 180.0, 0.1, 0.5, 6.0, 300.0, 0.4, 400.0, 3,
+                        new DoubleRange(4.0, 10.0), 10.0, 200.0, -0.125, 14.0),
+                new RockParams(new IntRange(1, 2), new IntRange(1, 2), new IntRange(1, 2), new IntRange(3, 5),
+                        new IntRange(2, 4), 60.0),
                 new SurfaceParams(0.04, 8, -0.125, 14.0, 2),
-                new AccessoryParams(2, 4, 3, 7, 0.5, 120.0, 0.7, 0.85, 4, 40, 0.4, 3, 6, 6, 0.3, 2));
+                new AccessoryParams(new IntRange(2, 4), new IntRange(3, 7), 0.5, 120.0, new DoubleRange(0.7, 0.85),
+                        4, 40, 0.4, new IntRange(3, 6), 6, 0.3, 2));
+    }
+
+    private static TypeParams typeParams(int minDepth, int maxDepth, int minSeams, int maxSeams, double minThickness,
+            double maxThickness, int minSpacing, int maxSpacing, int maxFaults) {
+        return new TypeParams(new IntRange(minDepth, maxDepth), new IntRange(minSeams, maxSeams),
+                new DoubleRange(minThickness, maxThickness), new IntRange(minSpacing, maxSpacing), maxFaults);
     }
 }

@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.coal;
 
+import de.wirezat.realisticores.worldgen.IntRange;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import de.wirezat.realisticores.worldgen.ValueNoise;
 import java.util.ArrayList;
@@ -142,17 +143,17 @@ public final class SeamModel {
         CoalParams.RockParams r = params.rock();
         int salt = HULL_SALT + index * HULL_NOISES;
         if (lignite) {
-            int roof = hull(basin, salt, x, z, r.minRoofMudstone(), r.maxRoofMudstone());
-            int floor = hull(basin, salt + 1, x, z, r.minFloorMudstone(), r.maxFloorMudstone());
+            int roof = hull(basin, salt, x, z, r.roofMudstone());
+            int floor = hull(basin, salt + 1, x, z, r.floorMudstone());
             claim(claims, top + 1, roof, Rock.MUDSTONE);
             claim(claims, bottom - floor, floor, Rock.MUDSTONE);
             claimSandstone(claims, basin, index, top + roof + 1, true, x, z);
             return;
         }
-        int black = hull(basin, salt, x, z, r.minBlackShale(), r.maxBlackShale());
-        int roof = hull(basin, salt + 1, x, z, r.minShale(), r.maxShale());
-        int fireclay = hull(basin, salt + 2, x, z, r.minFireclay(), r.maxFireclay());
-        int floor = hull(basin, salt + 3, x, z, r.minShale(), r.maxShale());
+        int black = hull(basin, salt, x, z, r.blackShale());
+        int roof = hull(basin, salt + 1, x, z, r.shale());
+        int fireclay = hull(basin, salt + 2, x, z, r.fireclay());
+        int floor = hull(basin, salt + 3, x, z, r.shale());
         boolean topmost = index == resolved.layout().seams().size() - 1;
         int bank = topmost && noise(basin, BANK_SALT, x, z, params.accessories().sandWavelength())
                 > 1.0 - 2.0 * params.accessories().blackbandCover() ? 1 : 0;
@@ -170,8 +171,7 @@ public final class SeamModel {
         if (noise(basin, SAND_SALT + index, x, z, a.sandWavelength()) <= 1.0 - 2.0 * a.sandCover()) {
             return;
         }
-        int thickness = hull(basin, SAND_SALT + HULL_NOISES + index, x, z, lignite ? a.ligniteSandMin() : a.sandMin(),
-                lignite ? a.ligniteSandMax() : a.sandMax());
+        int thickness = hull(basin, SAND_SALT + HULL_NOISES + index, x, z, lignite ? a.ligniteSand() : a.sand());
         claim(claims, bottom, thickness, Rock.SANDSTONE);
     }
 
@@ -181,9 +181,10 @@ public final class SeamModel {
         }
     }
 
-    private int hull(Basin basin, int salt, int x, int z, int min, int max) {
+    private int hull(Basin basin, int salt, int x, int z, IntRange range) {
         double share = (noise(basin, salt, x, z, params.rock().wavelength()) + 1.0) / 2.0;
-        return min + Math.min(max - min, (int) (share * (max - min + 1)));
+        int span = range.max() - range.min();
+        return range.min() + Math.min(span, (int) (share * (span + 1)));
     }
 
     private static List<Layer> withoutOverlap(List<Layer> claims) {

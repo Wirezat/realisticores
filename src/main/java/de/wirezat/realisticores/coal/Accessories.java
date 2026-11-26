@@ -41,7 +41,7 @@ public final class Accessories {
      */
     public double front(long basinSeed, int x, int z) {
         double share = SplitMix64.unit(SplitMix64.hash(basinSeed ^ FRONT_SALT, 0, 0));
-        return params.frontMin() + (params.frontMax() - params.frontMin()) * share
+        return params.front().lerp(share)
                 + FRONT_WOBBLE * ValueNoise.sample2(basinSeed ^ FRONT_SALT, x, z, FRONT_WAVELENGTH);
     }
 
@@ -127,7 +127,7 @@ public final class Accessories {
                 }
                 double centreX = (cellX + dx) * cell + random.nextDouble() * cell;
                 double centreZ = (cellZ + dz) * cell + random.nextDouble() * cell;
-                int radius = random.nextInt(params.fireMinRadius(), params.fireMaxRadius());
+                int radius = params.fireRadius().pick(random);
                 double ox = x + 0.5 - centreX;
                 double oz = z + 0.5 - centreZ;
                 if (ox * ox + oz * oz <= radius * radius) {

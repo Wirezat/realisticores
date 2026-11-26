@@ -24,7 +24,7 @@ class BasinGeneratorTest {
     void ellipseKeepsTheRolledArea() {
         for (Basin basin : BASINS) {
             double mean = Math.sqrt(basin.longRadius() * basin.shortRadius());
-            assertTrue(mean >= PARAMS.basin().minRadius() - 0.1 && mean <= PARAMS.basin().maxRadius() + 0.1);
+            assertTrue(mean >= PARAMS.basin().radius().min() - 0.1 && mean <= PARAMS.basin().radius().max() + 0.1);
             assertTrue(basin.shortRadius() / basin.longRadius() >= 0.6 - 1e-9);
         }
     }

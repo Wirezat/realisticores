@@ -46,8 +46,8 @@ public final class FieldGenerator {
         if (!craton.contains(seed, centerX, centerZ)) {
             return Optional.empty();
         }
-        int radius = rng.nextInt(f.minRadius(), f.maxRadius());
-        int attempts = rng.nextInt(f.minPipes(), f.maxPipes());
+        int radius = f.radius().pick(rng);
+        int attempts = f.pipes().pick(rng);
         List<Pipe> pipes = new ArrayList<>();
         for (int i = 0; i < attempts; i++) {
             placePipe(seed, rng, centerX, centerZ, radius, pipes);
@@ -67,7 +67,7 @@ public final class FieldGenerator {
      */
     public List<Pipe> pipesNear(long seed, int minX, int minZ, int maxX, int maxZ) {
         KimberliteParams.FieldParams f = params.field();
-        double reach = f.maxRadius() + shape.reach(Pipe.of(seed, 0, 0, params.pipe().maxDiameter()));
+        double reach = f.radius().max() + shape.reach(Pipe.of(seed, 0, 0, params.pipe().diameter().max()));
         List<Pipe> result = new ArrayList<>();
         Cells.around(minX, minZ, maxX, maxZ, reach, f.cellSize(), (cellX, cellZ) ->
                 fieldAt(seed, cellX, cellZ).ifPresent(field -> {
@@ -86,7 +86,7 @@ public final class FieldGenerator {
         KimberliteParams.FieldParams f = params.field();
         KimberliteParams.PipeParams p = params.pipe();
         double lnDiameter = Math.log(p.medianDiameter()) + rng.nextGaussian() * p.diameterSigma();
-        int diameter = (int) Math.round(Math.min(p.maxDiameter(), Math.max(p.minDiameter(), Math.exp(lnDiameter))));
+        int diameter = (int) Math.round(Math.min(p.diameter().max(), Math.max(p.diameter().min(), Math.exp(lnDiameter))));
         for (int attempt = 0; attempt < f.placementAttempts(); attempt++) {
             double angle = rng.nextDouble() * 2.0 * Math.PI;
             double distance = radius * Math.sqrt(rng.nextDouble());
@@ -123,7 +123,7 @@ public final class FieldGenerator {
      * @return the nearest pipe, empty if none lies within the limit
      */
     public Optional<Pipe> nearestPipe(long seed, int x, int z, int maxRadius) {
-        return nearest(seed, x, z, maxRadius, params.field().maxRadius() + 1, field -> field.pipes().stream()
+        return nearest(seed, x, z, maxRadius, params.field().radius().max() + 1, field -> field.pipes().stream()
                 .map(pipe -> new Candidate<>(pipe, Math.hypot(pipe.x() - x, pipe.z() - z)))
                 .min(Comparator.comparingDouble(Candidate::distance)));
     }

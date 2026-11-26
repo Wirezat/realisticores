@@ -6,6 +6,7 @@ import static de.wirezat.realisticores.config.ConfigValues.integer;
 
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.config.MineralConfig;
+import de.wirezat.realisticores.worldgen.IntRange;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -27,8 +28,8 @@ public final class KimberliteConfig {
         Supplier<Double> cratonThreshold = decimal(b, "threshold", d.craton().threshold(), -1.0, 2.0,
                 "Noise value above which a position is craton; higher means less craton (about 17% at 0.45).");
         b.pop();
-        Supplier<KimberliteParams.CratonParams> craton = () -> new KimberliteParams.CratonParams(
-                cratonWavelength.get(), cratonThreshold.get());
+        Supplier<KimberliteParams.CratonParams> craton = () -> new KimberliteParams.CratonParams(cratonWavelength.get(),
+                cratonThreshold.get());
 
         b.comment("Kimberlite fields: clusters of pipes inside cratons.").push("field");
         Supplier<Integer> fieldCellSize = integer(b, "cellSize", d.field().cellSize(), 256, 100000,
@@ -37,13 +38,13 @@ public final class KimberliteConfig {
                 "Probability that a cell on a craton holds a field.");
         Supplier<Double> fieldJitter = decimal(b, "jitter", d.field().jitter(), 0.0, 0.5,
                 "Maximum offset of a field from its cell centre, as a fraction of the cell size.");
-        Supplier<Integer> fieldMinRadius = integer(b, "minRadius", d.field().minRadius(), 16, 5000,
+        Supplier<Integer> fieldMinRadius = integer(b, "minRadius", d.field().radius().min(), 16, 5000,
                 "Smallest field radius in blocks.");
-        Supplier<Integer> fieldMaxRadius = integer(b, "maxRadius", d.field().maxRadius(), 16, 5000,
+        Supplier<Integer> fieldMaxRadius = integer(b, "maxRadius", d.field().radius().max(), 16, 5000,
                 "Largest field radius in blocks.");
-        Supplier<Integer> fieldMinPipes = integer(b, "minPipes", d.field().minPipes(), 1, 200,
+        Supplier<Integer> fieldMinPipes = integer(b, "minPipes", d.field().pipes().min(), 1, 200,
                 "Fewest pipes attempted per field.");
-        Supplier<Integer> fieldMaxPipes = integer(b, "maxPipes", d.field().maxPipes(), 1, 200,
+        Supplier<Integer> fieldMaxPipes = integer(b, "maxPipes", d.field().pipes().max(), 1, 200,
                 "Most pipes attempted per field.");
         Supplier<Integer> fieldMinSpacing = integer(b, "minSpacing", d.field().minSpacing(), 1, 1000,
                 "Minimum distance between pipe centres in a field, in blocks.");
@@ -51,18 +52,19 @@ public final class KimberliteConfig {
                 100,
                 "Tries to find a free position for each pipe before it is skipped; fewer tries give sparser fields.");
         b.pop();
-        Supplier<KimberliteParams.FieldParams> field = () -> new KimberliteParams.FieldParams(
-                fieldCellSize.get(), fieldChance.get(), fieldJitter.get(), fieldMinRadius.get(), fieldMaxRadius.get(),
-                fieldMinPipes.get(), fieldMaxPipes.get(), fieldMinSpacing.get(), fieldPlacementAttempts.get());
+        Supplier<KimberliteParams.FieldParams> field = () -> new KimberliteParams.FieldParams(fieldCellSize.get(),
+                fieldChance.get(), fieldJitter.get(), new IntRange(fieldMinRadius.get(), fieldMaxRadius.get()),
+                new IntRange(fieldMinPipes.get(), fieldMaxPipes.get()), fieldMinSpacing.get(),
+                fieldPlacementAttempts.get());
 
         b.comment("Pipe size and shape.").push("pipe");
         Supplier<Integer> pipeMedianDiameter = integer(b, "medianDiameter", d.pipe().medianDiameter(), 8, 1000,
                 "Median surface diameter in blocks.");
         Supplier<Double> pipeDiameterSigma = decimal(b, "diameterSigma", d.pipe().diameterSigma(), 0.0, 2.0,
                 "Spread of diameters (log-normal); higher gives more very small and very large pipes.");
-        Supplier<Integer> pipeMinDiameter = integer(b, "minDiameter", d.pipe().minDiameter(), 4, 1000,
+        Supplier<Integer> pipeMinDiameter = integer(b, "minDiameter", d.pipe().diameter().min(), 4, 1000,
                 "Smallest diameter in blocks.");
-        Supplier<Integer> pipeMaxDiameter = integer(b, "maxDiameter", d.pipe().maxDiameter(), 8, 2000,
+        Supplier<Integer> pipeMaxDiameter = integer(b, "maxDiameter", d.pipe().diameter().max(), 8, 2000,
                 "Largest diameter in blocks.");
         Supplier<Integer> pipeCraterBaseY = integer(b, "craterBaseY", d.pipe().craterBaseY(), -64, 320,
                 "Height where the crater flare starts.");
@@ -97,8 +99,8 @@ public final class KimberliteConfig {
         Supplier<Double> pipeWallVerticalStretch = decimal(b, "wallVerticalStretch", d.pipe().wallVerticalStretch(),
                 0.2, 10.0, "How much the wall noise is stretched vertically; higher gives smoother vertical walls.");
         b.pop();
-        Supplier<KimberliteParams.PipeParams> pipe = () -> new KimberliteParams.PipeParams(
-                pipeMedianDiameter.get(), pipeDiameterSigma.get(), pipeMinDiameter.get(), pipeMaxDiameter.get(),
+        Supplier<KimberliteParams.PipeParams> pipe = () -> new KimberliteParams.PipeParams(pipeMedianDiameter.get(),
+                pipeDiameterSigma.get(), new IntRange(pipeMinDiameter.get(), pipeMaxDiameter.get()),
                 pipeCraterBaseY.get(), pipeCraterHeight.get(), pipeCraterWidening.get(), pipeDiatremeTaper.get(),
                 pipeRootY.get(), pipeRootMinRadius.get(), pipeBottomY.get(), pipeWallNoise.get(), pipeMinAspect.get(),
                 pipeOutcropThreshold.get(), pipeOutcropWavelength.get(), pipeWallWavelengthFactor.get(),
@@ -153,25 +155,26 @@ public final class KimberliteConfig {
         b.comment("Crater bowl and lake.").push("crater");
         Supplier<Double> craterDepthPerDiameter = decimal(b, "depthPerDiameter", d.crater().depthPerDiameter(), 0.0,
                 0.5, "Bowl depth as a fraction of the pipe diameter.");
-        Supplier<Integer> craterMinDepth = integer(b, "minDepth", d.crater().minDepth(), 0, 64,
+        Supplier<Integer> craterMinDepth = integer(b, "minDepth", d.crater().depth().min(), 0, 64,
                 "Smallest bowl depth in blocks.");
-        Supplier<Integer> craterMaxDepth = integer(b, "maxDepth", d.crater().maxDepth(), 0, 128,
+        Supplier<Integer> craterMaxDepth = integer(b, "maxDepth", d.crater().depth().max(), 0, 128,
                 "Largest bowl depth in blocks.");
         Supplier<Integer> craterFloorLayers = integer(b, "floorLayers", d.crater().floorLayers(), 0, 16,
                 "Volcaniclastic layers at the bowl floor.");
         Supplier<Integer> craterRingPoints = integer(b, "ringPoints", d.crater().ringPoints(), 3, 64,
                 "Terrain samples on the ring around a crater that set the rim height and lake level.");
         Supplier<Integer> craterMaxWallHeight = integer(b, "maxWallHeight", d.crater().maxWallHeight(), 0, 64,
-                "Tallest wall the bowl may cut into sloping terrain; never less than the bowl depth." + " Lower values"
-                        + " give gentler rims.");
+                "Tallest wall the bowl may cut into sloping terrain; never less than the bowl depth."
+                        + " Lower values give gentler rims.");
         Supplier<Integer> craterSoilLayers = integer(b, "soilLayers", d.crater().soilLayers(), 0, 16,
                 "Soil blocks laid on the bowl floor so the crater is overgrown; 0 leaves bare volcaniclastic rock.");
         Supplier<Boolean> craterLakeInDryBiomes = flag(b, "lakeInDryBiomes", d.crater().lakeInDryBiomes(),
                 "Fill craters with water even in biomes without precipitation (desert, savanna, badlands).");
         b.pop();
         Supplier<KimberliteParams.CraterParams> crater = () -> new KimberliteParams.CraterParams(
-                craterDepthPerDiameter.get(), craterMinDepth.get(), craterMaxDepth.get(), craterFloorLayers.get(),
-                craterRingPoints.get(), craterMaxWallHeight.get(), craterSoilLayers.get(), craterLakeInDryBiomes.get());
+                craterDepthPerDiameter.get(), new IntRange(craterMinDepth.get(), craterMaxDepth.get()),
+                craterFloorLayers.get(), craterRingPoints.get(), craterMaxWallHeight.get(), craterSoilLayers.get(),
+                craterLakeInDryBiomes.get());
 
         b.comment("Ore grade of pipes: barren, poor and rich pipes, with varying rock phases.").push("grade");
         Supplier<Double> gradeBarrenShare = decimal(b, "barrenShare", d.grade().barrenShare(), 0.0, 1.0,
@@ -185,9 +188,8 @@ public final class KimberliteConfig {
         Supplier<Double> gradePhaseAmplitude = decimal(b, "phaseAmplitude", d.grade().phaseAmplitude(), 0.0, 1.0,
                 "How far the grade of a phase may deviate from the pipe grade.");
         b.pop();
-        Supplier<KimberliteParams.GradeParams> grade = () -> new KimberliteParams.GradeParams(
-                gradeBarrenShare.get(), gradePoorShare.get(), gradePoorFactor.get(), gradePhaseWavelength.get(),
-                gradePhaseAmplitude.get());
+        Supplier<KimberliteParams.GradeParams> grade = () -> new KimberliteParams.GradeParams(gradeBarrenShare.get(),
+                gradePoorShare.get(), gradePoorFactor.get(), gradePhaseWavelength.get(), gradePhaseAmplitude.get());
 
         b.comment("Indicator mineral trails: grains washed downhill from a pipe, found by panning.").push("plume");
         Supplier<Double> plumeStepLength = decimal(b, "stepLength", d.plume().stepLength(), 8.0, 128.0,
@@ -223,11 +225,10 @@ public final class KimberliteConfig {
         Supplier<Double> ilmenitePeak = decimal(b, "ilmenitePeak", d.plume().ilmenite().peak(), 0.0, 1.0,
                 "Measured share of ilmenite next to the pipe; 1 is 100 g per wash.");
         b.pop();
-        Supplier<KimberliteParams.PlumeParams> plume = () -> new KimberliteParams.PlumeParams(
-                plumeStepLength.get(), plumeMaxLength.get(), plumeInertia.get(), plumeFlatSlope.get(),
-                plumeStartWidth.get(), plumeWidthGrowth.get(), plumeColdFactor.get(), plumeDryFactor.get(),
-                plumeOceanFactor.get(), plumeMaxSeaDepth.get(),
-                new KimberliteParams.IndicatorParams(pyropeLength.get(), pyropePeak.get()),
+        Supplier<KimberliteParams.PlumeParams> plume = () -> new KimberliteParams.PlumeParams(plumeStepLength.get(),
+                plumeMaxLength.get(), plumeInertia.get(), plumeFlatSlope.get(), plumeStartWidth.get(),
+                plumeWidthGrowth.get(), plumeColdFactor.get(), plumeDryFactor.get(), plumeOceanFactor.get(),
+                plumeMaxSeaDepth.get(), new KimberliteParams.IndicatorParams(pyropeLength.get(), pyropePeak.get()),
                 new KimberliteParams.IndicatorParams(chromiteLength.get(), chromitePeak.get()),
                 new KimberliteParams.IndicatorParams(ilmeniteLength.get(), ilmenitePeak.get()));
 

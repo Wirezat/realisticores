@@ -45,8 +45,8 @@ class KimberliteGenerationTest {
         List<Pipe> pipes = new FieldGenerator(params).pipesNear(SEED, -REGION, -REGION, REGION, REGION);
         assertFalse(pipes.isEmpty());
         for (Pipe pipe : pipes) {
-            assertTrue(pipe.diameter() >= params.pipe().minDiameter());
-            assertTrue(pipe.diameter() <= params.pipe().maxDiameter());
+            assertTrue(pipe.diameter() >= params.pipe().diameter().min());
+            assertTrue(pipe.diameter() <= params.pipe().diameter().max());
         }
     }
 

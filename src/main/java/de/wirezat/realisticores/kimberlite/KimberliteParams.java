@@ -1,5 +1,7 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.IntRange;
+
 /**
  * All tunable values of kimberlite generation.
  *
@@ -29,15 +31,13 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * @param cellSize grid cell size in blocks; each cell holds at most one field
      * @param chance probability that a cell holds a field
      * @param jitter maximum offset of the field centre from the cell centre, as a fraction of the cell size
-     * @param minRadius smallest field radius in blocks
-     * @param maxRadius largest field radius in blocks
-     * @param minPipes fewest pipes attempted per field
-     * @param maxPipes most pipes attempted per field
+     * @param radius smallest and largest field radius in blocks
+     * @param pipes fewest and most pipes attempted per field
      * @param minSpacing minimum distance between pipe centres in blocks
      * @param placementAttempts tries to find a free position for each pipe before it is skipped
      */
-    public record FieldParams(int cellSize, double chance, double jitter, int minRadius, int maxRadius,
-            int minPipes, int maxPipes, int minSpacing, int placementAttempts) {
+    public record FieldParams(int cellSize, double chance, double jitter, IntRange radius, IntRange pipes,
+            int minSpacing, int placementAttempts) {
     }
 
     /**
@@ -45,8 +45,7 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      *
      * @param medianDiameter median surface diameter in blocks
      * @param diameterSigma standard deviation of the natural log of the diameter
-     * @param minDiameter smallest allowed diameter in blocks
-     * @param maxDiameter largest allowed diameter in blocks
+     * @param diameter smallest and largest allowed diameter in blocks
      * @param craterBaseY Y level where the crater flare starts
      * @param craterHeight height of the crater flare in blocks
      * @param craterWidening radius factor reached at the top of the crater flare
@@ -64,8 +63,8 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * @param wallFineScale size of the fine wall roughness relative to the large bumps
      * @param wallVerticalStretch how much the wall noise is stretched vertically
      */
-    public record PipeParams(int medianDiameter, double diameterSigma, int minDiameter, int maxDiameter,
-            int craterBaseY, int craterHeight, double craterWidening, double diatremeTaper,
+    public record PipeParams(int medianDiameter, double diameterSigma, IntRange diameter, int craterBaseY,
+            int craterHeight, double craterWidening, double diatremeTaper,
             int rootY, double rootMinRadius, int bottomY, double wallNoiseStrength, double minAspect,
             double outcropThreshold, double outcropWavelength, double wallWavelengthFactor,
             double wallMinWavelength, double wallFineShare, double wallFineScale, double wallVerticalStretch) {
@@ -103,15 +102,14 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      * Crater bowl settings.
      *
      * @param depthPerDiameter bowl depth as a fraction of the pipe diameter
-     * @param minDepth smallest bowl depth in blocks
-     * @param maxDepth largest bowl depth in blocks
+     * @param depth smallest and largest bowl depth in blocks
      * @param floorLayers number of volcaniclastic layers at the bowl floor
      * @param ringPoints number of terrain samples on the ring around a crater
      * @param maxWallHeight tallest wall the bowl may cut into sloping terrain; never less than the bowl depth
      * @param soilLayers number of soil blocks laid on the bowl floor so the crater is overgrown
      * @param lakeInDryBiomes true if craters fill with water even in biomes without precipitation
      */
-    public record CraterParams(double depthPerDiameter, int minDepth, int maxDepth, int floorLayers,
+    public record CraterParams(double depthPerDiameter, IntRange depth, int floorLayers,
             int ringPoints, int maxWallHeight, int soilLayers, boolean lakeInDryBiomes) {
     }
 
@@ -169,21 +167,18 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
      */
     public KimberliteParams sanitized() {
         FieldParams f = field;
-        FieldParams field = new FieldParams(f.cellSize(), f.chance(), f.jitter(), f.minRadius(),
-                Math.max(f.minRadius(), f.maxRadius()), f.minPipes(), Math.max(f.minPipes(), f.maxPipes()),
-                f.minSpacing(), f.placementAttempts());
+        FieldParams field = new FieldParams(f.cellSize(), f.chance(), f.jitter(), f.radius().ordered(),
+                f.pipes().ordered(), f.minSpacing(), f.placementAttempts());
         PipeParams p = pipe;
         int rootY = Math.min(p.rootY(), p.craterBaseY() - 1);
-        PipeParams pipe = new PipeParams(p.medianDiameter(), p.diameterSigma(), p.minDiameter(),
-                Math.max(p.minDiameter(), p.maxDiameter()), p.craterBaseY(), p.craterHeight(),
-                p.craterWidening(), p.diatremeTaper(), rootY, p.rootMinRadius(),
+        PipeParams pipe = new PipeParams(p.medianDiameter(), p.diameterSigma(), p.diameter().ordered(),
+                p.craterBaseY(), p.craterHeight(), p.craterWidening(), p.diatremeTaper(), rootY, p.rootMinRadius(),
                 Math.min(p.bottomY(), rootY - 1), p.wallNoiseStrength(), p.minAspect(), p.outcropThreshold(),
                 p.outcropWavelength(), p.wallWavelengthFactor(), p.wallMinWavelength(), p.wallFineShare(),
                 p.wallFineScale(), p.wallVerticalStretch());
         CraterParams c = crater;
-        CraterParams crater = new CraterParams(c.depthPerDiameter(), c.minDepth(),
-                Math.max(c.minDepth(), c.maxDepth()), c.floorLayers(), c.ringPoints(), c.maxWallHeight(),
-                c.soilLayers(), c.lakeInDryBiomes());
+        CraterParams crater = new CraterParams(c.depthPerDiameter(), c.depth().ordered(), c.floorLayers(),
+                c.ringPoints(), c.maxWallHeight(), c.soilLayers(), c.lakeInDryBiomes());
         GradeParams g = grade;
         double poorShare = Math.min(g.poorShare(), 1.0 - Math.min(1.0, g.barrenShare()));
         GradeParams grade = new GradeParams(g.barrenShare(), poorShare, g.poorFactor(), g.phaseWavelength(),
@@ -199,10 +194,12 @@ public record KimberliteParams(CratonParams craton, FieldParams field, PipeParam
     public static KimberliteParams defaults() {
         return new KimberliteParams(
                 new CratonParams(8000.0, 0.45),
-                new FieldParams(3000, 0.5, 0.3, 300, 800, 5, 30, 80, 10),
-                new PipeParams(70, 0.5, 30, 300, 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0, 0.3, 10.0, 0.35, 0.4, 2.0),
-                new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855, 6.0, 5.0, 3.0, 10.0, 20.0, 0.4, 0.3, 0.8, 0.0),
-                new CraterParams(0.08, 4, 12, 3, 12, 8, 3, false),
+                new FieldParams(3000, 0.5, 0.3, new IntRange(300, 800), new IntRange(5, 30), 80, 10),
+                new PipeParams(70, 0.5, new IntRange(30, 300), 64, 16, 1.2, 0.15, -40, 2.5, -64, 0.45, 0.55, 0.5, 14.0,
+                        0.3, 10.0, 0.35, 0.4, 2.0),
+                new FaciesParams(25.0, 6.0, 0.15, 35.0, 0.6, 0.56, 0.855, 6.0, 5.0, 3.0, 10.0, 20.0, 0.4, 0.3, 0.8,
+                        0.0),
+                new CraterParams(0.08, new IntRange(4, 12), 3, 12, 8, 3, false),
                 new GradeParams(0.5, 0.35, 0.15, 40.0, 0.9),
                 new PlumeParams(32.0, 1800.0, 0.6, 0.05, 10.0, 0.08, 2.5, 0.6, 0.5, 30.0,
                         new IndicatorParams(400.0, 0.6), new IndicatorParams(300.0, 0.4),

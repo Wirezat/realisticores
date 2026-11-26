@@ -25,7 +25,7 @@ class AccessoriesTest {
         assertEquals(Accessories.Sand.OXIDIZED, RULES.sandstone(at(front + 0.01), x, z));
         assertEquals(Accessories.Sand.ORE_BAND, RULES.sandstone(at(front - band / 2), x, z));
         assertEquals(Accessories.Sand.REDUCED, RULES.sandstone(at(front - 2 * band), x, z));
-        assertTrue(front > PARAMS.frontMin() - 0.05 && front < PARAMS.frontMax() + 0.05);
+        assertTrue(front > PARAMS.front().min() - 0.05 && front < PARAMS.front().max() + 0.05);
     }
 
     @Test
@@ -89,8 +89,8 @@ class AccessoriesTest {
                 }
             }
         }
-        double meanArea = Math.PI * (Math.pow(PARAMS.fireMaxRadius() + 0.5, 3) - Math.pow(PARAMS.fireMinRadius() - 0.5, 3))
-                / (3.0 * (PARAMS.fireMaxRadius() - PARAMS.fireMinRadius() + 1));
+        double meanArea = Math.PI * (Math.pow(PARAMS.fireRadius().max() + 0.5, 3) - Math.pow(PARAMS.fireRadius().min() - 0.5, 3))
+                / (3.0 * (PARAMS.fireRadius().max() - PARAMS.fireRadius().min() + 1));
         double expected = PARAMS.fireChance() * meanArea / (PARAMS.fireCell() * PARAMS.fireCell());
         assertEquals(expected, (double) burning / total, expected * 0.35);
     }

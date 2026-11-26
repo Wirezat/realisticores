@@ -50,29 +50,29 @@ public record BasinLayout(double depth, List<Seam> seams, List<Fault> faults, do
     public static BasinLayout of(Basin basin, BasinType type, CoalParams params) {
         CoalParams.TypeParams t = params.type(type);
         SplitMix64 rng = new SplitMix64(SplitMix64.hash(basin.seed(), SALT, type.ordinal()));
-        double depth = rng.nextDouble(t.minDepth(), t.maxDepth());
-        int count = rng.nextInt(t.minSeams(), t.maxSeams());
+        double depth = rng.nextDouble(t.depth().min(), t.depth().max());
+        int count = t.seams().pick(rng);
         List<Seam> seams = new ArrayList<>();
         double offset = 0.0;
         for (int i = 0; i < count; i++) {
-            double thickness = rng.nextDouble(t.minThickness(), t.maxThickness());
+            double thickness = t.thickness().pick(rng);
             if (offset + thickness > depth - params.seam().cover()) {
                 break;
             }
             seams.add(new Seam(offset, thickness));
-            offset += thickness + rng.nextDouble(t.minSpacing(), t.maxSpacing());
+            offset += thickness + rng.nextDouble(t.spacing().min(), t.spacing().max());
         }
         double radius = Math.sqrt(basin.longRadius() * basin.shortRadius());
         List<Fault> faults = new ArrayList<>();
         for (int i = rng.nextInt(0, t.maxFaults()); i > 0; i--) {
             double normal = basin.strike() + (rng.nextDouble() < 0.5 ? 0.0 : Math.PI / 2.0);
             double distance = rng.nextDouble(-1.0, 1.0) * FAULT_SPREAD * radius;
-            double size = rng.nextDouble(params.seam().minThrow(), params.seam().maxThrow());
+            double size = params.seam().faultThrow().pick(rng);
             faults.add(new Fault(Math.cos(normal), Math.sin(normal), distance, rng.nextDouble() < 0.5 ? size : -size));
         }
         CoalParams.FoldParams f = params.fold();
-        double amplitude = type == BasinType.FOLDED ? rng.nextDouble(f.minAmplitude(), f.maxAmplitude()) : 0.0;
+        double amplitude = type == BasinType.FOLDED ? f.amplitude().pick(rng) : 0.0;
         return new BasinLayout(depth, List.copyOf(seams), List.copyOf(faults), amplitude,
-                rng.nextDouble(f.minWavelength(), f.maxWavelength()), rng.nextDouble() * 2.0 * Math.PI);
+                f.wavelength().pick(rng), rng.nextDouble() * 2.0 * Math.PI);
     }
 }
