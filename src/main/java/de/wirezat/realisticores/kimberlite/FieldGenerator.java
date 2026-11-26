@@ -96,7 +96,8 @@ public final class FieldGenerator {
         KimberliteParams.FieldParams f = params.field();
         KimberliteParams.PipeParams p = params.pipe();
         double lnDiameter = Math.log(p.medianDiameter()) + rng.nextGaussian() * p.diameterSigma();
-        int diameter = (int) Math.round(Math.min(p.diameter().max(), Math.max(p.diameter().min(), Math.exp(lnDiameter))));
+        int diameter = (int) Math.round(
+                Math.min(p.diameter().max(), Math.max(p.diameter().min(), Math.exp(lnDiameter))));
         for (int attempt = 0; attempt < f.placementAttempts(); attempt++) {
             double angle = rng.nextDouble() * 2.0 * Math.PI;
             double distance = radius * Math.sqrt(rng.nextDouble());

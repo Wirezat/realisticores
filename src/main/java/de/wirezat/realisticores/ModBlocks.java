@@ -37,11 +37,13 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> KIMBERLITE_BRECCIA =
             register("kimberlite_breccia", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> VOLCANICLASTIC_KIMBERLITE =
-            register("volcaniclastic_kimberlite", BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF).strength(1.0F, 3.0F));
+            register("volcaniclastic_kimberlite",
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF).strength(1.0F, 3.0F));
     public static final DeferredBlock<Block> WEATHERED_KIMBERLITE =
             register("weathered_kimberlite", BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY));
     public static final DeferredBlock<Block> SERPENTINIZED_KIMBERLITE =
-            register("serpentinized_kimberlite", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(1.2F, 4.0F));
+            register("serpentinized_kimberlite",
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(1.2F, 4.0F));
     public static final DeferredBlock<Block> PERIDOTITE =
             register("peridotite", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(3.5F, 9.0F));
 
@@ -51,8 +53,8 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> KIMBERLITE_DIAMOND_ORE = registerOre("kimberlite_diamond_ore", "diamond",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE).strength(4.0F, 9.0F));
 
-    public static final DeferredBlock<Block> KIMBERLITE_GRAPHITE_ORE = registerOre("kimberlite_graphite_ore", "graphite",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
+    public static final DeferredBlock<Block> KIMBERLITE_GRAPHITE_ORE =
+            registerOre("kimberlite_graphite_ore", "graphite", BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
 
     public static final DeferredBlock<Block> KIMBERLITE_BORT_ORE = registerOre("kimberlite_bort_ore", "bort",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE));
@@ -87,11 +89,13 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> MUDSTONE = register("mudstone",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
                     .strength(1.0F, 3.0F));
-    public static final DeferredBlock<BurningSeamBlock> BURNING_COAL_SEAM = withItem("burning_coal_seam", BurningSeamBlock::new,
-            burning(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE)));
-    public static final DeferredBlock<BurningSeamBlock> BURNING_LIGNITE_SEAM = withItem("burning_lignite_seam", BurningSeamBlock::new,
-            burning(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE)
-                    .strength(1.5F, 2.0F)));
+    public static final DeferredBlock<BurningSeamBlock> BURNING_COAL_SEAM =
+            withItem("burning_coal_seam", BurningSeamBlock::new,
+                    burning(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE)));
+    public static final DeferredBlock<BurningSeamBlock> BURNING_LIGNITE_SEAM =
+            withItem("burning_lignite_seam", BurningSeamBlock::new,
+                    burning(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE)
+                            .strength(1.5F, 2.0F)));
     public static final DeferredBlock<Block> CLINKER = register("clinker",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_RED).strength(2.0F, 5.0F));
     public static final DeferredBlock<Block> LIGNITE_BLOCK = register("lignite_block",
@@ -107,7 +111,8 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> BLACKBAND_IRONSTONE = register("blackband_ironstone",
             BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_BLACK).strength(3.0F, 3.0F));
     public static final DeferredBlock<Block> RUST_STAINED_SHALE = register("rust_stained_shale",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_ORANGE).strength(1.2F, 4.0F));
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_ORANGE)
+                    .strength(1.2F, 4.0F));
     public static final DeferredBlock<Block> RAW_SIDERITE_BLOCK = register("raw_siderite_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.TERRACOTTA_BROWN));
     public static final DeferredBlock<Block> RAW_URANIUM_BLOCK = register("raw_uranium_block",

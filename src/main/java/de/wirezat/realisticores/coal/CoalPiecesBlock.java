@@ -24,8 +24,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class CoalPiecesBlock extends Block {
     public static final int MAX_PIECES = 4;
     public static final IntegerProperty PIECES = IntegerProperty.create("pieces", 1, MAX_PIECES);
-    private static final VoxelShape[] SHAPES = {box(5.0, 0.0, 5.0, 11.0, 4.0, 11.0), box(3.0, 0.0, 3.0, 13.0, 4.0, 13.0),
-            box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0), box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0)};
+    private static final VoxelShape[] SHAPES = {box(5.0, 0.0, 5.0, 11.0, 4.0, 11.0),
+            box(3.0, 0.0, 3.0, 13.0, 4.0, 13.0), box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0),
+            box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0)};
 
     private final Supplier<? extends Item> item;
 

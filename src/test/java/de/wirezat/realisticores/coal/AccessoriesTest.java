@@ -89,7 +89,8 @@ class AccessoriesTest {
                 }
             }
         }
-        double meanArea = Math.PI * (Math.pow(PARAMS.fireRadius().max() + 0.5, 3) - Math.pow(PARAMS.fireRadius().min() - 0.5, 3))
+        double meanArea = Math.PI
+                * (Math.pow(PARAMS.fireRadius().max() + 0.5, 3) - Math.pow(PARAMS.fireRadius().min() - 0.5, 3))
                 / (3.0 * (PARAMS.fireRadius().max() - PARAMS.fireRadius().min() + 1));
         double expected = PARAMS.fireChance() * meanArea / (PARAMS.fireCell() * PARAMS.fireCell());
         assertEquals(expected, (double) burning / total, expected * 0.35);

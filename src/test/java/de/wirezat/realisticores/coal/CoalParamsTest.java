@@ -9,8 +9,8 @@ class CoalParamsTest {
     @Test
     void sanitizedKeepsBasinsWithinTheirNeighbourCells() {
         CoalParams d = CoalParams.defaults();
-        CoalParams.BasinParams b = new CoalParams.BasinParams(256, 1.0, 0.4, new IntRange(5000, 20000), 0.25, 0.5, 250.0,
-                0.65);
+        CoalParams.BasinParams b = new CoalParams.BasinParams(256, 1.0, 0.4, new IntRange(5000, 20000), 0.25, 0.5,
+                250.0, 0.65);
         CoalParams.BasinParams fixed = new CoalParams(b, d.relief(), d.hardCoal(), d.lignite(), d.folded(), d.fold(),
                 d.seam(), d.rock(), d.surface(), d.accessories()).sanitized().basin();
         assertEquals(new IntRange(70, 70), fixed.radius());

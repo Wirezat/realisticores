@@ -38,7 +38,8 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(), new ModItemTags(output, event.getLookupProvider(),
                 blockTags.contentsGetter(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(output,
-                event.getLookupProvider(), new RegistrySetBuilder().add(Registries.TRIM_MATERIAL, TrimMaterials::bootstrap),
+                event.getLookupProvider(),
+                new RegistrySetBuilder().add(Registries.TRIM_MATERIAL, TrimMaterials::bootstrap),
                 Set.of(RealisticOres.MOD_ID)));
         generator.addProvider(event.includeClient(), new BlockModels(output, event.getExistingFileHelper()));
         generator.addProvider(event.includeClient(), new ItemModels(output, event.getExistingFileHelper()));

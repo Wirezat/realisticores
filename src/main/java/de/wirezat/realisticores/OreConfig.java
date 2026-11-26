@@ -75,7 +75,8 @@ public final class OreConfig {
                 .defineListAllowEmpty("oreBlockOverrides", List.of(), () -> "peridot=othermod:peridot_ore",
                         OreConfig::isValidOverride);
         builder.comment("Settings of the operator command /locate realisticores.").push("command");
-        COMMAND_SEARCH_LIMIT = builder.comment("Largest search radius in blocks; coal basins are searched up to 100000.")
+        COMMAND_SEARCH_LIMIT = builder
+                .comment("Largest search radius in blocks; coal basins are searched up to 100000.")
                 .defineInRange("searchLimit", 320000, 1000, 2000000);
         builder.pop();
         SPEC = builder.build();

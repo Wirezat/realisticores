@@ -161,8 +161,10 @@ public final class CoalCarver {
                 yield ironstone != null ? ironstone.block() : ModBlocks.BLACK_SHALE.get().defaultBlockState();
             }
             case FIRECLAY -> ModBlocks.FIRECLAY.get().defaultBlockState();
-            case SHALE -> nodule(seed, accents.get(Rock.SHALE.name()), ModBlocks.SHALE.get().defaultBlockState(), x, y, z);
-            case MUDSTONE -> nodule(seed, accents.get(Rock.MUDSTONE.name()), ModBlocks.MUDSTONE.get().defaultBlockState(), x, y, z);
+            case SHALE -> nodule(seed, accents.get(Rock.SHALE.name()), ModBlocks.SHALE.get().defaultBlockState(),
+                    x, y, z);
+            case MUDSTONE -> nodule(seed, accents.get(Rock.MUDSTONE.name()),
+                    ModBlocks.MUDSTONE.get().defaultBlockState(), x, y, z);
         };
     }
 

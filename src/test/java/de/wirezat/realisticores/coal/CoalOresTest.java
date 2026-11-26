@@ -33,15 +33,18 @@ class CoalOresTest {
 
     @Test
     void accessoryMineralsTakeNoRank() {
-        ActiveMineral pyrite = new ActiveMineral("pyrite", List.of("BLACK_SHALE"), 0.03, false, "m:pyrite_ore", true, Map.of());
+        ActiveMineral pyrite =
+                new ActiveMineral("pyrite", List.of("BLACK_SHALE"), 0.03, false, "m:pyrite_ore", true, Map.of());
         assertEquals(Map.of(Rank.LIGNITE, "m:lignite"),
                 CoalOres.blocks(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
-        assertEquals(List.of(pyrite), CoalOres.accessories(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
+        assertEquals(List.of(pyrite),
+                CoalOres.accessories(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
     }
 
     @Test
     void everyActiveRankKeepsItsOwnBlock() {
-        assertEquals(Map.of(Rank.HARD_COAL, "other:coal_ore", Rank.ANTHRACITE, "m:anthracite", Rank.LIGNITE, "m:lignite"),
+        assertEquals(
+                Map.of(Rank.HARD_COAL, "other:coal_ore", Rank.ANTHRACITE, "m:anthracite", Rank.LIGNITE, "m:lignite"),
                 CoalOres.blocks(List.of(mineral("coal", Rank.HARD_COAL, "other:coal_ore"),
                         mineral("lignite", Rank.LIGNITE, "m:lignite"),
                         mineral("anthracite", Rank.ANTHRACITE, "m:anthracite"))));

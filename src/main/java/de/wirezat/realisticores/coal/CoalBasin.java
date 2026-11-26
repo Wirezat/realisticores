@@ -19,7 +19,8 @@ public final class CoalBasin implements DepositType {
 
     private static final int SEARCH_LIMIT = 100000;
     private static final Set<String> ZONES = Stream.concat(Stream.concat(Stream.of(Rank.values()).map(Rank::name),
-            Stream.of(Rock.values()).filter(rock -> rock != Rock.SEAM).map(Rock::name)), Stream.of(CoalCarver.SEAM_FIRE))
+            Stream.of(Rock.values()).filter(rock -> rock != Rock.SEAM).map(Rock::name)),
+            Stream.of(CoalCarver.SEAM_FIRE))
             .collect(Collectors.toUnmodifiableSet());
 
     private CoalBasin() {

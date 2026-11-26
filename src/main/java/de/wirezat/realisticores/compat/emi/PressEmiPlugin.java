@@ -24,7 +24,8 @@ public class PressEmiPlugin implements EmiPlugin {
         EmiRecipeCategory category = new EmiRecipeCategory(CATEGORY_ID, icon);
         registry.addCategory(category);
         registry.addWorkstation(category, icon);
-        for (RecipeHolder<PressRecipe> holder : registry.getRecipeManager().getAllRecipesFor(ModPress.PRESS_TYPE.get())) {
+        for (RecipeHolder<PressRecipe> holder
+                : registry.getRecipeManager().getAllRecipesFor(ModPress.PRESS_TYPE.get())) {
             registry.addRecipe(new PressEmiRecipe(category, holder.id(), holder.value()));
         }
     }

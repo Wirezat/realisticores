@@ -23,7 +23,8 @@ class OreMatcherTest {
     }
 
     private static ConfiguredFeature<?, ?> oreFeature() {
-        OreConfiguration config = new OreConfiguration(new BlockMatchTest(Blocks.STONE), Blocks.IRON_ORE.defaultBlockState(), 9);
+        OreConfiguration config =
+                new OreConfiguration(new BlockMatchTest(Blocks.STONE), Blocks.IRON_ORE.defaultBlockState(), 9);
         return new ConfiguredFeature<>(Feature.ORE, config);
     }
 

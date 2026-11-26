@@ -29,14 +29,16 @@ public final class ModPress {
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, RealisticOres.MOD_ID);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrystalPressBlockEntity>> PRESS_BLOCK_ENTITY =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrystalPressBlockEntity>>
+            PRESS_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("crystal_press", () -> BlockEntityType.Builder
                     .of(CrystalPressBlockEntity::new, ModBlocks.CRYSTAL_PRESS.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<CrystalPressMenu>> PRESS_MENU =
             MENUS.register("crystal_press", () -> IMenuTypeExtension.create(CrystalPressMenu::new));
     public static final DeferredHolder<RecipeType<?>, RecipeType<PressRecipe>> PRESS_TYPE =
             RECIPE_TYPES.register("crystal_press",
-                    () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "crystal_press")));
+                    () -> RecipeType.simple(
+                            ResourceLocation.fromNamespaceAndPath(RealisticOres.MOD_ID, "crystal_press")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PressRecipe>> PRESS_SERIALIZER =
             RECIPE_SERIALIZERS.register("crystal_press", PressRecipe.Serializer::new);
 
@@ -59,7 +61,8 @@ public final class ModPress {
         RECIPE_SERIALIZERS.register(modBus);
         modBus.addListener((RegisterDataMapTypesEvent event) -> event.register(SEEDS));
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, PRESS_BLOCK_ENTITY.get(), (entity, side) -> PressSides.handlerFor(entity.inventory(), side,
+                Capabilities.ItemHandler.BLOCK, PRESS_BLOCK_ENTITY.get(),
+                (entity, side) -> PressSides.handlerFor(entity.inventory(), side,
                         entity.getBlockState().getValue(CrystalPressBlock.FACING))));
     }
 }

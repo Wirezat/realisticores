@@ -181,7 +181,8 @@ public final class ClientPanTooltip implements ClientTooltipComponent {
             int left = x + SYMBOL_WIDTH + i * columnWidth(font);
             Indicator mineral = minerals.get(i);
             if (Indicators.isLead(mineral) && tone != GradeTone.RED) {
-                graphics.blitSprite(sprite(mineral.id() + "_" + tone.getSerializedName()), left, y, ICON_SIZE, ICON_SIZE);
+                graphics.blitSprite(sprite(mineral.id() + "_" + tone.getSerializedName()), left, y, ICON_SIZE,
+                        ICON_SIZE);
             } else {
                 graphics.renderFakeItem(new ItemStack(Indicators.item(mineral)), left, y);
             }

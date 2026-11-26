@@ -19,11 +19,13 @@ class FieldGeneratorTest {
             for (int cellZ = -20; cellZ <= 20; cellZ++) {
                 Optional<Field> field = generator.fieldAt(seed, cellX, cellZ).filter(f -> !f.pipes().isEmpty());
                 if (field.isPresent()) {
-                    expected = Math.min(expected, Math.hypot(field.get().centerX() - 1234, field.get().centerZ() + 5678));
+                    expected = Math.min(expected,
+                            Math.hypot(field.get().centerX() - 1234, field.get().centerZ() + 5678));
                 }
             }
         }
-        assertEquals(expected, Math.hypot(nearest.orElseThrow().centerX() - 1234, nearest.get().centerZ() + 5678), 1e-9);
+        assertEquals(expected,
+                Math.hypot(nearest.orElseThrow().centerX() - 1234, nearest.get().centerZ() + 5678), 1e-9);
     }
 
     @Test
