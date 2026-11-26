@@ -26,7 +26,7 @@ public final class CratonMask {
      * @return true if the noise value at the position exceeds the threshold
      */
     public boolean contains(long seed, double x, double z) {
-        return ValueNoise.sample2(seed ^ SALT, x / params.wavelength(), z / params.wavelength())
+        return ValueNoise.sample2(seed ^ SALT, x, z, params.wavelength())
                 > params.threshold();
     }
 }

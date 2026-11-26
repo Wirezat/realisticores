@@ -76,7 +76,7 @@ public final class SurfaceHint {
         }
         double wavelength = params.soilWavelength();
         double kept = 1.0 - height.getAsInt() / (params.soilFringe() + 1.0);
-        return ValueNoise.sample2(seed ^ SOIL_SALT, x / wavelength, z / wavelength) > params.soilThreshold()
+        return ValueNoise.sample2(seed ^ SOIL_SALT, x, z, wavelength) > params.soilThreshold()
                 && new SplitMix64(SplitMix64.hash(seed ^ FRINGE_SALT, x, z)).nextDouble() < kept;
     }
 }

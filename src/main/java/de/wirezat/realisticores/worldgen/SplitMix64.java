@@ -40,6 +40,16 @@ public final class SplitMix64 {
     }
 
     /**
+     * Turns a hash into a uniform value.
+     *
+     * @param hash 64 random bits
+     * @return uniform double in [0, 1)
+     */
+    public static double unit(long hash) {
+        return (hash >>> 11) * 0x1.0p-53;
+    }
+
+    /**
      * Advances the stream.
      *
      * @return next 64 random bits
@@ -55,7 +65,29 @@ public final class SplitMix64 {
      * @return uniform double in [0, 1)
      */
     public double nextDouble() {
-        return (nextLong() >>> 11) * 0x1.0p-53;
+        return unit(nextLong());
+    }
+
+    /**
+     * Advances the stream.
+     *
+     * @param min lower bound
+     * @param max upper bound
+     * @return uniform double in [min, max)
+     */
+    public double nextDouble(double min, double max) {
+        return min + nextDouble() * (max - min);
+    }
+
+    /**
+     * Advances the stream.
+     *
+     * @param min lowest value
+     * @param max highest value
+     * @return uniform integer from min to max, both included
+     */
+    public int nextInt(int min, int max) {
+        return min + (int) (nextDouble() * (max - min + 1));
     }
 
     /**

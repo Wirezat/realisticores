@@ -21,6 +21,6 @@ public final class MineralRoll {
      */
     public static double roll(String ore, int x, int y, int z) {
         long seed = SALT ^ SplitMix64.mix(ore.hashCode()) ^ y;
-        return (SplitMix64.hash(seed, x, z) >>> 11) * 0x1.0p-53;
+        return SplitMix64.unit(SplitMix64.hash(seed, x, z));
     }
 }

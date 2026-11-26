@@ -101,7 +101,7 @@ public final class SeamModel {
      */
     public boolean isOutcrop(int x, int z) {
         double wavelength = params.seam().outcropWavelength();
-        return ValueNoise.sample2(OUTCROP_SALT, x / wavelength, z / wavelength) > params.seam().outcropThreshold();
+        return ValueNoise.sample2(OUTCROP_SALT, x, z, wavelength) > params.seam().outcropThreshold();
     }
 
     private Rank rank(ResolvedBasin basin, double edge) {
@@ -211,6 +211,6 @@ public final class SeamModel {
     }
 
     private static double noise(Basin basin, int salt, double x, double z, double wavelength) {
-        return ValueNoise.sample2(SplitMix64.hash(basin.seed(), salt, 0), x / wavelength, z / wavelength);
+        return ValueNoise.sample2(SplitMix64.hash(basin.seed(), salt, 0), x, z, wavelength);
     }
 }

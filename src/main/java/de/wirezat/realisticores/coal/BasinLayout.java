@@ -50,37 +50,29 @@ public record BasinLayout(double depth, List<Seam> seams, List<Fault> faults, do
     public static BasinLayout of(Basin basin, BasinType type, CoalParams params) {
         CoalParams.TypeParams t = params.type(type);
         SplitMix64 rng = new SplitMix64(SplitMix64.hash(basin.seed(), SALT, type.ordinal()));
-        double depth = between(rng, t.minDepth(), t.maxDepth());
-        int count = pick(rng, t.minSeams(), t.maxSeams());
+        double depth = rng.nextDouble(t.minDepth(), t.maxDepth());
+        int count = rng.nextInt(t.minSeams(), t.maxSeams());
         List<Seam> seams = new ArrayList<>();
         double offset = 0.0;
         for (int i = 0; i < count; i++) {
-            double thickness = between(rng, t.minThickness(), t.maxThickness());
+            double thickness = rng.nextDouble(t.minThickness(), t.maxThickness());
             if (offset + thickness > depth - params.seam().cover()) {
                 break;
             }
             seams.add(new Seam(offset, thickness));
-            offset += thickness + between(rng, t.minSpacing(), t.maxSpacing());
+            offset += thickness + rng.nextDouble(t.minSpacing(), t.maxSpacing());
         }
         double radius = Math.sqrt(basin.longRadius() * basin.shortRadius());
         List<Fault> faults = new ArrayList<>();
-        for (int i = pick(rng, 0, t.maxFaults()); i > 0; i--) {
+        for (int i = rng.nextInt(0, t.maxFaults()); i > 0; i--) {
             double normal = basin.strike() + (rng.nextDouble() < 0.5 ? 0.0 : Math.PI / 2.0);
-            double distance = (rng.nextDouble() * 2.0 - 1.0) * FAULT_SPREAD * radius;
-            double size = between(rng, params.seam().minThrow(), params.seam().maxThrow());
+            double distance = rng.nextDouble(-1.0, 1.0) * FAULT_SPREAD * radius;
+            double size = rng.nextDouble(params.seam().minThrow(), params.seam().maxThrow());
             faults.add(new Fault(Math.cos(normal), Math.sin(normal), distance, rng.nextDouble() < 0.5 ? size : -size));
         }
         CoalParams.FoldParams f = params.fold();
-        double amplitude = type == BasinType.FOLDED ? between(rng, f.minAmplitude(), f.maxAmplitude()) : 0.0;
+        double amplitude = type == BasinType.FOLDED ? rng.nextDouble(f.minAmplitude(), f.maxAmplitude()) : 0.0;
         return new BasinLayout(depth, List.copyOf(seams), List.copyOf(faults), amplitude,
-                between(rng, f.minWavelength(), f.maxWavelength()), rng.nextDouble() * 2.0 * Math.PI);
-    }
-
-    private static double between(SplitMix64 rng, double min, double max) {
-        return min + rng.nextDouble() * (max - min);
-    }
-
-    private static int pick(SplitMix64 rng, int min, int max) {
-        return min + (int) (rng.nextDouble() * (max - min + 1));
+                rng.nextDouble(f.minWavelength(), f.maxWavelength()), rng.nextDouble() * 2.0 * Math.PI);
     }
 }

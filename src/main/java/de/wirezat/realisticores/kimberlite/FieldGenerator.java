@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.Cells;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +39,13 @@ public final class FieldGenerator {
         if (rng.nextDouble() >= f.chance()) {
             return Optional.empty();
         }
-        int centerX = (int) ((cellX + 0.5 + (rng.nextDouble() * 2.0 - 1.0) * f.jitter()) * f.cellSize());
-        int centerZ = (int) ((cellZ + 0.5 + (rng.nextDouble() * 2.0 - 1.0) * f.jitter()) * f.cellSize());
+        int centerX = Cells.center(rng, cellX, f.cellSize(), f.jitter());
+        int centerZ = Cells.center(rng, cellZ, f.cellSize(), f.jitter());
         if (!craton.contains(seed, centerX, centerZ)) {
             return Optional.empty();
         }
-        int radius = f.minRadius() + (int) (rng.nextDouble() * (f.maxRadius() - f.minRadius() + 1));
-        int attempts = f.minPipes() + (int) (rng.nextDouble() * (f.maxPipes() - f.minPipes() + 1));
+        int radius = rng.nextInt(f.minRadius(), f.maxRadius());
+        int attempts = rng.nextInt(f.minPipes(), f.maxPipes());
         List<Pipe> pipes = new ArrayList<>();
         for (int i = 0; i < attempts; i++) {
             placePipe(rng, centerX, centerZ, radius, pipes);
@@ -65,13 +66,8 @@ public final class FieldGenerator {
     public List<Pipe> pipesNear(long seed, int minX, int minZ, int maxX, int maxZ) {
         KimberliteParams.FieldParams f = params.field();
         double reach = f.maxRadius() + shape.reach(new Pipe(0, 0, params.pipe().maxDiameter()));
-        int firstX = Math.floorDiv((int) (minX - reach), f.cellSize());
-        int lastX = Math.floorDiv((int) (maxX + reach), f.cellSize());
-        int firstZ = Math.floorDiv((int) (minZ - reach), f.cellSize());
-        int lastZ = Math.floorDiv((int) (maxZ + reach), f.cellSize());
         List<Pipe> result = new ArrayList<>();
-        for (int cellX = firstX; cellX <= lastX; cellX++) {
-            for (int cellZ = firstZ; cellZ <= lastZ; cellZ++) {
+        Cells.around(minX, minZ, maxX, maxZ, reach, f.cellSize(), (cellX, cellZ) ->
                 fieldAt(seed, cellX, cellZ).ifPresent(field -> {
                     for (Pipe pipe : field.pipes()) {
                         double r = shape.reach(pipe);
@@ -80,9 +76,7 @@ public final class FieldGenerator {
                             result.add(pipe);
                         }
                     }
-                });
-            }
-        }
+                }));
         return result;
     }
 

@@ -34,29 +34,25 @@ public final class FaciesSelector {
         long seed = SplitMix64.hash(SALT, pipe.x(), pipe.z());
         double depth = surfaceY - y;
         double weatheringDepth = f.weatheringDepth()
-                + f.weatheringNoise() * ValueNoise.sample2(seed, x / f.weatheringWavelength(), z / f.weatheringWavelength());
+                + f.weatheringNoise() * ValueNoise.sample2(seed, x, z, f.weatheringWavelength());
         if (depth < weatheringDepth) {
             return Facies.WEATHERED;
         }
         if (wallDistance > 1.0 - f.contactFraction()
-                && ValueNoise.sample3(seed + 1, x / f.contactWavelength(), y / f.contactWavelength(),
-                        z / f.contactWavelength()) > f.contactThreshold()) {
+                && ValueNoise.sample3(seed + 1, x, y, z, f.contactWavelength()) > f.contactThreshold()) {
             return Facies.HOST;
         }
-        if (ValueNoise.sample3(seed + 2, x / f.peridotiteWavelength(), y / f.peridotiteWavelength(),
-                z / f.peridotiteWavelength()) > f.peridotiteThreshold()) {
+        if (ValueNoise.sample3(seed + 2, x, y, z, f.peridotiteWavelength()) > f.peridotiteThreshold()) {
             return Facies.PERIDOTITE;
         }
-        if (ValueNoise.sample3(seed + 3, x / f.xenolithWavelength(), y / f.xenolithWavelength(),
-                z / f.xenolithWavelength()) > f.xenolithThreshold()) {
+        if (ValueNoise.sample3(seed + 3, x, y, z, f.xenolithWavelength()) > f.xenolithThreshold()) {
             return Facies.HOST;
         }
         double bonus = depth < weatheringDepth + f.serpentinizationBand() ? f.serpentineBandBonus() : 0.0;
         if (wallDistance > f.serpentineWallStart()) {
             bonus += f.serpentineWallBonus();
         }
-        double serpentine = ValueNoise.sample3(seed + 4, x / f.serpentineWavelength(), y / f.serpentineWavelength(),
-                z / f.serpentineWavelength());
+        double serpentine = ValueNoise.sample3(seed + 4, x, y, z, f.serpentineWavelength());
         if (serpentine + bonus > f.serpentinizationThreshold()) {
             return Facies.SERPENTINIZED;
         }

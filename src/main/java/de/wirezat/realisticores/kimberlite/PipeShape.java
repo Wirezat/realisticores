@@ -58,7 +58,7 @@ public final class PipeShape {
         long shapeSeed = SplitMix64.hash(SHAPE_SALT, pipe.x(), pipe.z());
         SplitMix64 rng = new SplitMix64(shapeSeed);
         double angle = rng.nextDouble() * Math.PI;
-        double aspect = params.minAspect() + (1.0 - params.minAspect()) * rng.nextDouble();
+        double aspect = rng.nextDouble(params.minAspect(), 1.0);
         double dx = x - pipe.x();
         double dz = z - pipe.z();
         double along = dx * Math.cos(angle) + dz * Math.sin(angle);
@@ -84,6 +84,6 @@ public final class PipeShape {
      */
     public boolean isOutcrop(int x, int z) {
         double wavelength = params.outcropWavelength();
-        return ValueNoise.sample2(OUTCROP_SALT, x / wavelength, z / wavelength) > params.outcropThreshold();
+        return ValueNoise.sample2(OUTCROP_SALT, x, z, wavelength) > params.outcropThreshold();
     }
 }

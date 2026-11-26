@@ -14,13 +14,20 @@ public final class ValueNoise {
      * @return noise value in [-1, 1)
      */
     public static double sample2(long seed, double x, double z) {
-        int x0 = (int) Math.floor(x);
-        int z0 = (int) Math.floor(z);
-        double tx = smooth(x - x0);
-        double tz = smooth(z - z0);
-        double top = lerp(lattice(seed, x0, z0, 0), lattice(seed, x0 + 1, z0, 0), tx);
-        double bottom = lerp(lattice(seed, x0, z0 + 1, 0), lattice(seed, x0 + 1, z0 + 1, 0), tx);
-        return lerp(top, bottom, tz);
+        return sample2Layer(seed, x, z, 0);
+    }
+
+    /**
+     * Samples 2D noise with features of a given size.
+     *
+     * @param seed noise seed
+     * @param x X in blocks
+     * @param z Z in blocks
+     * @param wavelength size of one lattice cell in blocks
+     * @return noise value in [-1, 1)
+     */
+    public static double sample2(long seed, double x, double z, double wavelength) {
+        return sample2(seed, x / wavelength, z / wavelength);
     }
 
     /**
@@ -38,6 +45,20 @@ public final class ValueNoise {
         double low = sample2Layer(seed, x, z, y0);
         double high = sample2Layer(seed, x, z, y0 + 1);
         return lerp(low, high, ty);
+    }
+
+    /**
+     * Samples 3D noise with features of a given size.
+     *
+     * @param seed noise seed
+     * @param x X in blocks
+     * @param y Y in blocks
+     * @param z Z in blocks
+     * @param wavelength size of one lattice cell in blocks
+     * @return noise value in [-1, 1)
+     */
+    public static double sample3(long seed, double x, double y, double z, double wavelength) {
+        return sample3(seed, x / wavelength, y / wavelength, z / wavelength);
     }
 
     private static double sample2Layer(long seed, double x, double z, int layer) {

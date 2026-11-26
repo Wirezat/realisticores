@@ -40,9 +40,9 @@ public final class Accessories {
      * @return distance to the basin centre in basin units beyond which sandstone is oxidized
      */
     public double front(long basinSeed, int x, int z) {
-        double share = (SplitMix64.hash(basinSeed ^ FRONT_SALT, 0, 0) >>> 11) * 0x1.0p-53;
+        double share = SplitMix64.unit(SplitMix64.hash(basinSeed ^ FRONT_SALT, 0, 0));
         return params.frontMin() + (params.frontMax() - params.frontMin()) * share
-                + FRONT_WOBBLE * ValueNoise.sample2(basinSeed ^ FRONT_SALT, x / FRONT_WAVELENGTH, z / FRONT_WAVELENGTH);
+                + FRONT_WOBBLE * ValueNoise.sample2(basinSeed ^ FRONT_SALT, x, z, FRONT_WAVELENGTH);
     }
 
     /**
@@ -71,8 +71,8 @@ public final class Accessories {
      * @return true if the block is pyrite ore
      */
     public boolean pyrite(double fraction, int x, int y, int z) {
-        double nest = uniform(SplitMix64.hash(PYRITE_SALT ^ (y >> 1), x >> 1, z >> 1));
-        double block = uniform(SplitMix64.hash(PYRITE_SALT ^ ~((long) y), x, z));
+        double nest = SplitMix64.unit(SplitMix64.hash(PYRITE_SALT ^ (y >> 1), x >> 1, z >> 1));
+        double block = SplitMix64.unit(SplitMix64.hash(PYRITE_SALT ^ ~((long) y), x, z));
         return nest < 2.0 * fraction && block < 0.5;
     }
 
@@ -87,8 +87,8 @@ public final class Accessories {
      * @return true if the block is ironstone
      */
     public boolean ironstone(double fraction, int x, int y, int z) {
-        double nest = uniform(SplitMix64.hash(IRONSTONE_SALT ^ y, x >> 1, z >> 1));
-        double block = uniform(SplitMix64.hash(IRONSTONE_SALT ^ ~((long) y), x, z));
+        double nest = SplitMix64.unit(SplitMix64.hash(IRONSTONE_SALT ^ y, x >> 1, z >> 1));
+        double block = SplitMix64.unit(SplitMix64.hash(IRONSTONE_SALT ^ ~((long) y), x, z));
         return nest < 2.0 * fraction && block < 0.5;
     }
 
@@ -112,8 +112,7 @@ public final class Accessories {
                 }
                 double centreX = (cellX + dx) * cell + random.nextDouble() * cell;
                 double centreZ = (cellZ + dz) * cell + random.nextDouble() * cell;
-                int radius = params.fireMinRadius()
-                        + (int) (random.nextDouble() * (params.fireMaxRadius() - params.fireMinRadius() + 1));
+                int radius = random.nextInt(params.fireMinRadius(), params.fireMaxRadius());
                 double ox = x + 0.5 - centreX;
                 double oz = z + 0.5 - centreZ;
                 if (ox * ox + oz * oz <= radius * radius) {
@@ -122,9 +121,5 @@ public final class Accessories {
             }
         }
         return false;
-    }
-
-    private static double uniform(long hash) {
-        return (hash >>> 11) * 0x1.0p-53;
     }
 }

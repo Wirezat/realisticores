@@ -51,8 +51,8 @@ public record Basin(int x, int z, double longRadius, double shortRadius, double 
      * @return 0 at the centre, below 1 inside the basin
      */
     public double edgeDistance(double px, double pz, CoalParams.BasinParams params) {
-        double noise = ValueNoise.sample2(SplitMix64.hash(seed, OUTLINE_SALT, 0), px / params.outlineWavelength(),
-                pz / params.outlineWavelength());
+        double noise = ValueNoise.sample2(SplitMix64.hash(seed, OUTLINE_SALT, 0), px, pz,
+                params.outlineWavelength());
         return distance(px, pz) * (1.0 + params.outlineNoise() * noise);
     }
 }

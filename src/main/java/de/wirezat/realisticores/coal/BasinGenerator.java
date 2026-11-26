@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.coal;
 
+import de.wirezat.realisticores.worldgen.Cells;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,10 @@ public final class BasinGenerator {
         if (rng.nextDouble() >= params.chance()) {
             return Optional.empty();
         }
-        int x = (int) ((cellX + 0.5 + (rng.nextDouble() * 2.0 - 1.0) * params.jitter()) * params.cellSize());
-        int z = (int) ((cellZ + 0.5 + (rng.nextDouble() * 2.0 - 1.0) * params.jitter()) * params.cellSize());
-        double radius = params.minRadius() + rng.nextDouble() * (params.maxRadius() - params.minRadius());
-        double root = Math.sqrt(params.minAspect() + rng.nextDouble() * (1.0 - params.minAspect()));
+        int x = Cells.center(rng, cellX, params.cellSize(), params.jitter());
+        int z = Cells.center(rng, cellZ, params.cellSize(), params.jitter());
+        double radius = rng.nextDouble(params.minRadius(), params.maxRadius());
+        double root = Math.sqrt(rng.nextDouble(params.minAspect(), 1.0));
         double strike = rng.nextDouble() * Math.PI;
         BasinType type = rng.nextDouble() < params.hardCoalShare() ? BasinType.HARD_COAL : BasinType.LIGNITE;
         return Optional.of(new Basin(x, z, radius / root, radius * root, strike, type, cellSeed));
@@ -57,17 +58,13 @@ public final class BasinGenerator {
         double stretch = 1.0 / (1.0 - params.outlineNoise());
         int reach = (int) Math.ceil(params.maxRadius() / Math.sqrt(params.minAspect()) * stretch
                 + params.jitter() * params.cellSize());
-        int cell = params.cellSize();
         List<Basin> result = new ArrayList<>();
-        for (int cellX = Math.floorDiv(minX - reach, cell); cellX <= Math.floorDiv(maxX + reach, cell); cellX++) {
-            for (int cellZ = Math.floorDiv(minZ - reach, cell); cellZ <= Math.floorDiv(maxZ + reach, cell); cellZ++) {
+        Cells.around(minX, minZ, maxX, maxZ, reach, params.cellSize(), (cellX, cellZ) ->
                 basinAt(seed, cellX, cellZ).filter(basin -> {
                     double r = basin.longRadius() * stretch;
                     return basin.x() + r >= minX && basin.x() - r <= maxX
                             && basin.z() + r >= minZ && basin.z() - r <= maxZ;
-                }).ifPresent(result::add);
-            }
-        }
+                }).ifPresent(result::add));
         return result;
     }
 }
