@@ -158,10 +158,12 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
      * @param fireMinRadius smallest fire radius in blocks
      * @param fireMaxRadius largest fire radius in blocks
      * @param fireDepth blocks below the surface that burn
+     * @param blackbandCover share of the area where blackband ironstone lies on the topmost hard coal seam
+     * @param rustDepth blocks of shale below the soil that are rust-stained
      */
     public record AccessoryParams(int sandMin, int sandMax, int ligniteSandMin, int ligniteSandMax, double sandCover,
             double sandWavelength, double frontMin, double frontMax, int frontBand, int fireCell, double fireChance,
-            int fireMinRadius, int fireMaxRadius, int fireDepth) {
+            int fireMinRadius, int fireMaxRadius, int fireDepth, double blackbandCover, int rustDepth) {
     }
 
     /**
@@ -212,7 +214,8 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                         accessories.sandCover(), accessories.sandWavelength(), accessories.frontMin(),
                         Math.max(accessories.frontMin(), accessories.frontMax()), accessories.frontBand(),
                         accessories.fireCell(), accessories.fireChance(), accessories.fireMinRadius(),
-                        Math.max(accessories.fireMinRadius(), accessories.fireMaxRadius()), accessories.fireDepth()));
+                        Math.max(accessories.fireMinRadius(), accessories.fireMaxRadius()), accessories.fireDepth(),
+                        accessories.blackbandCover(), accessories.rustDepth()));
     }
 
     /**
@@ -232,6 +235,6 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                         -0.125, 14.0),
                 new RockParams(1, 2, 1, 2, 1, 2, 3, 5, 2, 4, 60.0),
                 new SurfaceParams(0.04, 8, -0.125, 14.0, 2),
-                new AccessoryParams(2, 4, 3, 7, 0.5, 120.0, 0.7, 0.85, 4, 40, 0.4, 3, 6, 6));
+                new AccessoryParams(2, 4, 3, 7, 0.5, 120.0, 0.7, 0.85, 4, 40, 0.4, 3, 6, 6, 0.3, 2));
     }
 }

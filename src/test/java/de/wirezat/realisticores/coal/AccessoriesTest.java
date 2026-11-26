@@ -52,6 +52,32 @@ class AccessoriesTest {
     }
 
     @Test
+    void ironstoneKeepsItsShareInFlatNests() {
+        int ore = 0;
+        int beside = 0;
+        int above = 0;
+        int total = 0;
+        for (int x = 0; x < 60; x++) {
+            for (int y = 0; y < 20; y++) {
+                for (int z = 0; z < 60; z++) {
+                    total++;
+                    if (RULES.ironstone(0.04, x, y, z)) {
+                        ore++;
+                        if (RULES.ironstone(0.04, x ^ 1, y, z) || RULES.ironstone(0.04, x, y, z ^ 1)) {
+                            beside++;
+                        }
+                        if (RULES.ironstone(0.04, x, y ^ 1, z)) {
+                            above++;
+                        }
+                    }
+                }
+            }
+        }
+        assertEquals(0.04, (double) ore / total, 0.007);
+        assertTrue(beside > 3 * above);
+    }
+
+    @Test
     void firePatchesCoverTheExpectedShare() {
         int burning = 0;
         int total = 0;

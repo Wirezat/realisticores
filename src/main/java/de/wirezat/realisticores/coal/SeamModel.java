@@ -15,6 +15,7 @@ public final class SeamModel {
     private static final int HULL_SALT = 300;
     private static final int HULL_NOISES = 8;
     private static final int SAND_SALT = 500;
+    private static final int BANK_SALT = 600;
     private static final long OUTCROP_SALT = 0x434F414C4F555443L;
 
     private final CoalParams params;
@@ -151,11 +152,15 @@ public final class SeamModel {
         int roof = hull(basin, salt + 1, x, z, r.minShale(), r.maxShale());
         int fireclay = hull(basin, salt + 2, x, z, r.minFireclay(), r.maxFireclay());
         int floor = hull(basin, salt + 3, x, z, r.minShale(), r.maxShale());
-        claim(claims, top + 1, black, Rock.BLACK_SHALE);
-        claim(claims, top + 1 + black, roof, Rock.SHALE);
+        boolean topmost = index == resolved.layout().seams().size() - 1;
+        int bank = topmost && noise(basin, BANK_SALT, x, z, params.accessories().sandWavelength())
+                > 1.0 - 2.0 * params.accessories().blackbandCover() ? 1 : 0;
+        claim(claims, top + 1, bank, Rock.BLACKBAND);
+        claim(claims, top + 1 + bank, black, Rock.BLACK_SHALE);
+        claim(claims, top + 1 + bank + black, roof, Rock.SHALE);
         claim(claims, bottom - fireclay, fireclay, Rock.FIRECLAY);
         claim(claims, bottom - fireclay - floor, floor, Rock.SHALE);
-        claimSandstone(claims, basin, index, top + 1 + black + roof, false, x, z);
+        claimSandstone(claims, basin, index, top + 1 + bank + black + roof, false, x, z);
     }
 
     private void claimSandstone(List<Layer> claims, Basin basin, int index, int bottom, boolean lignite, int x,

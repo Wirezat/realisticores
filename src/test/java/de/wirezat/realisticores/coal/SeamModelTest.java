@@ -131,4 +131,24 @@ class SeamModelTest {
         }
         assertTrue(sandstone > 0);
     }
+
+    @Test
+    void blackbandLiesOnTheTopmostHardCoalSeamOnly() {
+        int banks = 0;
+        for (BasinType type : BasinType.values()) {
+            for (SeamColumn column : columns(type)) {
+                List<Layer> layers = column.layers();
+                for (int i = 0; i < layers.size(); i++) {
+                    if (layers.get(i).rock() != Rock.BLACKBAND) {
+                        continue;
+                    }
+                    banks++;
+                    assertTrue(type != BasinType.LIGNITE);
+                    assertEquals(Rock.SEAM, layers.get(i - 1).rock());
+                    assertTrue(layers.subList(i, layers.size()).stream().noneMatch(l -> l.rock() == Rock.SEAM));
+                }
+            }
+        }
+        assertTrue(banks > 0);
+    }
 }

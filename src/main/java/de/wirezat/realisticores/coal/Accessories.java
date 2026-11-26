@@ -8,6 +8,7 @@ public final class Accessories {
     private static final long FRONT_SALT = 0x524F4C4C46524F4EL;
     private static final long PYRITE_SALT = 0x5059524954454E53L;
     private static final long FIRE_SALT = 0x5345414D46495245L;
+    private static final long IRONSTONE_SALT = 0x49524F4E53544F4EL;
     private static final double FRONT_WOBBLE = 0.03;
     private static final double FRONT_WAVELENGTH = 150.0;
 
@@ -71,6 +72,22 @@ public final class Accessories {
     public boolean pyrite(double fraction, int x, int y, int z) {
         double nest = uniform(SplitMix64.hash(PYRITE_SALT ^ (y >> 1), x >> 1, z >> 1));
         double block = uniform(SplitMix64.hash(PYRITE_SALT ^ ~((long) y), x, z));
+        return nest < 2.0 * fraction && block < 0.5;
+    }
+
+    /**
+     * Rolls whether a shale or mudstone block holds clay ironstone; ore comes in flat nests two blocks wide and
+     * one block high, along the bedding.
+     *
+     * @param fraction share of the rock that becomes ironstone
+     * @param x world X of the block
+     * @param y world Y of the block
+     * @param z world Z of the block
+     * @return true if the block is ironstone
+     */
+    public boolean ironstone(double fraction, int x, int y, int z) {
+        double nest = uniform(SplitMix64.hash(IRONSTONE_SALT ^ y, x >> 1, z >> 1));
+        double block = uniform(SplitMix64.hash(IRONSTONE_SALT ^ ~((long) y), x, z));
         return nest < 2.0 * fraction && block < 0.5;
     }
 

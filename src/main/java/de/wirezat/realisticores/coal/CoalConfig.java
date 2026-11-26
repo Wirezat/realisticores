@@ -103,6 +103,8 @@ public final class CoalConfig {
     private static final Supplier<Integer> ACC_FIRE_MIN_RADIUS;
     private static final Supplier<Integer> ACC_FIRE_MAX_RADIUS;
     private static final Supplier<Integer> ACC_FIRE_DEPTH;
+    private static final Supplier<Double> ACC_BLACKBAND_COVER;
+    private static final Supplier<Integer> ACC_RUST_DEPTH;
     private static final Map<String, Supplier<Double>> MINERAL_FRACTIONS = new LinkedHashMap<>();
     private static final Map<String, Supplier<String>> MINERAL_REPLACEMENTS = new LinkedHashMap<>();
     private static final Map<String, String> DEFAULT_REPLACEMENTS = Map.of("coal", "realisticores:black_shale",
@@ -322,6 +324,10 @@ public final class CoalConfig {
                 "Largest fire radius in blocks.");
         ACC_FIRE_DEPTH = integer(b, "fireDepth", d.accessories().fireDepth(), 1, 32,
                 "Blocks below the surface that burn.");
+        ACC_BLACKBAND_COVER = decimal(b, "blackbandCover", d.accessories().blackbandCover(), 0.0, 1.0,
+                "Share of the area where blackband ironstone lies on the topmost hard coal seam.");
+        ACC_RUST_DEPTH = integer(b, "rustDepth", d.accessories().rustDepth(), 0, 16,
+                "Blocks of shale below the soil that are rust-stained; 0 turns it off.");
         b.pop();
 
         b.comment("Share of each mineral and the block placed while its ore is switched off.").push("minerals");
@@ -426,7 +432,8 @@ public final class CoalConfig {
                         ACC_LIGNITE_SAND_MAX.get(), ACC_SAND_COVER.get(), ACC_SAND_WAVELENGTH.get(),
                         ACC_FRONT_MIN.get(), ACC_FRONT_MAX.get(), ACC_FRONT_BAND.get(), ACC_FIRE_CELL.get(),
                         ACC_FIRE_CHANCE.get(), ACC_FIRE_MIN_RADIUS.get(), ACC_FIRE_MAX_RADIUS.get(),
-                        ACC_FIRE_DEPTH.get()))
+                        ACC_FIRE_DEPTH.get(),
+                        ACC_BLACKBAND_COVER.get(), ACC_RUST_DEPTH.get()))
                 .sanitized();
     }
 }
