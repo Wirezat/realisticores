@@ -1,9 +1,0 @@
-{
-  "asset_name": "realisticores_siderite",
-  "description": {
-    "color": "#A0683A",
-    "translate": "trim_material.realisticores.siderite"
-  },
-  "ingredient": "realisticores:raw_siderite",
-  "item_model_index": 0.2
-}

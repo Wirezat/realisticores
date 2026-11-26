@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_bort_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:bort_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:bort_from_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_bort_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:bort_from_block"
+    ]
+  }
+}

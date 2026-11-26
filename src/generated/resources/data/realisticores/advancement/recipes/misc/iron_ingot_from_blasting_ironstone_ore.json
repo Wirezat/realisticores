@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_shale_ironstone_ore": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:shale_ironstone_ore"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:iron_ingot_from_blasting_ironstone_ore"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_shale_ironstone_ore"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:iron_ingot_from_blasting_ironstone_ore"
+    ]
+  }
+}

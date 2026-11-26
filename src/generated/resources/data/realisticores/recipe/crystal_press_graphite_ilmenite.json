@@ -1,0 +1,15 @@
+{
+  "type": "realisticores:crystal_press",
+  "catalyst": {
+    "tag": "c:raw_materials/ilmenite"
+  },
+  "material": {
+    "item": "realisticores:graphite"
+  },
+  "material_count": 36,
+  "result": {
+    "count": 9,
+    "id": "minecraft:diamond"
+  },
+  "time": 32400
+}

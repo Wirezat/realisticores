@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_bort",
+  "description": {
+    "color": "#B1AC9C",
+    "translate": "trim_material.realisticores.bort"
+  },
+  "ingredient": "realisticores:bort",
+  "item_model_index": 0.1
+}

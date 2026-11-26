@@ -1,0 +1,15 @@
+{
+  "type": "realisticores:crystal_press",
+  "catalyst": {
+    "tag": "c:ingots/iron"
+  },
+  "material": {
+    "item": "realisticores:graphite"
+  },
+  "material_count": 9,
+  "result": {
+    "count": 1,
+    "id": "minecraft:diamond"
+  },
+  "time": 4800
+}

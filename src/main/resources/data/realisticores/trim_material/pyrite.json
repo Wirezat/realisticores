@@ -1,9 +1,0 @@
-{
-  "asset_name": "realisticores_pyrite",
-  "description": {
-    "color": "#BCAE55",
-    "translate": "trim_material.realisticores.pyrite"
-  },
-  "ingredient": "realisticores:pyrite",
-  "item_model_index": 0.6
-}

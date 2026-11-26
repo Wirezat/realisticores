@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pyrope": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:pyrope"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:pyrope_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pyrope"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:pyrope_block"
+    ]
+  }
+}

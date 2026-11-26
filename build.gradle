@@ -30,6 +30,14 @@ neoForge {
             programArgument '--nogui'
         }
 
+        data {
+            data()
+            jvmArgument '-Xmx1536M'
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.DEBUG
@@ -89,6 +97,10 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     into "build/generated/sources/modMetadata"
 }
 sourceSets.main.resources.srcDir generateModMetadata
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '.cache/'
+}
 neoForge.ideSyncTask generateModMetadata
 
 tasks.matching { it.name == 'runServer' }.configureEach {

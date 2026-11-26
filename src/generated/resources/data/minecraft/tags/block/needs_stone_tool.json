@@ -1,0 +1,23 @@
+{
+  "values": [
+    "realisticores:graphite_block",
+    "realisticores:chromite_block",
+    "realisticores:ilmenite_block",
+    "realisticores:anthracite_block",
+    "realisticores:raw_uranium_block",
+    "realisticores:pyrite_block",
+    "realisticores:sal_ammoniac_block",
+    "realisticores:raw_siderite_block",
+    "realisticores:peridot_ore",
+    "realisticores:kimberlite_graphite_ore",
+    "realisticores:kimberlite_bort_ore",
+    "realisticores:anthracite_seam",
+    "realisticores:black_shale_pyrite_ore",
+    "realisticores:shale_ironstone_ore",
+    "realisticores:mudstone_ironstone_ore",
+    "realisticores:blackband_ironstone",
+    "realisticores:kimberlite",
+    "realisticores:peridotite",
+    "realisticores:crystal_press"
+  ]
+}

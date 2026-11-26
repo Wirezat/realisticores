@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chromite_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:chromite_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:chromite_from_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_chromite_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:chromite_from_block"
+    ]
+  }
+}

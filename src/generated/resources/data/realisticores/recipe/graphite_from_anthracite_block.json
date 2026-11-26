@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 800,
+  "experience": 0.2,
+  "ingredient": {
+    "tag": "c:storage_blocks/anthracite"
+  },
+  "result": {
+    "count": 4,
+    "id": "realisticores:graphite"
+  }
+}
