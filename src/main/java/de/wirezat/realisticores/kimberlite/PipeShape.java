@@ -52,7 +52,7 @@ public final class PipeShape {
      * @return its outline
      */
     public Outline outline(Pipe pipe) {
-        long seed = SplitMix64.hash(SHAPE_SALT, pipe.x(), pipe.z());
+        long seed = SplitMix64.mix(pipe.seed() ^ SHAPE_SALT);
         SplitMix64 rng = new SplitMix64(seed);
         double angle = rng.nextDouble() * Math.PI;
         double aspect = rng.nextDouble(params.minAspect(), 1.0);
@@ -90,12 +90,13 @@ public final class PipeShape {
     /**
      * Checks whether kimberlite shows at the surface in a column instead of staying under the soil.
      *
+     * @param seed world seed
      * @param x world X of the column
      * @param z world Z of the column
      * @return true if the column is an outcrop
      */
-    public boolean isOutcrop(int x, int z) {
+    public boolean isOutcrop(long seed, int x, int z) {
         double wavelength = params.outcropWavelength();
-        return ValueNoise.sample2(OUTCROP_SALT, x, z, wavelength) > params.outcropThreshold();
+        return ValueNoise.sample2(seed ^ OUTCROP_SALT, x, z, wavelength) > params.outcropThreshold();
     }
 }

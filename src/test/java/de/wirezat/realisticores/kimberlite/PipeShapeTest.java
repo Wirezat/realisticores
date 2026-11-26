@@ -23,7 +23,7 @@ class PipeShapeTest {
     void mostOutlinesAreNotCircular() {
         int irregular = 0;
         for (int i = 0; i < 10; i++) {
-            Pipe pipe = new Pipe(1000 + i * 977, 2000 - i * 1301, 120);
+            Pipe pipe = Pipe.of(0L, 1000 + i * 977, 2000 - i * 1301, 120);
             double min = Double.MAX_VALUE;
             double max = 0;
             for (int step = 0; step < 24; step++) {
@@ -45,7 +45,7 @@ class PipeShapeTest {
         for (int x = 0; x < 200; x++) {
             for (int z = 0; z < 200; z++) {
                 total++;
-                if (SHAPE.isOutcrop(x, z)) {
+                if (SHAPE.isOutcrop(0L, x, z)) {
                     outcrops++;
                 }
             }

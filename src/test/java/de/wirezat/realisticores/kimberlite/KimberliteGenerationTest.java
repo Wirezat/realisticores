@@ -79,7 +79,7 @@ class KimberliteGenerationTest {
     void radiusFollowsCraterDiatremeRootProfile() {
         KimberliteParams.PipeParams p = KimberliteParams.defaults().pipe();
         PipeProfile profile = new PipeProfile(p);
-        Pipe pipe = new Pipe(0, 0, 100);
+        Pipe pipe = Pipe.of(0L, 0, 0, 100);
         double craterTop = profile.radiusAt(pipe, p.craterBaseY() + p.craterHeight());
         double diatremeTop = profile.radiusAt(pipe, p.craterBaseY());
         double diatremeBottom = profile.radiusAt(pipe, p.rootY());

@@ -10,7 +10,7 @@ class CraterTest {
 
     @Test
     void bowlIsDeepestAtTheAxisAndMeetsTheRimAtTheWall() {
-        Pipe pipe = new Pipe(0, 0, 120);
+        Pipe pipe = Pipe.of(0L, 0, 0, 120);
         int rim = 80;
         int center = CRATER.floorY(pipe, 0.0, rim, rim);
         int half = CRATER.floorY(pipe, 0.5, rim, rim);
@@ -21,7 +21,7 @@ class CraterTest {
 
     @Test
     void wallsIntoSlopingTerrainNeverExceedTheAllowedHeight() {
-        Pipe pipe = new Pipe(0, 0, 120);
+        Pipe pipe = Pipe.of(0L, 0, 0, 120);
         int surface = 110;
         int allowed = Math.max(KimberliteParams.defaults().crater().maxWallHeight(), CRATER.depth(pipe));
         assertEquals(surface - allowed, CRATER.floorY(pipe, 0.9, 80, surface));

@@ -95,13 +95,14 @@ public final class SeamModel {
     /**
      * Checks whether a seam shows through the soil in a column.
      *
+     * @param seed world seed
      * @param x world X of the column
      * @param z world Z of the column
      * @return true if the column is an outcrop
      */
-    public boolean isOutcrop(int x, int z) {
+    public boolean isOutcrop(long seed, int x, int z) {
         double wavelength = params.seam().outcropWavelength();
-        return ValueNoise.sample2(OUTCROP_SALT, x, z, wavelength) > params.seam().outcropThreshold();
+        return ValueNoise.sample2(seed ^ OUTCROP_SALT, x, z, wavelength) > params.seam().outcropThreshold();
     }
 
     private Rank rank(ResolvedBasin basin, double edge) {

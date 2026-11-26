@@ -17,7 +17,7 @@ class PanYieldTest {
     private static final PlumePath TRAIL = trailFrom(0);
 
     private static PlumePath trailFrom(int x) {
-        return new PlumePath(new Pipe(x, 0, 70), new double[] {x, x + 1600}, new double[] {0, 0},
+        return new PlumePath(Pipe.of(0L, x, 0, 70), new double[] {x, x + 1600}, new double[] {0, 0},
                 new double[] {0, 1600}, 1.0);
     }
 

@@ -64,15 +64,16 @@ public final class Accessories {
     /**
      * Rolls whether a black shale block holds pyrite; ore comes in nests of two by two by two cells.
      *
+     * @param seed world seed
      * @param fraction share of black shale that becomes pyrite
      * @param x world X of the block
      * @param y world Y of the block
      * @param z world Z of the block
      * @return true if the block is pyrite ore
      */
-    public boolean pyrite(double fraction, int x, int y, int z) {
-        double nest = SplitMix64.unit(SplitMix64.hash(PYRITE_SALT ^ (y >> 1), x >> 1, z >> 1));
-        double block = SplitMix64.unit(SplitMix64.hash(PYRITE_SALT ^ ~((long) y), x, z));
+    public boolean pyrite(long seed, double fraction, int x, int y, int z) {
+        double nest = SplitMix64.unit(SplitMix64.hash(seed ^ PYRITE_SALT ^ (y >> 1), x >> 1, z >> 1));
+        double block = SplitMix64.unit(SplitMix64.hash(seed ^ PYRITE_SALT ^ ~((long) y), x, z));
         return nest < 2.0 * fraction && block < 0.5;
     }
 
@@ -80,15 +81,16 @@ public final class Accessories {
      * Rolls whether a shale or mudstone block holds clay ironstone; ore comes in flat nests two blocks wide and
      * one block high, along the bedding.
      *
+     * @param seed world seed
      * @param fraction share of the rock that becomes ironstone
      * @param x world X of the block
      * @param y world Y of the block
      * @param z world Z of the block
      * @return true if the block is ironstone
      */
-    public boolean ironstone(double fraction, int x, int y, int z) {
-        double nest = SplitMix64.unit(SplitMix64.hash(IRONSTONE_SALT ^ y, x >> 1, z >> 1));
-        double block = SplitMix64.unit(SplitMix64.hash(IRONSTONE_SALT ^ ~((long) y), x, z));
+    public boolean ironstone(long seed, double fraction, int x, int y, int z) {
+        double nest = SplitMix64.unit(SplitMix64.hash(seed ^ IRONSTONE_SALT ^ y, x >> 1, z >> 1));
+        double block = SplitMix64.unit(SplitMix64.hash(seed ^ IRONSTONE_SALT ^ ~((long) y), x, z));
         return nest < 2.0 * fraction && block < 0.5;
     }
 

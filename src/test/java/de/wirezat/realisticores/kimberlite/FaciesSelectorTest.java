@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class FaciesSelectorTest {
     private static final KimberliteParams PARAMS = KimberliteParams.defaults();
     private static final FaciesSelector SELECTOR = new FaciesSelector(PARAMS);
-    private static final Pipe PIPE = new Pipe(500, 500, 120);
+    private static final Pipe PIPE = Pipe.of(0L, 500, 500, 120);
 
     private static Map<Facies, Integer> histogram(int y, int surfaceY, double wallDistance) {
         Map<Facies, Integer> counts = new EnumMap<>(Facies.class);

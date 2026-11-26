@@ -64,9 +64,9 @@ public final class CoalCarver {
                     int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
                     boolean coal = config.coalRanks().contains(column.get().rank());
                     Optional<BlockState> seam = seamBlock(column.get().rank(), blocks, coal);
-                    write(chunk, x, z, surfaceY, column.get(), seam, model.isOutcrop(x, z), accents);
+                    write(chunk, seed, x, z, surfaceY, column.get(), seam, model.isOutcrop(seed, x, z), accents);
                     if (burns(chunk, seed, column.get(), x, z, surfaceY)) {
-                        burn(chunk, x, z, surfaceY, column.get(), coal ? seam : Optional.empty(),
+                        burn(chunk, seed, x, z, surfaceY, column.get(), coal ? seam : Optional.empty(),
                                 accents.get(SEAM_FIRE));
                     } else if (coal && Coal.surface().soil(seed, column.get(), surfaceY, x, z)) {
                         writeSoil(chunk, x, z, surfaceY, column.get().rank() == Rank.LIGNITE);
@@ -90,7 +90,7 @@ public final class CoalCarver {
         return accents;
     }
 
-    private static void write(ChunkAccess chunk, int x, int z, int surfaceY, SeamColumn column,
+    private static void write(ChunkAccess chunk, long seed, int x, int z, int surfaceY, SeamColumn column,
             Optional<BlockState> seam, boolean outcrop, Map<String, Accent> accents) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         Accessories.Sand sand = Coal.accessories().sandstone(column, x, z);
@@ -104,7 +104,7 @@ public final class CoalCarver {
             for (int y = Math.max(layer.minY(), chunk.getMinBuildHeight()); y <= topY; y++) {
                 BlockState old = chunk.getBlockState(pos.set(x, y, z));
                 if (old.is(BlockTags.BASE_STONE_OVERWORLD) || throughSoil && old.is(BlockTags.DIRT)) {
-                    BlockState block = layerBlock(layer.rock(), seam, sand, accents, x, y, z);
+                    BlockState block = layerBlock(seed, layer.rock(), seam, sand, accents, x, y, z);
                     chunk.setBlockState(pos, y > rust && block.is(ModBlocks.SHALE.get())
                             ? ModBlocks.RUST_STAINED_SHALE.get().defaultBlockState() : block, false);
                 }
@@ -112,7 +112,7 @@ public final class CoalCarver {
         }
     }
 
-    private static BlockState layerBlock(Rock rock, Optional<BlockState> seam, Accessories.Sand sand,
+    private static BlockState layerBlock(long seed, Rock rock, Optional<BlockState> seam, Accessories.Sand sand,
             Map<String, Accent> accents, int x, int y, int z) {
         return switch (rock) {
             case SEAM -> seam.orElseThrow();
@@ -122,12 +122,12 @@ public final class CoalCarver {
                 }
                 Accent uranium = accents.get(SANDSTONE);
                 yield sand == Accessories.Sand.ORE_BAND && uranium != null
-                        && MineralRoll.roll(uranium.ore(), x, y, z) < uranium.fraction()
+                        && MineralRoll.roll(seed, uranium.ore(), x, y, z) < uranium.fraction()
                         ? uranium.block() : Blocks.SANDSTONE.defaultBlockState();
             }
             case BLACK_SHALE -> {
                 Accent pyrite = accents.get(BLACK_SHALE);
-                yield pyrite != null && Coal.accessories().pyrite(pyrite.fraction(), x, y, z)
+                yield pyrite != null && Coal.accessories().pyrite(seed, pyrite.fraction(), x, y, z)
                         ? pyrite.block() : ModBlocks.BLACK_SHALE.get().defaultBlockState();
             }
             case BLACKBAND -> {
@@ -135,14 +135,14 @@ public final class CoalCarver {
                 yield ironstone != null ? ironstone.block() : ModBlocks.BLACK_SHALE.get().defaultBlockState();
             }
             case FIRECLAY -> ModBlocks.FIRECLAY.get().defaultBlockState();
-            case SHALE -> nodule(accents.get(SHALE), ModBlocks.SHALE.get().defaultBlockState(), x, y, z);
-            case MUDSTONE -> nodule(accents.get(MUDSTONE), ModBlocks.MUDSTONE.get().defaultBlockState(), x, y, z);
+            case SHALE -> nodule(seed, accents.get(SHALE), ModBlocks.SHALE.get().defaultBlockState(), x, y, z);
+            case MUDSTONE -> nodule(seed, accents.get(MUDSTONE), ModBlocks.MUDSTONE.get().defaultBlockState(), x, y, z);
         };
     }
 
-    private static BlockState nodule(Accent ironstone, BlockState rock, int x, int y, int z) {
-        return ironstone != null && Coal.accessories().ironstone(ironstone.fraction(), x, y, z) ? ironstone.block()
-                : rock;
+    private static BlockState nodule(long seed, Accent ironstone, BlockState rock, int x, int y, int z) {
+        return ironstone != null && Coal.accessories().ironstone(seed, ironstone.fraction(), x, y, z)
+                ? ironstone.block() : rock;
     }
 
     private static int rockTop(ChunkAccess chunk, int x, int z, int surfaceY) {
@@ -161,7 +161,7 @@ public final class CoalCarver {
                 && Coal.accessories().onFire(seed, x, z);
     }
 
-    private static void burn(ChunkAccess chunk, int x, int z, int surfaceY, SeamColumn column,
+    private static void burn(ChunkAccess chunk, long seed, int x, int z, int surfaceY, SeamColumn column,
             Optional<BlockState> seam, Accent crust) {
         BlockState burning = (column.rank() == Rank.LIGNITE ? ModBlocks.BURNING_LIGNITE_SEAM
                 : ModBlocks.BURNING_COAL_SEAM).get().defaultBlockState();
@@ -177,7 +177,7 @@ public final class CoalCarver {
             }
         }
         if (crust != null && chunk.getBlockState(pos.set(x, surfaceY, z)) == clinker
-                && MineralRoll.roll(crust.ore(), x, surfaceY, z) < crust.fraction()) {
+                && MineralRoll.roll(seed, crust.ore(), x, surfaceY, z) < crust.fraction()) {
             chunk.setBlockState(pos, crust.block(), false);
         }
     }

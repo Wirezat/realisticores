@@ -16,7 +16,7 @@ class PipeGradeTest {
         int rich = 0;
         int total = 4000;
         for (int i = 0; i < total; i++) {
-            double factor = GRADE.pipeFactor(new Pipe(i * 211, i * 97 - 5000, 80));
+            double factor = GRADE.pipeFactor(Pipe.of(0L, i * 211, i * 97 - 5000, 80));
             if (factor == 0.0) {
                 barren++;
             } else if (factor == PARAMS.poorFactor()) {
@@ -35,7 +35,7 @@ class PipeGradeTest {
         Pipe barren = null;
         Pipe rich = null;
         for (int i = 0; i < 200 && (barren == null || rich == null); i++) {
-            Pipe pipe = new Pipe(i * 131, i * 53, 80);
+            Pipe pipe = Pipe.of(0L, i * 131, i * 53, 80);
             if (GRADE.pipeFactor(pipe) == 0.0 && barren == null) {
                 barren = pipe;
             } else if (GRADE.pipeFactor(pipe) == 1.0 && rich == null) {

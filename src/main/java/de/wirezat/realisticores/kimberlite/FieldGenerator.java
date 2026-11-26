@@ -48,7 +48,7 @@ public final class FieldGenerator {
         int attempts = rng.nextInt(f.minPipes(), f.maxPipes());
         List<Pipe> pipes = new ArrayList<>();
         for (int i = 0; i < attempts; i++) {
-            placePipe(rng, centerX, centerZ, radius, pipes);
+            placePipe(seed, rng, centerX, centerZ, radius, pipes);
         }
         return Optional.of(new Field(centerX, centerZ, radius, List.copyOf(pipes)));
     }
@@ -65,7 +65,7 @@ public final class FieldGenerator {
      */
     public List<Pipe> pipesNear(long seed, int minX, int minZ, int maxX, int maxZ) {
         KimberliteParams.FieldParams f = params.field();
-        double reach = f.maxRadius() + shape.reach(new Pipe(0, 0, params.pipe().maxDiameter()));
+        double reach = f.maxRadius() + shape.reach(Pipe.of(seed, 0, 0, params.pipe().maxDiameter()));
         List<Pipe> result = new ArrayList<>();
         Cells.around(minX, minZ, maxX, maxZ, reach, f.cellSize(), (cellX, cellZ) ->
                 fieldAt(seed, cellX, cellZ).ifPresent(field -> {
@@ -80,7 +80,7 @@ public final class FieldGenerator {
         return result;
     }
 
-    private void placePipe(SplitMix64 rng, int centerX, int centerZ, int radius, List<Pipe> placed) {
+    private void placePipe(long seed, SplitMix64 rng, int centerX, int centerZ, int radius, List<Pipe> placed) {
         KimberliteParams.FieldParams f = params.field();
         KimberliteParams.PipeParams p = params.pipe();
         double lnDiameter = Math.log(p.medianDiameter()) + rng.nextGaussian() * p.diameterSigma();
@@ -91,7 +91,7 @@ public final class FieldGenerator {
             int x = centerX + (int) Math.round(Math.cos(angle) * distance);
             int z = centerZ + (int) Math.round(Math.sin(angle) * distance);
             if (placed.stream().allMatch(o -> Math.hypot(o.x() - x, o.z() - z) >= f.minSpacing())) {
-                placed.add(new Pipe(x, z, diameter));
+                placed.add(Pipe.of(seed, x, z, diameter));
                 return;
             }
         }

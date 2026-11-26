@@ -37,10 +37,10 @@ class AccessoriesTest {
             for (int y = 0; y < 20; y++) {
                 for (int z = 0; z < 60; z++) {
                     total++;
-                    if (RULES.pyrite(0.03, x, y, z)) {
+                    if (RULES.pyrite(0L, 0.03, x, y, z)) {
                         ore++;
-                        if (RULES.pyrite(0.03, x ^ 1, y, z) || RULES.pyrite(0.03, x, y ^ 1, z)
-                                || RULES.pyrite(0.03, x, y, z ^ 1)) {
+                        if (RULES.pyrite(0L, 0.03, x ^ 1, y, z) || RULES.pyrite(0L, 0.03, x, y ^ 1, z)
+                                || RULES.pyrite(0L, 0.03, x, y, z ^ 1)) {
                             paired++;
                         }
                     }
@@ -61,12 +61,12 @@ class AccessoriesTest {
             for (int y = 0; y < 20; y++) {
                 for (int z = 0; z < 60; z++) {
                     total++;
-                    if (RULES.ironstone(0.04, x, y, z)) {
+                    if (RULES.ironstone(0L, 0.04, x, y, z)) {
                         ore++;
-                        if (RULES.ironstone(0.04, x ^ 1, y, z) || RULES.ironstone(0.04, x, y, z ^ 1)) {
+                        if (RULES.ironstone(0L, 0.04, x ^ 1, y, z) || RULES.ironstone(0L, 0.04, x, y, z ^ 1)) {
                             beside++;
                         }
-                        if (RULES.ironstone(0.04, x, y ^ 1, z)) {
+                        if (RULES.ironstone(0L, 0.04, x, y ^ 1, z)) {
                             above++;
                         }
                     }

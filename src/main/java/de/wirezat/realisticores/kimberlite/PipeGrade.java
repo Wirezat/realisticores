@@ -26,7 +26,7 @@ public final class PipeGrade {
      * @return 0 for barren pipes, the poor factor for poor pipes, 1 for rich pipes
      */
     public double pipeFactor(Pipe pipe) {
-        double roll = SplitMix64.unit(SplitMix64.hash(PIPE_SALT, pipe.x(), pipe.z()));
+        double roll = SplitMix64.unit(SplitMix64.mix(pipe.seed() ^ PIPE_SALT));
         if (roll < params.barrenShare()) {
             return 0.0;
         }
@@ -47,7 +47,7 @@ public final class PipeGrade {
         if (pipeFactor == 0.0) {
             return 0.0;
         }
-        long seed = SplitMix64.hash(PHASE_SALT, pipe.x(), pipe.z());
+        long seed = SplitMix64.mix(pipe.seed() ^ PHASE_SALT);
         double phase = 1.0 + params.phaseAmplitude() * ValueNoise.sample3(seed, x, y, z, params.phaseWavelength());
         return pipeFactor * Math.max(0.0, phase);
     }

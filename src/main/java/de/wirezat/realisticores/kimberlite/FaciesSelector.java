@@ -31,7 +31,7 @@ public final class FaciesSelector {
      */
     public Facies at(Pipe pipe, int x, int y, int z, int surfaceY, double wallDistance) {
         KimberliteParams.FaciesParams f = params.facies();
-        long seed = SplitMix64.hash(SALT, pipe.x(), pipe.z());
+        long seed = SplitMix64.mix(pipe.seed() ^ SALT);
         double depth = surfaceY - y;
         double weatheringDepth = f.weatheringDepth()
                 + f.weatheringNoise() * ValueNoise.sample2(seed, x, z, f.weatheringWavelength());

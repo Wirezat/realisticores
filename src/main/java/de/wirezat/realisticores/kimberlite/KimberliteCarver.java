@@ -76,21 +76,21 @@ public final class KimberliteCarver {
                         }
                         fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
                     }
-                    boolean overgrown = topSoil != null && !shape.isOutcrop(x, z);
-                    carveBody(chunk, pos, outline, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
+                    boolean overgrown = topSoil != null && !shape.isOutcrop(seed, x, z);
+                    carveBody(chunk, seed, pos, outline, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
                             ores, overgrown ? topSoil : null, subSoil);
                 }
             }
         }
     }
 
-    private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, PipeShape.Outline outline,
-            int x, int z, int bottomY, int groundY, boolean bowl, PipeShape shape, List<OreBlock> ores,
+    private static void carveBody(ChunkAccess chunk, long seed, BlockPos.MutableBlockPos pos,
+            PipeShape.Outline outline, int x, int z, int bottomY, int groundY, boolean bowl, PipeShape shape, List<OreBlock> ores,
             BlockState topSoil, BlockState subSoil) {
         Pipe pipe = outline.pipe();
         FaciesSelector facies = Kimberlite.facies();
         int floorLayers = Kimberlite.params().crater().floorLayers();
-        boolean outcrop = shape.isOutcrop(x, z);
+        boolean outcrop = shape.isOutcrop(seed, x, z);
         int topY = Math.min(chunk.getMaxBuildHeight() - 1, groundY);
         for (int y = bottomY; y <= topY; y++) {
             double wallDistance = shape.normalizedDistance(outline, x, y, z);
@@ -110,7 +110,7 @@ public final class KimberliteCarver {
                     ? Facies.VOLCANICLASTIC
                     : facies.at(pipe, x, y, z, groundY, wallDistance);
             if (rock != Facies.HOST) {
-                chunk.setBlockState(pos, mineralBlock(ores, pipe, rock, x, y, z, blockFor(rock)), false);
+                chunk.setBlockState(pos, mineralBlock(seed, ores, pipe, rock, x, y, z, blockFor(rock)), false);
             }
         }
     }
@@ -138,7 +138,7 @@ public final class KimberliteCarver {
                 .map(block -> new OreBlock(mineral, block)).stream()).toList();
     }
 
-    private static BlockState mineralBlock(List<OreBlock> ores, Pipe pipe, Facies rock, int x, int y, int z,
+    private static BlockState mineralBlock(long seed, List<OreBlock> ores, Pipe pipe, Facies rock, int x, int y, int z,
             BlockState rockBlock) {
         for (OreBlock ore : ores) {
             ActiveMineral mineral = ore.mineral();
@@ -148,7 +148,7 @@ public final class KimberliteCarver {
             double fraction = mineral.graded()
                     ? mineral.fraction() * Kimberlite.grade().factor(pipe, x, y, z)
                     : mineral.fraction();
-            if (MineralRoll.roll(mineral.ore(), x, y, z) < fraction) {
+            if (MineralRoll.roll(seed, mineral.ore(), x, y, z) < fraction) {
                 return ore.block();
             }
         }
