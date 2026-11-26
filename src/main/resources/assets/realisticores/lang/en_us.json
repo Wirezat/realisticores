@@ -84,5 +84,8 @@
   "block.realisticores.pyrite_block": "Block of Pyrite",
   "trim_material.realisticores.pyrite": "Pyrite Material",
   "block.realisticores.sal_ammoniac_block": "Block of Sal Ammoniac",
-  "trim_material.realisticores.sal_ammoniac": "Sal Ammoniac Material"
+  "trim_material.realisticores.sal_ammoniac": "Sal Ammoniac Material",
+  "block.realisticores.burning_coal_seam": "Burning Coal Seam",
+  "block.realisticores.burning_lignite_seam": "Burning Lignite Seam",
+  "block.realisticores.clinker": "Clinker"
 }

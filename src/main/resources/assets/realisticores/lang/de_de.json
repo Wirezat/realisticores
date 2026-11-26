@@ -84,5 +84,8 @@
   "block.realisticores.pyrite_block": "Pyritblock",
   "trim_material.realisticores.pyrite": "Pyrit",
   "block.realisticores.sal_ammoniac_block": "Salmiakblock",
-  "trim_material.realisticores.sal_ammoniac": "Salmiak"
+  "trim_material.realisticores.sal_ammoniac": "Salmiak",
+  "block.realisticores.burning_coal_seam": "Brennendes Steinkohleflöz",
+  "block.realisticores.burning_lignite_seam": "Brennendes Braunkohleflöz",
+  "block.realisticores.clinker": "Gebrannter Schiefer"
 }

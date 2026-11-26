@@ -16,6 +16,9 @@
     "realisticores:fireclay",
     "realisticores:shale",
     "realisticores:black_shale",
-    "realisticores:mudstone"
+    "realisticores:mudstone",
+    "realisticores:burning_coal_seam",
+    "realisticores:burning_lignite_seam",
+    "realisticores:clinker"
   ]
 }

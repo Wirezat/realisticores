@@ -30,6 +30,9 @@
     "realisticores:sal_ammoniac_crust",
     "realisticores:raw_uranium_block",
     "realisticores:pyrite_block",
-    "realisticores:sal_ammoniac_block"
+    "realisticores:sal_ammoniac_block",
+    "realisticores:burning_coal_seam",
+    "realisticores:burning_lignite_seam",
+    "realisticores:clinker"
   ]
 }

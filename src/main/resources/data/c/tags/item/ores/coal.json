@@ -1,5 +1,6 @@
 {
   "values": [
-    "realisticores:coal_seam"
+    "realisticores:coal_seam",
+    "realisticores:burning_coal_seam"
   ]
 }

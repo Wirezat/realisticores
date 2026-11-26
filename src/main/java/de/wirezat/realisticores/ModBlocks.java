@@ -1,5 +1,6 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.coal.BurningSeamBlock;
 import de.wirezat.realisticores.coal.CoalPiecesBlock;
 import de.wirezat.realisticores.coal.CoalyDirtBlock;
 import de.wirezat.realisticores.coal.CoalyGrassBlock;
@@ -86,6 +87,12 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> MUDSTONE = register("mudstone",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
                     .strength(1.0F, 3.0F));
+    public static final DeferredBlock<BurningSeamBlock> BURNING_COAL_SEAM = registerBurning("burning_coal_seam",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<BurningSeamBlock> BURNING_LIGNITE_SEAM = registerBurning("burning_lignite_seam",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_ORANGE).strength(1.5F, 2.0F));
+    public static final DeferredBlock<Block> CLINKER = register("clinker",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_RED).strength(2.0F, 5.0F));
     public static final DeferredBlock<Block> LIGNITE_BLOCK = register("lignite_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).mapColor(MapColor.COLOR_BROWN));
     public static final DeferredBlock<Block> ANTHRACITE_BLOCK =
@@ -136,6 +143,14 @@ public final class ModBlocks {
                 BlockBehaviour.Properties.ofFullCopy(Blocks.BLAST_FURNACE)
                         .lightLevel(state -> state.getValue(CrystalPressBlock.LIT) ? 13 : 0));
         BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem("crystal_press", block));
+        return block;
+    }
+
+    private static DeferredBlock<BurningSeamBlock> registerBurning(String name, BlockBehaviour.Properties properties) {
+        DeferredBlock<BurningSeamBlock> block = BLOCKS.registerBlock(name, BurningSeamBlock::new,
+                properties.lightLevel(state -> 10).hasPostProcess((state, level, pos) -> true)
+                        .emissiveRendering((state, level, pos) -> true));
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
         return block;
     }
 
