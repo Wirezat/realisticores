@@ -95,9 +95,19 @@ final class Resources {
             new Resource("sal_ammoniac", ModItems.SAL_AMMONIAC, List.of(), ModBlocks.SAL_AMMONIAC_BLOCK,
                     "sal_ammoniac", Tier.STONE, "#DDD2A6", 0.1F, List.of()),
             new Resource("siderite", ModItems.RAW_SIDERITE, List.of("raw_materials/siderite", "raw_materials/iron"),
-                    ModBlocks.RAW_SIDERITE_BLOCK, "raw_siderite", Tier.STONE, "#A0683A", 0.2F, List.of()));
+                    ModBlocks.RAW_SIDERITE_BLOCK, "raw_siderite", Tier.STONE, "#A0683A", 0.2F, List.of()),
+            new Resource("malachite", ModItems.MALACHITE, List.of("raw_materials/malachite", "raw_materials/copper"),
+                    ModBlocks.MALACHITE_BLOCK, "raw_malachite", Tier.STONE, "#2E9A62", 0.7F, List.of()),
+            new Resource("azurite", ModItems.AZURITE, List.of("raw_materials/azurite", "raw_materials/copper"),
+                    ModBlocks.AZURITE_BLOCK, "raw_azurite", Tier.STONE, "#2D4FB8", 0.9F, List.of()),
+            new Resource("chalcopyrite", ModItems.CHALCOPYRITE,
+                    List.of("raw_materials/chalcopyrite", "raw_materials/copper"), ModBlocks.CHALCOPYRITE_BLOCK,
+                    "raw_chalcopyrite", Tier.STONE, "#B89A3A", 0.6F, List.of()),
+            new Resource("molybdenite", ModItems.MOLYBDENITE, List.of("raw_materials/molybdenite"),
+                    ModBlocks.MOLYBDENITE_BLOCK, "raw_molybdenite", Tier.STONE, "#868C99", 0.2F, List.of()));
 
     private static final List<String> IRONSTONE = List.of("ores/siderite", "ores/iron");
+    private static final List<String> CHALCOPYRITE = List.of("ores/chalcopyrite", "ores/copper");
 
     static final List<Ore> ORES = List.of(
             new Ore(ModBlocks.PERIDOT_ORE, ModItems.PERIDOT, 1, List.of("ores/peridot"), Tier.STONE, true),
@@ -118,7 +128,19 @@ final class Resources {
                     false),
             new Ore(ModBlocks.SHALE_IRONSTONE_ORE, ModItems.RAW_SIDERITE, 1, IRONSTONE, Tier.STONE, true),
             new Ore(ModBlocks.MUDSTONE_IRONSTONE_ORE, ModItems.RAW_SIDERITE, 1, IRONSTONE, Tier.STONE, true),
-            new Ore(ModBlocks.BLACKBAND_IRONSTONE, ModItems.RAW_SIDERITE, 1, IRONSTONE, Tier.STONE, true));
+            new Ore(ModBlocks.BLACKBAND_IRONSTONE, ModItems.RAW_SIDERITE, 1, IRONSTONE, Tier.STONE, true),
+            new Ore(ModBlocks.MALACHITE_ORE, ModItems.MALACHITE, 2, List.of("ores/malachite", "ores/copper"),
+                    Tier.STONE, true),
+            new Ore(ModBlocks.AZURITE_ORE, ModItems.AZURITE, 2, List.of("ores/azurite", "ores/copper"), Tier.STONE,
+                    true),
+            new Ore(ModBlocks.LEACHED_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 2, CHALCOPYRITE, Tier.STONE, true),
+            new Ore(ModBlocks.POTASSIC_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 3, CHALCOPYRITE, Tier.STONE, true),
+            new Ore(ModBlocks.PHYLLIC_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 3, CHALCOPYRITE, Tier.STONE, true),
+            new Ore(ModBlocks.BRECCIA_CHALCOPYRITE_ORE, ModItems.CHALCOPYRITE, 4, CHALCOPYRITE, Tier.STONE, true),
+            new Ore(ModBlocks.PHYLLIC_PYRITE_ORE, ModItems.PYRITE, 2, List.of("ores/pyrite"), Tier.STONE, true),
+            new Ore(ModBlocks.MOLYBDENITE_ORE, ModItems.MOLYBDENITE, 1, List.of("ores/molybdenite"), Tier.IRON,
+                    true),
+            new Ore(ModBlocks.GOSSAN_GOLD_ORE, Items.GOLD_NUGGET, 6, List.of("ores/gold"), Tier.STONE, true));
 
     static final List<Rock> ROCKS = List.of(
             new Rock(ModBlocks.KIMBERLITE, Tool.PICKAXE, Tier.STONE, true),
@@ -155,6 +177,8 @@ final class Resources {
         return List.of(ModBlocks.ANTHRACITE_BLOCK, ModBlocks.BORT_BLOCK, ModBlocks.CHROMITE_BLOCK,
                 ModBlocks.ILMENITE_BLOCK, ModBlocks.LIGNITE_BLOCK, ModBlocks.NATURAL_DIAMOND_BLOCK,
                 ModBlocks.PERIDOT_BLOCK, ModBlocks.PYRITE_BLOCK, ModBlocks.PYROPE_BLOCK,
-                ModBlocks.RAW_SIDERITE_BLOCK, ModBlocks.RAW_URANIUM_BLOCK, ModBlocks.SAL_AMMONIAC_BLOCK);
+                ModBlocks.RAW_SIDERITE_BLOCK, ModBlocks.RAW_URANIUM_BLOCK, ModBlocks.SAL_AMMONIAC_BLOCK,
+                ModBlocks.MALACHITE_BLOCK, ModBlocks.AZURITE_BLOCK, ModBlocks.CHALCOPYRITE_BLOCK,
+                ModBlocks.MOLYBDENITE_BLOCK);
     }
 }

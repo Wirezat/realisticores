@@ -148,6 +148,42 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> TOURMALINE_BRECCIA = register("tourmaline_breccia",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_BLACK).strength(2.0F, 6.0F));
 
+    public static final DeferredBlock<Block> MALACHITE_ORE = registerOre("malachite_ore", "malachite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(1.5F, 3.0F));
+    public static final DeferredBlock<Block> AZURITE_ORE = registerOre("azurite_ore", "azurite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(1.5F, 3.0F));
+    public static final DeferredBlock<Block> LEACHED_CHALCOPYRITE_ORE = registerOre("leached_chalcopyrite_ore",
+            "chalcopyrite", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(2.0F, 3.0F));
+    public static final DeferredBlock<Block> POTASSIC_CHALCOPYRITE_ORE = registerOre("potassic_chalcopyrite_ore",
+            "chalcopyrite", BlockBehaviour.Properties.ofFullCopy(Blocks.GRANITE).mapColor(MapColor.TERRACOTTA_PINK)
+                    .strength(3.0F, 6.0F));
+    public static final DeferredBlock<Block> PHYLLIC_CHALCOPYRITE_ORE = registerOre("phyllic_chalcopyrite_ore",
+            "chalcopyrite", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(2.0F, 4.0F));
+    public static final DeferredBlock<Block> BRECCIA_CHALCOPYRITE_ORE = registerOre("breccia_chalcopyrite_ore",
+            "chalcopyrite", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_BLACK)
+                    .strength(3.0F, 6.0F));
+    public static final DeferredBlock<Block> PHYLLIC_PYRITE_ORE = registerOre("phyllic_pyrite_ore", "pyrite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(2.0F, 4.0F));
+    public static final DeferredBlock<Block> MOLYBDENITE_ORE = registerOre("molybdenite_ore", "molybdenite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRANITE).mapColor(MapColor.TERRACOTTA_PINK)
+                    .strength(3.0F, 6.0F));
+    public static final DeferredBlock<Block> GOSSAN_GOLD_ORE = registerOre("gossan_gold_ore", "gossan_gold",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_BROWN)
+                    .strength(1.5F, 3.0F));
+    public static final DeferredBlock<Block> MALACHITE_BLOCK = register("malachite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.EMERALD));
+    public static final DeferredBlock<Block> AZURITE_BLOCK = register("azurite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.LAPIS));
+    public static final DeferredBlock<Block> CHALCOPYRITE_BLOCK = register("chalcopyrite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.GOLD));
+    public static final DeferredBlock<Block> MOLYBDENITE_BLOCK = register("molybdenite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_GRAY));
+
     public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
             registerPieces("coal_pieces", MapColor.COLOR_BLACK, () -> Items.COAL);
     public static final DeferredBlock<CoalPiecesBlock> LIGNITE_PIECES =
