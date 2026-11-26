@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.worldgen;
 
+import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +22,17 @@ public final class LevelTerrainProbe implements TerrainProbe {
     public LevelTerrainProbe(ServerLevel level, NoiseBasedChunkGenerator generator) {
         this.level = level;
         this.generator = generator;
+    }
+
+    /**
+     * Creates a probe for a world whose terrain comes from a noise chunk generator.
+     *
+     * @param level the world to read
+     * @return the probe, empty for worlds with another generator, such as superflat
+     */
+    public static Optional<TerrainProbe> of(ServerLevel level) {
+        return level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator
+                ? Optional.of(new LevelTerrainProbe(level, generator)) : Optional.empty();
     }
 
     @Override

@@ -22,7 +22,6 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 
 /** Operator command that finds the nearest deposit, in the style of the vanilla locate command. */
 public final class LocateDepositCommand {
@@ -107,12 +106,11 @@ public final class LocateDepositCommand {
 
     private static Search basin(BasinType type) {
         return (level, origin) -> {
-            if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().coalBasinActive()
-                    || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
+            if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().coalBasinActive()) {
                 return Optional.empty();
             }
-            return Coal.nearest(level.getSeed(), new LevelTerrainProbe(level, generator), type, origin.getX(),
-                    origin.getZ(), Math.min(BASIN_SEARCH_LIMIT, OreConfig.commandSearchLimit()))
+            return LevelTerrainProbe.of(level).flatMap(probe -> Coal.nearest(level.getSeed(), probe, type,
+                    origin.getX(), origin.getZ(), Math.min(BASIN_SEARCH_LIMIT, OreConfig.commandSearchLimit())))
                     .map(found -> new BlockPos(found.basin().x(), 0, found.basin().z()));
         };
     }

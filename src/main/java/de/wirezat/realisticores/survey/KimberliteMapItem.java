@@ -6,6 +6,7 @@ import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.Pipe;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import de.wirezat.realisticores.worldgen.Surveys;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -58,15 +58,15 @@ public class KimberliteMapItem extends Item {
                 ? Kimberlite.generator().nearestField(server.getSeed(), player.getBlockX(), player.getBlockZ(),
                         MAX_SEARCH)
                 : Optional.empty();
-        if (field.isEmpty()
-                || !(server.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
+        Optional<TerrainProbe> probe = LevelTerrainProbe.of(server);
+        if (field.isEmpty() || probe.isEmpty()) {
             playNothingFound(reader);
             return InteractionResultHolder.fail(stack);
         }
         player.getCooldowns().addCooldown(this, MAX_WAIT_TICKS);
         List<Pipe> pipes = new ArrayList<>(field.get().pipes());
         Util.shuffle(pipes, level.getRandom());
-        Kimberlite.mapSpot(server.getSeed(), new LevelTerrainProbe(server, generator), server.getSeaLevel(), pipes,
+        Kimberlite.mapSpot(server.getSeed(), probe.get(), server.getSeaLevel(), pipes,
                 level.getRandom().nextInt())
                 .thenApplyAsync(spot -> spot.map(found -> survey(server, found)), Util.backgroundExecutor())
                 .whenCompleteAsync((survey, failure) -> {

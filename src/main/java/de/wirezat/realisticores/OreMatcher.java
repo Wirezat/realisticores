@@ -1,9 +1,9 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.ore.BlockIds;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +29,7 @@ public final class OreMatcher {
             if (entry.startsWith("#")) {
                 tags.add(TagKey.create(Registries.BLOCK, ResourceLocation.parse(entry.substring(1))));
             } else {
-                BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(entry)).ifPresent(blocks::add);
+                BlockIds.block(entry).ifPresent(blocks::add);
             }
         }
     }

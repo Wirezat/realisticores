@@ -3,6 +3,7 @@ package de.wirezat.realisticores.coal;
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -14,7 +15,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -30,15 +30,14 @@ public class LooseCoalFeature extends Feature<NoneFeatureConfiguration> {
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
         Set<Rank> ranks = OreConfig.resolved().coalRanks();
-        if (ranks.isEmpty() || level.getLevel().dimension() != Level.OVERWORLD
-                || !(context.chunkGenerator() instanceof NoiseBasedChunkGenerator generator)) {
+        Optional<TerrainProbe> probe = LevelTerrainProbe.of(level.getLevel());
+        if (ranks.isEmpty() || level.getLevel().dimension() != Level.OVERWORLD || probe.isEmpty()) {
             return false;
         }
         ChunkPos chunk = new ChunkPos(context.origin());
         int minX = chunk.getMinBlockX();
         int minZ = chunk.getMinBlockZ();
-        List<ResolvedBasin> basins = Coal.basinsNear(level.getSeed(),
-                new LevelTerrainProbe(level.getLevel(), generator), minX, minZ, minX + 15, minZ + 15);
+        List<ResolvedBasin> basins = Coal.basinsNear(level.getSeed(), probe.get(), minX, minZ, minX + 15, minZ + 15);
         boolean placed = false;
         for (int i = 0; i < 256 && !basins.isEmpty(); i++) {
             int x = minX + i % 16;

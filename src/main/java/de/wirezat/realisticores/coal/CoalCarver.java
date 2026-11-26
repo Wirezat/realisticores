@@ -3,6 +3,7 @@ package de.wirezat.realisticores.coal;
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
+import de.wirezat.realisticores.ore.BlockIds;
 import de.wirezat.realisticores.ore.MineralRoll;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.HashMap;
@@ -10,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -84,8 +83,8 @@ public final class CoalCarver {
         Map<String, Accent> accents = new HashMap<>();
         for (ActiveMineral mineral : minerals) {
             for (String zone : mineral.zones()) {
-                BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.blockFor(zone))).ifPresent(block ->
-                        accents.put(zone, new Accent(mineral.ore(), block.defaultBlockState(), mineral.fraction())));
+                BlockIds.state(mineral.blockFor(zone)).ifPresent(block ->
+                        accents.put(zone, new Accent(mineral.ore(), block, mineral.fraction())));
             }
         }
         return accents;
@@ -205,8 +204,7 @@ public final class CoalCarver {
     }
 
     private static Optional<BlockState> seamBlock(Rank rank, Map<Rank, String> blocks, boolean coal) {
-        Optional<Block> block = Optional.ofNullable(blocks.get(rank)).map(ResourceLocation::parse)
-                .flatMap(BuiltInRegistries.BLOCK::getOptional);
+        Optional<Block> block = Optional.ofNullable(blocks.get(rank)).flatMap(BlockIds::block);
         return (coal ? Optional.of(block.orElseGet(() -> ownSeam(rank))) : block).map(Block::defaultBlockState);
     }
 

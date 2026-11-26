@@ -3,16 +3,13 @@ package de.wirezat.realisticores.kimberlite;
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
+import de.wirezat.realisticores.ore.BlockIds;
 import de.wirezat.realisticores.ore.MineralRoll;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -44,6 +41,7 @@ public final class KimberliteCarver {
         if (pipes.isEmpty()) {
             return;
         }
+        List<OreBlock> ores = oreBlocks(config.kimberliteMinerals());
         PipeShape shape = Kimberlite.shape();
         Crater crater = Kimberlite.crater();
         int bottomY = Math.max(chunk.getMinBuildHeight(), Kimberlite.params().pipe().bottomY());
@@ -79,14 +77,14 @@ public final class KimberliteCarver {
                     }
                     boolean overgrown = topSoil != null && !shape.isOutcrop(x, z);
                     carveBody(chunk, pos, pipe, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
-                            config.kimberliteMinerals(), overgrown ? topSoil : null, subSoil);
+                            ores, overgrown ? topSoil : null, subSoil);
                 }
             }
         }
     }
 
     private static void carveBody(ChunkAccess chunk, BlockPos.MutableBlockPos pos, Pipe pipe, int x, int z,
-            int bottomY, int groundY, boolean bowl, PipeShape shape, List<ActiveMineral> minerals,
+            int bottomY, int groundY, boolean bowl, PipeShape shape, List<OreBlock> ores,
             BlockState topSoil, BlockState subSoil) {
         FaciesSelector facies = Kimberlite.facies();
         int floorLayers = Kimberlite.params().crater().floorLayers();
@@ -110,7 +108,7 @@ public final class KimberliteCarver {
                     ? Facies.VOLCANICLASTIC
                     : facies.at(pipe, x, y, z, groundY, wallDistance);
             if (rock != Facies.HOST) {
-                chunk.setBlockState(pos, mineralBlock(minerals, pipe, rock, x, y, z, blockFor(rock)), false);
+                chunk.setBlockState(pos, mineralBlock(ores, pipe, rock, x, y, z, blockFor(rock)), false);
             }
         }
     }
@@ -130,9 +128,18 @@ public final class KimberliteCarver {
         }
     }
 
-    private static BlockState mineralBlock(List<ActiveMineral> minerals, Pipe pipe, Facies rock, int x, int y,
-            int z, BlockState rockBlock) {
-        for (ActiveMineral mineral : minerals) {
+    private record OreBlock(ActiveMineral mineral, BlockState block) {
+    }
+
+    private static List<OreBlock> oreBlocks(List<ActiveMineral> minerals) {
+        return minerals.stream().flatMap(mineral -> BlockIds.state(mineral.block())
+                .map(block -> new OreBlock(mineral, block)).stream()).toList();
+    }
+
+    private static BlockState mineralBlock(List<OreBlock> ores, Pipe pipe, Facies rock, int x, int y, int z,
+            BlockState rockBlock) {
+        for (OreBlock ore : ores) {
+            ActiveMineral mineral = ore.mineral();
             if (!mineral.zones().contains(rock.name())) {
                 continue;
             }
@@ -140,10 +147,7 @@ public final class KimberliteCarver {
                     ? mineral.fraction() * Kimberlite.grade().factor(pipe, x, y, z)
                     : mineral.fraction();
             if (MineralRoll.roll(mineral.ore(), x, y, z) < fraction) {
-                Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(mineral.block()));
-                if (block.isPresent()) {
-                    return block.get().defaultBlockState();
-                }
+                return ore.block();
             }
         }
         return rockBlock;

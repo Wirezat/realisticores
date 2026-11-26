@@ -7,12 +7,13 @@ import de.wirezat.realisticores.kimberlite.PipeGrade;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import org.jetbrains.annotations.Nullable;
 
 /** Measures which indicator grains the sediment holds at a position. */
@@ -40,13 +41,14 @@ public final class PanYield {
      * @return future of the measurement
      */
     public static CompletableFuture<Measurement> measure(ServerLevel level, BlockPos pos) {
+        Optional<TerrainProbe> probe = LevelTerrainProbe.of(level);
         if (level.dimension() != Level.OVERWORLD || !OreConfig.resolved().kimberlitePipeActive()
-                || !(level.getChunkSource().getGenerator() instanceof NoiseBasedChunkGenerator generator)) {
+                || probe.isEmpty()) {
             return CompletableFuture.completedFuture(Measurement.NONE);
         }
         KimberliteParams.PlumeParams params = Kimberlite.params().plume();
         PipeGrade grade = Kimberlite.grade();
-        return Kimberlite.plumesReaching(level.getSeed(), new LevelTerrainProbe(level, generator),
+        return Kimberlite.plumesReaching(level.getSeed(), probe.get(),
                 level.getSeaLevel(), pos.getX(), pos.getZ(), pos.getX(), pos.getZ())
                 .thenApply(paths -> combine(paths, params, grade, level.getSeed(), pos.getX(), pos.getZ()));
     }

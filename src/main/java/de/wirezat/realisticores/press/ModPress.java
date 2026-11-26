@@ -2,7 +2,6 @@ package de.wirezat.realisticores.press;
 
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.RealisticOres;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
