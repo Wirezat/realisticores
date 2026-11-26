@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ore.ActiveMineral;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -21,7 +22,8 @@ public final class CoalOres {
     public static Map<Rank, String> blocks(List<ActiveMineral> active) {
         Map<Rank, String> blocks = new EnumMap<>(Rank.class);
         for (ActiveMineral mineral : active) {
-            mineral.zones().forEach(zone -> blocks.put(Rank.valueOf(zone), mineral.block()));
+            mineral.zones().stream().filter(CoalOres::isRank)
+                    .forEach(zone -> blocks.put(Rank.valueOf(zone), mineral.block()));
         }
         return blocks;
     }
@@ -35,8 +37,32 @@ public final class CoalOres {
     public static Set<Rank> coalRanks(List<ActiveMineral> active) {
         Set<Rank> ranks = EnumSet.noneOf(Rank.class);
         active.stream().filter(ActiveMineral::enabled).flatMap(mineral -> mineral.zones().stream())
-                .forEach(zone -> ranks.add(Rank.valueOf(zone)));
+                .filter(CoalOres::isRank).forEach(zone -> ranks.add(Rank.valueOf(zone)));
         return ranks;
+    }
+
+    /**
+     * Lists the minerals that accompany the coal instead of forming a seam.
+     *
+     * @param active minerals of the coal basin, enabled or replaced
+     * @return minerals none of whose zones is a coal rank
+     */
+    public static List<ActiveMineral> accessories(List<ActiveMineral> active) {
+        return active.stream().filter(mineral -> isAccessory(mineral.zones())).toList();
+    }
+
+    /**
+     * Tells whether a mineral accompanies the coal instead of forming a seam.
+     *
+     * @param zones rock zones of the mineral
+     * @return true if none of the zones is a coal rank
+     */
+    public static boolean isAccessory(List<String> zones) {
+        return zones.stream().noneMatch(CoalOres::isRank);
+    }
+
+    private static boolean isRank(String zone) {
+        return Arrays.stream(Rank.values()).anyMatch(rank -> rank.name().equals(zone));
     }
 
     /**

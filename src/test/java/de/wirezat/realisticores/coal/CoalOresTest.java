@@ -33,6 +33,14 @@ class CoalOresTest {
     }
 
     @Test
+    void accessoryMineralsTakeNoRank() {
+        ActiveMineral pyrite = new ActiveMineral("pyrite", List.of("BLACK_SHALE"), 0.03, false, "m:pyrite_ore", true);
+        assertEquals(Map.of(Rank.LIGNITE, "m:lignite"),
+                CoalOres.blocks(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
+        assertEquals(List.of(pyrite), CoalOres.accessories(List.of(mineral("lignite", Rank.LIGNITE, "m:lignite"), pyrite)));
+    }
+
+    @Test
     void basinGeneratesOnlyWithAnOreItCanHold() {
         assertTrue(CoalOres.generates(BasinType.FOLDED, Set.of(Rank.ANTHRACITE)));
         assertFalse(CoalOres.generates(BasinType.HARD_COAL, Set.of(Rank.ANTHRACITE)));

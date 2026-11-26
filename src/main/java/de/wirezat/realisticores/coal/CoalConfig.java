@@ -89,6 +89,7 @@ public final class CoalConfig {
     private static final Supplier<Double> SURFACE_SOIL_THRESHOLD;
     private static final Supplier<Double> SURFACE_SOIL_WAVELENGTH;
     private static final Supplier<Integer> SURFACE_SOIL_FRINGE;
+    private static final Map<String, Supplier<Double>> MINERAL_FRACTIONS = new LinkedHashMap<>();
     private static final Map<String, Supplier<String>> MINERAL_REPLACEMENTS = new LinkedHashMap<>();
     private static final Map<String, String> DEFAULT_REPLACEMENTS = Map.of("coal", "realisticores:black_shale",
             "lignite", "realisticores:mudstone", "anthracite", "realisticores:black_shale");
@@ -278,13 +279,18 @@ public final class CoalConfig {
                 "Height in blocks of an eroded seam above the ground up to which coaly soil frays out.");
         b.pop();
 
-        b.comment("Block placed instead of each ore while it is switched off.").push("minerals");
+        b.comment("Share of each mineral and the block placed while its ore is switched off.").push("minerals");
         for (Mineral mineral : OreConfig.registry().deposits().get(OreConfig.COAL_BASIN).minerals()) {
             ModConfigSpec.ConfigValue<String> replacement = b.comment("Block placed instead of " + mineral.ore()
                     + " while " + mineral.ore() + " is not in enabledOres; empty keeps the rock of the zone.")
                     .define(camelCase(mineral.ore()) + "Replacement", DEFAULT_REPLACEMENTS.getOrDefault(mineral.ore(), ""),
                             OreConfig::isValidReplacement);
             MINERAL_REPLACEMENTS.put(mineral.ore(), replacement::get);
+            if (!CoalOres.isAccessory(mineral.zones())) {
+                continue;
+            }
+            MINERAL_FRACTIONS.put(mineral.ore(), decimal(b, camelCase(mineral.ore()) + "Fraction", mineral.fraction(), 0.0, 1.0,
+                    "Share of rock blocks in " + mineral.zones() + " that become " + mineral.ore() + " ore."));
         }
         b.pop();
         SPEC = b.build();
@@ -322,6 +328,17 @@ public final class CoalConfig {
         Map<String, String> replacements = new HashMap<>();
         MINERAL_REPLACEMENTS.forEach((ore, value) -> replacements.put(ore, value.get()));
         return replacements;
+    }
+
+    /**
+     * Reads the configured shares of the minerals that accompany the coal.
+     *
+     * @return share by ore id
+     */
+    public static Map<String, Double> fractions() {
+        Map<String, Double> fractions = new HashMap<>();
+        MINERAL_FRACTIONS.forEach((ore, value) -> fractions.put(ore, value.get()));
+        return fractions;
     }
 
     /**

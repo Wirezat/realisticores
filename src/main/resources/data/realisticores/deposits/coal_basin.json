@@ -2,6 +2,9 @@
   "minerals": [
     {"ore": "coal", "zones": ["HARD_COAL"], "fraction": 1.0},
     {"ore": "lignite", "zones": ["LIGNITE"], "fraction": 1.0},
-    {"ore": "anthracite", "zones": ["ANTHRACITE"], "fraction": 1.0}
+    {"ore": "anthracite", "zones": ["ANTHRACITE"], "fraction": 1.0},
+    {"ore": "uranium", "zones": ["SANDSTONE"], "fraction": 0.02},
+    {"ore": "pyrite", "zones": ["BLACK_SHALE"], "fraction": 0.03},
+    {"ore": "sal_ammoniac", "zones": ["SEAM_FIRE"], "fraction": 0.3}
   ]
 }
