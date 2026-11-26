@@ -66,6 +66,7 @@
   "command.realisticores.locate.hard_coal": "Steinkohle-Becken",
   "command.realisticores.locate.lignite": "Braunkohle-Becken",
   "command.realisticores.locate.anthracite": "Anthrazit-Becken",
+  "command.realisticores.locate.porphyry": "Porphyr-Kupferlagerstätte",
   "block.realisticores.coal_pieces": "Kohlebrocken",
   "block.realisticores.lignite_pieces": "Braunkohlebrocken",
   "block.realisticores.anthracite_pieces": "Anthrazitbrocken",

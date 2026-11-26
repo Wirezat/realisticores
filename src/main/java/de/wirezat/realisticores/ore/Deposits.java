@@ -2,12 +2,14 @@ package de.wirezat.realisticores.ore;
 
 import de.wirezat.realisticores.coal.CoalBasin;
 import de.wirezat.realisticores.kimberlite.KimberlitePipe;
+import de.wirezat.realisticores.porphyry.PorphyryCopper;
 import java.util.ArrayList;
 import java.util.List;
 
 /** All deposit kinds of the mod, in the order they are carved into a chunk. */
 public final class Deposits {
-    public static final List<DepositType> ALL = List.of(KimberlitePipe.INSTANCE, CoalBasin.INSTANCE);
+    public static final List<DepositType> ALL = List.of(KimberlitePipe.INSTANCE, CoalBasin.INSTANCE,
+            PorphyryCopper.INSTANCE);
 
     private Deposits() {
     }

@@ -66,6 +66,7 @@
   "command.realisticores.locate.hard_coal": "Hard Coal Basin",
   "command.realisticores.locate.lignite": "Lignite Basin",
   "command.realisticores.locate.anthracite": "Anthracite Basin",
+  "command.realisticores.locate.porphyry": "Porphyry Copper Deposit",
   "block.realisticores.coal_pieces": "Pieces of Coal",
   "block.realisticores.lignite_pieces": "Pieces of Lignite",
   "block.realisticores.anthracite_pieces": "Pieces of Anthracite",
