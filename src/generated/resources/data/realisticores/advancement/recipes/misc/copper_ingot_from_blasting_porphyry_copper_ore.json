@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_potassic_chalcopyrite_ore": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:potassic_chalcopyrite_ore"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:copper_ingot_from_blasting_porphyry_copper_ore"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_potassic_chalcopyrite_ore"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:copper_ingot_from_blasting_porphyry_copper_ore"
+    ]
+  }
+}

@@ -50,6 +50,8 @@ final class ModItemTags extends ItemTagsProvider {
                 .forEach(name -> copy(ModBlockTags.common(name), common(name)));
         copy(Tags.Blocks.ORES, Tags.Items.ORES);
         copy(BlockTags.IRON_ORES, ItemTags.IRON_ORES);
+        copy(BlockTags.COPPER_ORES, ItemTags.COPPER_ORES);
+        copy(BlockTags.GOLD_ORES, ItemTags.GOLD_ORES);
         copy(BlockTags.DIRT, ItemTags.DIRT);
         tag(ItemTags.BEACON_PAYMENT_ITEMS).add(ModItems.NATURAL_DIAMOND.get());
         tag(ItemTags.COALS).add(ModItems.LIGNITE.get(), ModItems.ANTHRACITE.get());

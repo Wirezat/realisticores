@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chalcopyrite_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:chalcopyrite_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:chalcopyrite_from_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_chalcopyrite_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:chalcopyrite_from_block"
+    ]
+  }
+}

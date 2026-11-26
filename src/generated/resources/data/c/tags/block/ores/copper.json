@@ -1,0 +1,10 @@
+{
+  "values": [
+    "realisticores:malachite_ore",
+    "realisticores:azurite_ore",
+    "realisticores:leached_chalcopyrite_ore",
+    "realisticores:potassic_chalcopyrite_ore",
+    "realisticores:phyllic_chalcopyrite_ore",
+    "realisticores:breccia_chalcopyrite_ore"
+  ]
+}

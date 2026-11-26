@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_azurite",
+  "description": {
+    "color": "#2D4FB8",
+    "translate": "trim_material.realisticores.azurite"
+  },
+  "ingredient": "realisticores:azurite",
+  "item_model_index": 0.9
+}

@@ -5,6 +5,11 @@
     "#c:raw_materials/ilmenite",
     "#c:raw_materials/uranium",
     "#c:raw_materials/siderite",
-    "#c:raw_materials/iron"
+    "#c:raw_materials/iron",
+    "#c:raw_materials/malachite",
+    "#c:raw_materials/copper",
+    "#c:raw_materials/azurite",
+    "#c:raw_materials/chalcopyrite",
+    "#c:raw_materials/molybdenite"
   ]
 }

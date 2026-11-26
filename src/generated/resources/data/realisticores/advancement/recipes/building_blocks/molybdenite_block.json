@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_molybdenite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "realisticores:molybdenite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "realisticores:molybdenite_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_molybdenite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "realisticores:molybdenite_block"
+    ]
+  }
+}

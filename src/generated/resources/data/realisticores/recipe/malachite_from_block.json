@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "realisticores:malachite_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "realisticores:malachite"
+  }
+}

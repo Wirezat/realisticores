@@ -11,6 +11,12 @@
     "#c:ores/pyrite",
     "#c:ores/sal_ammoniac",
     "#c:ores/siderite",
-    "#c:ores/iron"
+    "#c:ores/iron",
+    "#c:ores/malachite",
+    "#c:ores/copper",
+    "#c:ores/azurite",
+    "#c:ores/chalcopyrite",
+    "#c:ores/molybdenite",
+    "#c:ores/gold"
   ]
 }

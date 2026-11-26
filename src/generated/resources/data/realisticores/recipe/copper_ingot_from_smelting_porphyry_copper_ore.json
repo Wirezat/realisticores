@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "group": "copper_ingot",
+  "ingredient": [
+    {
+      "item": "realisticores:malachite_ore"
+    },
+    {
+      "item": "realisticores:azurite_ore"
+    },
+    {
+      "item": "realisticores:leached_chalcopyrite_ore"
+    },
+    {
+      "item": "realisticores:potassic_chalcopyrite_ore"
+    },
+    {
+      "item": "realisticores:phyllic_chalcopyrite_ore"
+    },
+    {
+      "item": "realisticores:breccia_chalcopyrite_ore"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:copper_ingot"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "asset_name": "realisticores_malachite",
+  "description": {
+    "color": "#2E9A62",
+    "translate": "trim_material.realisticores.malachite"
+  },
+  "ingredient": "realisticores:malachite",
+  "item_model_index": 0.7
+}

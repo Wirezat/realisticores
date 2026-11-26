@@ -4,6 +4,7 @@ import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.RealisticOres;
 import de.wirezat.realisticores.indicator.ModPan;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -19,6 +20,9 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 
 /** Block tags of the mod: common ore and storage tags, tool requirements, soils and carvable rocks. */
 final class ModBlockTags extends BlockTagsProvider {
+    private static final Map<String, TagKey<Block>> VANILLA_ORES = Map.of("ores/iron", BlockTags.IRON_ORES,
+            "ores/copper", BlockTags.COPPER_ORES, "ores/gold", BlockTags.GOLD_ORES);
+
     /**
      * Creates the provider.
      *
@@ -40,9 +44,11 @@ final class ModBlockTags extends BlockTagsProvider {
         }
         for (Resources.Ore ore : Resources.ORES) {
             ore.tags().forEach(name -> tag(common(name)).add(ore.block().get()));
-            if (ore.tags().contains("ores/iron")) {
-                tag(BlockTags.IRON_ORES).add(ore.block().get());
-            }
+            VANILLA_ORES.forEach((name, vanilla) -> {
+                if (ore.tags().contains(name)) {
+                    tag(vanilla).add(ore.block().get());
+                }
+            });
             mining(ore.block(), Resources.Tool.PICKAXE, ore.tier(), ore.carved());
         }
         Resources.ORES.stream().flatMap(ore -> ore.tags().stream()).distinct()

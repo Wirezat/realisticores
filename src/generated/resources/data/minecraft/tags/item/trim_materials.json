@@ -12,6 +12,10 @@
     "realisticores:raw_uranium",
     "realisticores:pyrite",
     "realisticores:sal_ammoniac",
-    "realisticores:raw_siderite"
+    "realisticores:raw_siderite",
+    "realisticores:malachite",
+    "realisticores:azurite",
+    "realisticores:chalcopyrite",
+    "realisticores:molybdenite"
   ]
 }

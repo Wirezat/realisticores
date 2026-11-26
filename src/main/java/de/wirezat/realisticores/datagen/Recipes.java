@@ -33,8 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 /** Crafting, smelting and press recipes of the mod, and the vanilla recipes it opens to all coals. */
 final class Recipes extends RecipeProvider {
-    private static final String IRON_GROUP = "iron_ingot";
-    private static final float IRON_EXPERIENCE = 0.7F;
+    private static final float INGOT_EXPERIENCE = 0.7F;
     private static final int SMELTING_TIME = 200;
     private static final int BLASTING_TIME = 100;
     private static final float GRAPHITE_EXPERIENCE = 0.2F;
@@ -59,8 +58,15 @@ final class Recipes extends RecipeProvider {
         }
         Ingredient ironstone = Ingredient.of(ModBlocks.SHALE_IRONSTONE_ORE, ModBlocks.MUDSTONE_IRONSTONE_ORE,
                 ModBlocks.BLACKBAND_IRONSTONE);
-        iron(output, ironstone, "ironstone_ore", ModBlocks.SHALE_IRONSTONE_ORE);
-        iron(output, Ingredient.of(ModItems.RAW_SIDERITE), "raw_siderite", ModItems.RAW_SIDERITE);
+        smelt(output, ironstone, Items.IRON_INGOT, "ironstone_ore", ModBlocks.SHALE_IRONSTONE_ORE);
+        smelt(output, Ingredient.of(ModItems.RAW_SIDERITE), Items.IRON_INGOT, "raw_siderite", ModItems.RAW_SIDERITE);
+        Ingredient copperOres = Ingredient.of(ModBlocks.MALACHITE_ORE, ModBlocks.AZURITE_ORE,
+                ModBlocks.LEACHED_CHALCOPYRITE_ORE, ModBlocks.POTASSIC_CHALCOPYRITE_ORE,
+                ModBlocks.PHYLLIC_CHALCOPYRITE_ORE, ModBlocks.BRECCIA_CHALCOPYRITE_ORE);
+        smelt(output, copperOres, Items.COPPER_INGOT, "porphyry_copper_ore", ModBlocks.POTASSIC_CHALCOPYRITE_ORE);
+        smelt(output, Ingredient.of(ModItems.MALACHITE), Items.COPPER_INGOT, "malachite", ModItems.MALACHITE);
+        smelt(output, Ingredient.of(ModItems.AZURITE), Items.COPPER_INGOT, "azurite", ModItems.AZURITE);
+        smelt(output, Ingredient.of(ModItems.CHALCOPYRITE), Items.COPPER_INGOT, "chalcopyrite", ModItems.CHALCOPYRITE);
         graphite(output, "c:storage_blocks/coal", 2, "graphite_from_coal_block");
         graphite(output, "c:storage_blocks/anthracite", 4, "graphite_from_anthracite_block");
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.IRON_PAN)
@@ -115,20 +121,23 @@ final class Recipes extends RecipeProvider {
     }
 
     /**
-     * Adds smelting and blasting of an iron source into iron ingots.
+     * Adds smelting and blasting of a metal source into the vanilla ingot, grouped with the vanilla recipes.
      *
      * @param output recipe output
-     * @param ingredient the iron source
+     * @param ingredient the metal source
+     * @param ingot the vanilla ingot it yields
      * @param name name of the source in the recipe ids
      * @param unlock item whose pickup unlocks the recipes
      */
-    private static void iron(RecipeOutput output, Ingredient ingredient, String name, ItemLike unlock) {
-        SimpleCookingRecipeBuilder.smelting(ingredient, RecipeCategory.MISC, Items.IRON_INGOT, IRON_EXPERIENCE,
-                SMELTING_TIME).group(IRON_GROUP).unlockedBy(getHasName(unlock), has(unlock))
-                .save(output, id("iron_ingot_from_smelting_" + name));
-        SimpleCookingRecipeBuilder.blasting(ingredient, RecipeCategory.MISC, Items.IRON_INGOT, IRON_EXPERIENCE,
-                BLASTING_TIME).group(IRON_GROUP).unlockedBy(getHasName(unlock), has(unlock))
-                .save(output, id("iron_ingot_from_blasting_" + name));
+    private static void smelt(RecipeOutput output, Ingredient ingredient, ItemLike ingot, String name,
+            ItemLike unlock) {
+        String group = getItemName(ingot);
+        SimpleCookingRecipeBuilder.smelting(ingredient, RecipeCategory.MISC, ingot, INGOT_EXPERIENCE, SMELTING_TIME)
+                .group(group).unlockedBy(getHasName(unlock), has(unlock))
+                .save(output, id(group + "_from_smelting_" + name));
+        SimpleCookingRecipeBuilder.blasting(ingredient, RecipeCategory.MISC, ingot, INGOT_EXPERIENCE, BLASTING_TIME)
+                .group(group).unlockedBy(getHasName(unlock), has(unlock))
+                .save(output, id(group + "_from_blasting_" + name));
     }
 
     /**
