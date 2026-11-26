@@ -44,10 +44,12 @@ public final class SeedState {
      * Gives the duration of a run.
      *
      * @param recipeTime duration without a seed in ticks
-     * @return duration with the seed at work, at least one tick
+     * @return duration with the seed at work, from one tick up to {@link PressRecipe#MAX_TIME}
      */
     public int time(int recipeTime) {
-        return left > 0 ? Math.max(1, (int) Math.round(recipeTime / seed.speed())) : recipeTime;
+        return left > 0
+                ? (int) Math.max(1, Math.min(PressRecipe.MAX_TIME, Math.round(recipeTime / seed.speed())))
+                : recipeTime;
     }
 
     /**

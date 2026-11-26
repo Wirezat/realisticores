@@ -26,13 +26,14 @@ import net.minecraft.world.level.Level;
  */
 public record PressRecipe(Ingredient material, int materialCount, Ingredient catalyst, ItemStack result, int time)
         implements Recipe<PressInput> {
+    public static final int MAX_TIME = Short.MAX_VALUE;
 
     public static final MapCodec<PressRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Ingredient.CODEC_NONEMPTY.fieldOf("material").forGetter(PressRecipe::material),
             Codec.intRange(1, 64).optionalFieldOf("material_count", 1).forGetter(PressRecipe::materialCount),
             Ingredient.CODEC_NONEMPTY.fieldOf("catalyst").forGetter(PressRecipe::catalyst),
             ItemStack.CODEC.fieldOf("result").forGetter(PressRecipe::result),
-            Codec.intRange(1, 1_000_000).fieldOf("time").forGetter(PressRecipe::time))
+            Codec.intRange(1, MAX_TIME).fieldOf("time").forGetter(PressRecipe::time))
             .apply(instance, PressRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PressRecipe> STREAM_CODEC = StreamCodec.composite(

@@ -33,6 +33,13 @@ class SeedStateTest {
     }
 
     @Test
+    void aSlowSeedNeverStretchesTheRunBeyondWhatTheMenuCanShow() {
+        SeedState state = new SeedState();
+        state.load(new PressSeed(4, 0.5, 1));
+        assertEquals(PressRecipe.MAX_TIME, state.time(PressRecipe.MAX_TIME));
+    }
+
+    @Test
     void fractionsOfTheYieldAddUpOverSeveralRuns() {
         SeedState state = new SeedState();
         state.load(new PressSeed(16, 1.5, 1.5));

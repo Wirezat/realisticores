@@ -142,7 +142,6 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         }
         boolean canWork = recipe.isPresent() && press.outputFits(recipe.get().value());
         boolean wasLit = press.cycle.isLit();
-        int oldProgress = press.cycle.progress();
         PressCycle.Result result = press.cycle.tick(canWork, burnTime,
                 press.seeds.time(recipe.map(r -> r.value().time()).orElse(1)));
         if (result.burnFuel()) {
@@ -158,10 +157,8 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
         if (wasLit != press.cycle.isLit()) {
             level.setBlock(pos, state.setValue(CrystalPressBlock.LIT, press.cycle.isLit()), 3);
         }
-        if (result.burnFuel() || result.craft()) {
+        if (result.burnFuel() || result.craft() || wasLit != press.cycle.isLit()) {
             press.setChanged();
-        } else if (wasLit || press.cycle.progress() != oldProgress) {
-            level.blockEntityChanged(pos);
         }
     }
 
