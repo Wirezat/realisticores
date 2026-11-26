@@ -79,6 +79,11 @@ public final class CoalConfig {
     private static final Supplier<Integer> ROCK_MIN_FLOOR_MUDSTONE;
     private static final Supplier<Integer> ROCK_MAX_FLOOR_MUDSTONE;
     private static final Supplier<Double> ROCK_WAVELENGTH;
+    private static final Supplier<Double> SURFACE_LOOSE_DENSITY;
+    private static final Supplier<Integer> SURFACE_LOOSE_MAX_HEIGHT;
+    private static final Supplier<Double> SURFACE_SOIL_THRESHOLD;
+    private static final Supplier<Double> SURFACE_SOIL_WAVELENGTH;
+    private static final Supplier<Integer> SURFACE_SOIL_FRINGE;
 
     static {
         CoalParams d = CoalParams.defaults();
@@ -251,6 +256,19 @@ public final class CoalConfig {
         ROCK_WAVELENGTH = decimal(b, "wavelength", d.rock().wavelength(), 1.0, 5000.0,
                 "Size of thick and thin zones in blocks.");
         b.pop();
+
+        b.comment("Loose coal and coaly soil above a seam.").push("surface");
+        SURFACE_LOOSE_DENSITY = decimal(b, "looseDensity", d.surface().looseDensity(), 0.0, 1.0,
+                "Share of outcrop columns with loose coal; 0 turns it off.");
+        SURFACE_LOOSE_MAX_HEIGHT = integer(b, "looseMaxHeight", d.surface().looseMaxHeight(), 0, 200,
+                "Height in blocks of an eroded seam above the ground up to which its coal lies around.");
+        SURFACE_SOIL_THRESHOLD = decimal(b, "soilThreshold", d.surface().soilThreshold(), -1.0, 1.0,
+                "Noise value (-1..1) above which the soil of an outcrop is coaly; 1 turns it off.");
+        SURFACE_SOIL_WAVELENGTH = decimal(b, "soilWavelength", d.surface().soilWavelength(), 1.0, 5000.0,
+                "Size of coaly patches in blocks.");
+        SURFACE_SOIL_FRINGE = integer(b, "soilFringe", d.surface().soilFringe(), 0, 200,
+                "Height in blocks of an eroded seam above the ground up to which coaly soil frays out.");
+        b.pop();
         SPEC = b.build();
     }
 
@@ -302,7 +320,9 @@ public final class CoalConfig {
                 new CoalParams.RockParams(ROCK_MIN_SHALE.get(), ROCK_MAX_SHALE.get(), ROCK_MIN_BLACK_SHALE.get(),
                         ROCK_MAX_BLACK_SHALE.get(), ROCK_MIN_FIRECLAY.get(), ROCK_MAX_FIRECLAY.get(),
                         ROCK_MIN_ROOF_MUDSTONE.get(), ROCK_MAX_ROOF_MUDSTONE.get(), ROCK_MIN_FLOOR_MUDSTONE.get(),
-                        ROCK_MAX_FLOOR_MUDSTONE.get(), ROCK_WAVELENGTH.get()))
+                        ROCK_MAX_FLOOR_MUDSTONE.get(), ROCK_WAVELENGTH.get()),
+                new CoalParams.SurfaceParams(SURFACE_LOOSE_DENSITY.get(), SURFACE_LOOSE_MAX_HEIGHT.get(),
+                        SURFACE_SOIL_THRESHOLD.get(), SURFACE_SOIL_WAVELENGTH.get(), SURFACE_SOIL_FRINGE.get()))
                 .sanitized();
     }
 }

@@ -25,14 +25,15 @@ public final class Coal {
     }
 
     private record State(CoalParams params, BasinGenerator generator, SeamModel model,
-            ConcurrentMap<BasinKey, Optional<ResolvedBasin>> basins) {
+            SurfaceHint surface, ConcurrentMap<BasinKey, Optional<ResolvedBasin>> basins) {
     }
 
     private static State state() {
         State current = state;
         if (current == null) {
             CoalParams params = CoalConfig.params();
-            current = new State(params, new BasinGenerator(params), new SeamModel(params), new ConcurrentHashMap<>());
+            current = new State(params, new BasinGenerator(params), new SeamModel(params),
+                    new SurfaceHint(params.surface()), new ConcurrentHashMap<>());
             state = current;
         }
         return current;
@@ -50,6 +51,15 @@ public final class Coal {
      */
     public static SeamModel model() {
         return state().model();
+    }
+
+    /**
+     * Returns the shared rule for loose coal and coaly soil.
+     *
+     * @return rule for the active parameters
+     */
+    public static SurfaceHint surface() {
+        return state().surface();
     }
 
     /**

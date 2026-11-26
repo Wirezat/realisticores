@@ -12,12 +12,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 
-/** Writes the seams of coal basins and their host rocks into a chunk. */
+/** Writes the seams of coal basins, their host rocks and the coaly soil above them into a chunk. */
 public final class CoalCarver {
+    private static final int SOIL_DEPTH = 4;
+
     private CoalCarver() {
     }
 
@@ -51,6 +54,9 @@ public final class CoalCarver {
                     int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
                     write(chunk, x, z, surfaceY, column.get(), seamBlock(column.get().rank(), blocks),
                             model.isOutcrop(x, z));
+                    if (Coal.surface().soil(seed, column.get(), surfaceY, x, z)) {
+                        writeSoil(chunk, x, z, surfaceY, column.get().rank() == Rank.LIGNITE);
+                    }
                 }
             }
         }
@@ -68,6 +74,20 @@ public final class CoalCarver {
                 if (old.is(BlockTags.BASE_STONE_OVERWORLD) || throughSoil && old.is(BlockTags.DIRT)) {
                     chunk.setBlockState(pos, rock, false);
                 }
+            }
+        }
+    }
+
+    private static void writeSoil(ChunkAccess chunk, int x, int z, int surfaceY, boolean lignite) {
+        Block dirt = lignite ? ModBlocks.LIGNITIC_DIRT.get() : ModBlocks.COALY_DIRT.get();
+        Block grass = lignite ? ModBlocks.LIGNITIC_GRASS_BLOCK.get() : ModBlocks.COALY_GRASS_BLOCK.get();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int y = surfaceY; y > surfaceY - SOIL_DEPTH; y--) {
+            BlockState old = chunk.getBlockState(pos.set(x, y, z));
+            if (old.is(Blocks.GRASS_BLOCK)) {
+                chunk.setBlockState(pos, grass.withPropertiesOf(old), false);
+            } else if (old.is(Blocks.DIRT)) {
+                chunk.setBlockState(pos, dirt.defaultBlockState(), false);
             }
         }
     }

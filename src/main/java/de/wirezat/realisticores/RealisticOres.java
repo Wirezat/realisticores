@@ -31,6 +31,7 @@ public class RealisticOres {
         ModBlocks.register(modBus);
         ModItems.register(modBus);
         ModTabs.register(modBus);
+        ModFeatures.register(modBus);
         ModPress.register(modBus);
         ModPan.register(modBus);
         NeoForge.EVENT_BUS.addListener(TrailEffects::tick);

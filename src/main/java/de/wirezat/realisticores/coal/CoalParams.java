@@ -11,9 +11,10 @@ package de.wirezat.realisticores.coal;
  * @param fold folds and anthracite core of folded basins
  * @param seam shape of the seams
  * @param rock thickness of the rocks around a seam
+ * @param surface loose coal and coaly soil above a seam
  */
 public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hardCoal, TypeParams lignite,
-        TypeParams folded, FoldParams fold, SeamParams seam, RockParams rock) {
+        TypeParams folded, FoldParams fold, SeamParams seam, RockParams rock, SurfaceParams surface) {
 
     /**
      * Position, size and outline of basins.
@@ -126,6 +127,19 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
     }
 
     /**
+     * Loose coal and coaly soil above a seam.
+     *
+     * @param looseDensity share of outcrop columns with loose coal
+     * @param looseMaxHeight height in blocks of an eroded seam above the ground up to which its coal lies around
+     * @param soilThreshold noise value (-1..1) above which the soil of an outcrop is coaly
+     * @param soilWavelength size of coaly patches in blocks
+     * @param soilFringe height in blocks of an eroded seam above the ground up to which coaly soil frays out
+     */
+    public record SurfaceParams(double looseDensity, int looseMaxHeight, double soilThreshold, double soilWavelength,
+            int soilFringe) {
+    }
+
+    /**
      * Gives the settings of a basin type.
      *
      * @param type the type
@@ -167,7 +181,8 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                         Math.max(r.minBlackShale(), r.maxBlackShale()), r.minFireclay(),
                         Math.max(r.minFireclay(), r.maxFireclay()), r.minRoofMudstone(),
                         Math.max(r.minRoofMudstone(), r.maxRoofMudstone()), r.minFloorMudstone(),
-                        Math.max(r.minFloorMudstone(), r.maxFloorMudstone()), r.wavelength()));
+                        Math.max(r.minFloorMudstone(), r.maxFloorMudstone()), r.wavelength()),
+                surface);
     }
 
     /**
@@ -185,6 +200,7 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                 new FoldParams(10.0, 18.0, 200.0, 300.0, 0.55),
                 new SeamParams(6.0, 1.25, 0.6, 180.0, 0.1, 0.5, 6.0, 300.0, 0.4, 400.0, 3, 4.0, 10.0, 10.0, 200.0,
                         -0.125, 14.0),
-                new RockParams(1, 2, 1, 2, 1, 2, 3, 5, 2, 4, 60.0));
+                new RockParams(1, 2, 1, 2, 1, 2, 3, 5, 2, 4, 60.0),
+                new SurfaceParams(0.04, 8, -0.125, 14.0, 2));
     }
 }
