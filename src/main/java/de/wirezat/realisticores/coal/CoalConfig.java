@@ -89,6 +89,20 @@ public final class CoalConfig {
     private static final Supplier<Double> SURFACE_SOIL_THRESHOLD;
     private static final Supplier<Double> SURFACE_SOIL_WAVELENGTH;
     private static final Supplier<Integer> SURFACE_SOIL_FRINGE;
+    private static final Supplier<Integer> ACC_SAND_MIN;
+    private static final Supplier<Integer> ACC_SAND_MAX;
+    private static final Supplier<Integer> ACC_LIGNITE_SAND_MIN;
+    private static final Supplier<Integer> ACC_LIGNITE_SAND_MAX;
+    private static final Supplier<Double> ACC_SAND_COVER;
+    private static final Supplier<Double> ACC_SAND_WAVELENGTH;
+    private static final Supplier<Double> ACC_FRONT_MIN;
+    private static final Supplier<Double> ACC_FRONT_MAX;
+    private static final Supplier<Integer> ACC_FRONT_BAND;
+    private static final Supplier<Integer> ACC_FIRE_CELL;
+    private static final Supplier<Double> ACC_FIRE_CHANCE;
+    private static final Supplier<Integer> ACC_FIRE_MIN_RADIUS;
+    private static final Supplier<Integer> ACC_FIRE_MAX_RADIUS;
+    private static final Supplier<Integer> ACC_FIRE_DEPTH;
     private static final Map<String, Supplier<Double>> MINERAL_FRACTIONS = new LinkedHashMap<>();
     private static final Map<String, Supplier<String>> MINERAL_REPLACEMENTS = new LinkedHashMap<>();
     private static final Map<String, String> DEFAULT_REPLACEMENTS = Map.of("coal", "realisticores:black_shale",
@@ -279,6 +293,37 @@ public final class CoalConfig {
                 "Height in blocks of an eroded seam above the ground up to which coaly soil frays out.");
         b.pop();
 
+        b.comment("Sandstone with its roll front and the seam fires.").push("accessories");
+        ACC_SAND_MIN = integer(b, "sandMin", d.accessories().sandMin(), 0, 200,
+                "Thinnest sandstone above a hard coal seam in blocks.");
+        ACC_SAND_MAX = integer(b, "sandMax", d.accessories().sandMax(), 0, 200,
+                "Thickest sandstone above a hard coal seam in blocks.");
+        ACC_LIGNITE_SAND_MIN = integer(b, "ligniteSandMin", d.accessories().ligniteSandMin(), 0, 200,
+                "Thinnest sandstone above a lignite seam in blocks.");
+        ACC_LIGNITE_SAND_MAX = integer(b, "ligniteSandMax", d.accessories().ligniteSandMax(), 0, 200,
+                "Thickest sandstone above a lignite seam in blocks.");
+        ACC_SAND_COVER = decimal(b, "sandCover", d.accessories().sandCover(), 0.0, 1.0,
+                "Share of the area with sandstone.");
+        ACC_SAND_WAVELENGTH = decimal(b, "sandWavelength", d.accessories().sandWavelength(), 1.0, 5000.0,
+                "Size of sandstone lenses in blocks.");
+        ACC_FRONT_MIN = decimal(b, "frontMin", d.accessories().frontMin(), 0.0, 1.0,
+                "Innermost position of the roll front: distance to the basin centre, 0 in the centre and 1 at the rim.");
+        ACC_FRONT_MAX = decimal(b, "frontMax", d.accessories().frontMax(), 0.0, 1.0,
+                "Outermost position of the roll front: distance to the basin centre, 0 in the centre and 1 at the rim.");
+        ACC_FRONT_BAND = integer(b, "frontBand", d.accessories().frontBand(), 1, 200,
+                "Width in blocks of the uranium band inside the roll front.");
+        ACC_FIRE_CELL = integer(b, "fireCell", d.accessories().fireCell(), 16, 10000,
+                "Grid cell size of seam fires in blocks.");
+        ACC_FIRE_CHANCE = decimal(b, "fireChance", d.accessories().fireChance(), 0.0, 1.0,
+                "Probability that a cell holds a fire; 0 turns seam fires off.");
+        ACC_FIRE_MIN_RADIUS = integer(b, "fireMinRadius", d.accessories().fireMinRadius(), 1, 8,
+                "Smallest fire radius in blocks.");
+        ACC_FIRE_MAX_RADIUS = integer(b, "fireMaxRadius", d.accessories().fireMaxRadius(), 1, 8,
+                "Largest fire radius in blocks.");
+        ACC_FIRE_DEPTH = integer(b, "fireDepth", d.accessories().fireDepth(), 1, 32,
+                "Blocks below the surface that burn.");
+        b.pop();
+
         b.comment("Share of each mineral and the block placed while its ore is switched off.").push("minerals");
         for (Mineral mineral : OreConfig.registry().deposits().get(OreConfig.COAL_BASIN).minerals()) {
             ModConfigSpec.ConfigValue<String> replacement = b.comment("Block placed instead of " + mineral.ore()
@@ -376,7 +421,12 @@ public final class CoalConfig {
                         ROCK_MIN_ROOF_MUDSTONE.get(), ROCK_MAX_ROOF_MUDSTONE.get(), ROCK_MIN_FLOOR_MUDSTONE.get(),
                         ROCK_MAX_FLOOR_MUDSTONE.get(), ROCK_WAVELENGTH.get()),
                 new CoalParams.SurfaceParams(SURFACE_LOOSE_DENSITY.get(), SURFACE_LOOSE_MAX_HEIGHT.get(),
-                        SURFACE_SOIL_THRESHOLD.get(), SURFACE_SOIL_WAVELENGTH.get(), SURFACE_SOIL_FRINGE.get()))
+                        SURFACE_SOIL_THRESHOLD.get(), SURFACE_SOIL_WAVELENGTH.get(), SURFACE_SOIL_FRINGE.get()),
+                new CoalParams.AccessoryParams(ACC_SAND_MIN.get(), ACC_SAND_MAX.get(), ACC_LIGNITE_SAND_MIN.get(),
+                        ACC_LIGNITE_SAND_MAX.get(), ACC_SAND_COVER.get(), ACC_SAND_WAVELENGTH.get(),
+                        ACC_FRONT_MIN.get(), ACC_FRONT_MAX.get(), ACC_FRONT_BAND.get(), ACC_FIRE_CELL.get(),
+                        ACC_FIRE_CHANCE.get(), ACC_FIRE_MIN_RADIUS.get(), ACC_FIRE_MAX_RADIUS.get(),
+                        ACC_FIRE_DEPTH.get()))
                 .sanitized();
     }
 }

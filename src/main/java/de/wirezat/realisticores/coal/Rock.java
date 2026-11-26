@@ -6,5 +6,6 @@ public enum Rock {
     FIRECLAY,
     BLACK_SHALE,
     SHALE,
-    MUDSTONE
+    MUDSTONE,
+    SANDSTONE
 }

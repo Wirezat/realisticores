@@ -25,7 +25,7 @@ public final class Coal {
     }
 
     private record State(CoalParams params, BasinGenerator generator, SeamModel model,
-            SurfaceHint surface, ConcurrentMap<BasinKey, Optional<ResolvedBasin>> basins) {
+            SurfaceHint surface, Accessories accessories, ConcurrentMap<BasinKey, Optional<ResolvedBasin>> basins) {
     }
 
     private static State state() {
@@ -33,7 +33,7 @@ public final class Coal {
         if (current == null) {
             CoalParams params = CoalConfig.params();
             current = new State(params, new BasinGenerator(params), new SeamModel(params),
-                    new SurfaceHint(params.surface()), new ConcurrentHashMap<>());
+                    new SurfaceHint(params.surface()), new Accessories(params.accessories()), new ConcurrentHashMap<>());
             state = current;
         }
         return current;
@@ -42,6 +42,15 @@ public final class Coal {
     /** Drops the cached objects and measured basins so the next use rebuilds them. */
     public static void invalidate() {
         state = null;
+    }
+
+    /**
+     * Returns the active generation parameters.
+     *
+     * @return parameters read from the config
+     */
+    public static CoalParams params() {
+        return state().params();
     }
 
     /**
@@ -60,6 +69,15 @@ public final class Coal {
      */
     public static SurfaceHint surface() {
         return state().surface();
+    }
+
+    /**
+     * Returns the shared rules for the minerals that accompany the coal.
+     *
+     * @return rules for the active parameters
+     */
+    public static Accessories accessories() {
+        return state().accessories();
     }
 
     /**

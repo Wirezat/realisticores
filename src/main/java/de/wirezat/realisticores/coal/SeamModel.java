@@ -14,6 +14,7 @@ public final class SeamModel {
     private static final int SPLIT_SALT = 200;
     private static final int HULL_SALT = 300;
     private static final int HULL_NOISES = 8;
+    private static final int SAND_SALT = 500;
     private static final long OUTCROP_SALT = 0x434F414C4F555443L;
 
     private final CoalParams params;
@@ -55,7 +56,8 @@ public final class SeamModel {
             claimSeam(claims, nearest, i, (int) Math.round(floor + seams.get(i).offset()), edge, x, z);
         }
         return claims.isEmpty() ? Optional.empty()
-                : Optional.of(new SeamColumn(rank(nearest, edge), withoutOverlap(claims)));
+                : Optional.of(new SeamColumn(rank(nearest, edge), withoutOverlap(claims), edge, nearest.basin().seed(),
+                        Math.sqrt(nearest.basin().longRadius() * nearest.basin().shortRadius())));
     }
 
     /**
@@ -142,6 +144,7 @@ public final class SeamModel {
             int floor = hull(basin, salt + 1, x, z, r.minFloorMudstone(), r.maxFloorMudstone());
             claim(claims, top + 1, roof, Rock.MUDSTONE);
             claim(claims, bottom - floor, floor, Rock.MUDSTONE);
+            claimSandstone(claims, basin, index, top + roof + 1, true, x, z);
             return;
         }
         int black = hull(basin, salt, x, z, r.minBlackShale(), r.maxBlackShale());
@@ -152,6 +155,18 @@ public final class SeamModel {
         claim(claims, top + 1 + black, roof, Rock.SHALE);
         claim(claims, bottom - fireclay, fireclay, Rock.FIRECLAY);
         claim(claims, bottom - fireclay - floor, floor, Rock.SHALE);
+        claimSandstone(claims, basin, index, top + 1 + black + roof, false, x, z);
+    }
+
+    private void claimSandstone(List<Layer> claims, Basin basin, int index, int bottom, boolean lignite, int x,
+            int z) {
+        CoalParams.AccessoryParams a = params.accessories();
+        if (noise(basin, SAND_SALT + index, x, z, a.sandWavelength()) <= 1.0 - 2.0 * a.sandCover()) {
+            return;
+        }
+        int thickness = hull(basin, SAND_SALT + HULL_NOISES + index, x, z, lignite ? a.ligniteSandMin() : a.sandMin(),
+                lignite ? a.ligniteSandMax() : a.sandMax());
+        claim(claims, bottom, thickness, Rock.SANDSTONE);
     }
 
     private static void claim(List<Layer> claims, int minY, int height, Rock rock) {

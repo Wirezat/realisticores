@@ -12,9 +12,11 @@ package de.wirezat.realisticores.coal;
  * @param seam shape of the seams
  * @param rock thickness of the rocks around a seam
  * @param surface loose coal and coaly soil above a seam
+ * @param accessories sandstone with its roll front and the seam fires
  */
 public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hardCoal, TypeParams lignite,
-        TypeParams folded, FoldParams fold, SeamParams seam, RockParams rock, SurfaceParams surface) {
+        TypeParams folded, FoldParams fold, SeamParams seam, RockParams rock, SurfaceParams surface,
+        AccessoryParams accessories) {
 
     /**
      * Position, size and outline of basins.
@@ -140,6 +142,29 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
     }
 
     /**
+     * Sandstone with its roll front and the seam fires.
+     *
+     * @param sandMin thinnest sandstone above a hard coal seam in blocks
+     * @param sandMax thickest sandstone above a hard coal seam in blocks
+     * @param ligniteSandMin thinnest sandstone above a lignite seam in blocks
+     * @param ligniteSandMax thickest sandstone above a lignite seam in blocks
+     * @param sandCover share of the area with sandstone
+     * @param sandWavelength size of sandstone lenses in blocks
+     * @param frontMin innermost position of the roll front, as distance to the centre in basin units
+     * @param frontMax outermost position of the roll front, as distance to the centre in basin units
+     * @param frontBand width in blocks of the ore band inside the front
+     * @param fireCell grid cell size of seam fires in blocks
+     * @param fireChance probability that a cell holds a fire
+     * @param fireMinRadius smallest fire radius in blocks
+     * @param fireMaxRadius largest fire radius in blocks
+     * @param fireDepth blocks below the surface that burn
+     */
+    public record AccessoryParams(int sandMin, int sandMax, int ligniteSandMin, int ligniteSandMax, double sandCover,
+            double sandWavelength, double frontMin, double frontMax, int frontBand, int fireCell, double fireChance,
+            int fireMinRadius, int fireMaxRadius, int fireDepth) {
+    }
+
+    /**
      * Gives the settings of a basin type.
      *
      * @param type the type
@@ -182,7 +207,12 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                         Math.max(r.minFireclay(), r.maxFireclay()), r.minRoofMudstone(),
                         Math.max(r.minRoofMudstone(), r.maxRoofMudstone()), r.minFloorMudstone(),
                         Math.max(r.minFloorMudstone(), r.maxFloorMudstone()), r.wavelength()),
-                surface);
+                surface, new AccessoryParams(accessories.sandMin(), Math.max(accessories.sandMin(), accessories.sandMax()),
+                        accessories.ligniteSandMin(), Math.max(accessories.ligniteSandMin(), accessories.ligniteSandMax()),
+                        accessories.sandCover(), accessories.sandWavelength(), accessories.frontMin(),
+                        Math.max(accessories.frontMin(), accessories.frontMax()), accessories.frontBand(),
+                        accessories.fireCell(), accessories.fireChance(), accessories.fireMinRadius(),
+                        Math.max(accessories.fireMinRadius(), accessories.fireMaxRadius()), accessories.fireDepth()));
     }
 
     /**
@@ -201,6 +231,7 @@ public record CoalParams(BasinParams basin, ReliefParams relief, TypeParams hard
                 new SeamParams(6.0, 1.25, 0.6, 180.0, 0.1, 0.5, 6.0, 300.0, 0.4, 400.0, 3, 4.0, 10.0, 10.0, 200.0,
                         -0.125, 14.0),
                 new RockParams(1, 2, 1, 2, 1, 2, 3, 5, 2, 4, 60.0),
-                new SurfaceParams(0.04, 8, -0.125, 14.0, 2));
+                new SurfaceParams(0.04, 8, -0.125, 14.0, 2),
+                new AccessoryParams(2, 4, 3, 7, 0.5, 120.0, 0.7, 0.85, 4, 40, 0.4, 3, 6, 6));
     }
 }

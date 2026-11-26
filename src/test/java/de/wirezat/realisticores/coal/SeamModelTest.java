@@ -112,4 +112,23 @@ class SeamModelTest {
         assertEquals(Rank.LIGNITE, MODEL.column(List.of(far, near), 100, 0).orElseThrow().rank());
         assertEquals(Rank.HARD_COAL, MODEL.column(List.of(far), 100, 0).orElseThrow().rank());
     }
+
+    @Test
+    void sandstoneLiesAboveASeamAndNeverReplacesOne() {
+        int sandstone = 0;
+        for (BasinType type : BasinType.values()) {
+            for (SeamColumn column : columns(type)) {
+                List<Layer> layers = column.layers();
+                for (int i = 0; i < layers.size(); i++) {
+                    if (layers.get(i).rock() != Rock.SANDSTONE) {
+                        continue;
+                    }
+                    sandstone++;
+                    int y = layers.get(i).minY();
+                    assertTrue(layers.stream().anyMatch(l -> l.rock() == Rock.SEAM && l.maxY() < y));
+                }
+            }
+        }
+        assertTrue(sandstone > 0);
+    }
 }
