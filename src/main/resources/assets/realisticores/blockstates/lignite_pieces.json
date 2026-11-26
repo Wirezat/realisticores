@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "pieces=1": [
+      {
+        "model": "realisticores:block/lignite_pieces_1"
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_1",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_1",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_1",
+        "y": 270
+      }
+    ],
+    "pieces=2": [
+      {
+        "model": "realisticores:block/lignite_pieces_2"
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_2",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_2",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_2",
+        "y": 270
+      }
+    ],
+    "pieces=3": [
+      {
+        "model": "realisticores:block/lignite_pieces_3"
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_3",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_3",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_3",
+        "y": 270
+      }
+    ],
+    "pieces=4": [
+      {
+        "model": "realisticores:block/lignite_pieces_4"
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_4",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_4",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/lignite_pieces_4",
+        "y": 270
+      }
+    ]
+  }
+}

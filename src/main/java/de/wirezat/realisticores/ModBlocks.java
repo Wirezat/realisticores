@@ -1,17 +1,23 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.coal.CoalPiecesBlock;
 import de.wirezat.realisticores.ore.DepositRegistry;
 import de.wirezat.realisticores.ore.OreDefinition;
 import de.wirezat.realisticores.press.CrystalPressBlock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -83,6 +89,13 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> ANTHRACITE_BLOCK =
             register("anthracite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
 
+    public static final DeferredBlock<CoalPiecesBlock> COAL_PIECES =
+            registerPieces("coal_pieces", MapColor.COLOR_BLACK, () -> Items.COAL);
+    public static final DeferredBlock<CoalPiecesBlock> LIGNITE_PIECES =
+            registerPieces("lignite_pieces", MapColor.COLOR_BROWN, ModItems.LIGNITE);
+    public static final DeferredBlock<CoalPiecesBlock> ANTHRACITE_PIECES =
+            registerPieces("anthracite_pieces", MapColor.COLOR_BLACK, ModItems.ANTHRACITE);
+
     public static final DeferredBlock<CrystalPressBlock> CRYSTAL_PRESS = registerPress();
 
     private ModBlocks() {
@@ -100,6 +113,13 @@ public final class ModBlocks {
                         .lightLevel(state -> state.getValue(CrystalPressBlock.LIT) ? 13 : 0));
         BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem("crystal_press", block));
         return block;
+    }
+
+    private static DeferredBlock<CoalPiecesBlock> registerPieces(String name, MapColor color,
+            Supplier<? extends Item> item) {
+        return BLOCKS.registerBlock(name, props -> new CoalPiecesBlock(item, props),
+                BlockBehaviour.Properties.of().mapColor(color).sound(SoundType.STONE).instabreak().noCollission()
+                        .noOcclusion().pushReaction(PushReaction.DESTROY));
     }
 
     private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
@@ -127,5 +147,14 @@ public final class ModBlocks {
      */
     public static List<DeferredItem<? extends Item>> blockItems() {
         return BLOCK_ITEMS;
+    }
+
+    /**
+     * Gives the blocks of loose coal.
+     *
+     * @return one block per coal item that can be laid down
+     */
+    public static List<CoalPiecesBlock> coalPieces() {
+        return Stream.of(COAL_PIECES, LIGNITE_PIECES, ANTHRACITE_PIECES).map(DeferredBlock::get).toList();
     }
 }

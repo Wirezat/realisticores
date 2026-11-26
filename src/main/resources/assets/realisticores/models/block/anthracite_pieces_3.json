@@ -1,0 +1,6 @@
+{
+  "parent": "realisticores:block/coal_lumps_3",
+  "textures": {
+    "coal": "realisticores:block/anthracite_seam"
+  }
+}

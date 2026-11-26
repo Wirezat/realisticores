@@ -2,6 +2,7 @@ package de.wirezat.realisticores;
 
 import de.wirezat.realisticores.coal.Coal;
 import de.wirezat.realisticores.coal.CoalConfig;
+import de.wirezat.realisticores.coal.PlacePieces;
 import de.wirezat.realisticores.indicator.ModPan;
 import de.wirezat.realisticores.indicator.TrailEffects;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
@@ -35,6 +36,7 @@ public class RealisticOres {
         NeoForge.EVENT_BUS.addListener(TrailEffects::tick);
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Kimberlite.invalidate());
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> Coal.invalidate());
+        NeoForge.EVENT_BUS.addListener(PlacePieces::onUse);
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onTrades);
         NeoForge.EVENT_BUS.addListener(NaturalDiamondTrades::onTrades);
         NeoForge.EVENT_BUS.addListener(SurveyEvents::onLoot);
