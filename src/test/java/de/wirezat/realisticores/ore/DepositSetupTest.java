@@ -27,7 +27,7 @@ class DepositSetupTest {
     @Test
     void onlyEnabledOresArePlacedAndOverridesReplaceTheDefaultBlock() {
         List<ActiveMineral> active = DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("peridot"),
-                Map.of("peridot", "other:peridot_ore"), Map.of());
+                Map.of("peridot", "other:peridot_ore"), Map.of(), Map.of());
         assertEquals(1, active.size());
         assertEquals("other:peridot_ore", active.get(0).block());
         assertEquals(List.of("PERIDOTITE"), active.get(0).zones());
@@ -36,8 +36,26 @@ class DepositSetupTest {
     @Test
     void configuredSharesReplaceTheShippedShares() {
         List<ActiveMineral> active = DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("peridot"), Map.of(),
-                Map.of("peridot", 0.5));
+                Map.of("peridot", 0.5), Map.of());
         assertEquals(0.5, active.get(0).fraction());
+    }
+
+    @Test
+    void disabledOreTakesItsReplacementAndAnEmptyReplacementKeepsTheRock() {
+        List<ActiveMineral> placed = DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("peridot"), Map.of(),
+                Map.of(), Map.of("diamond", "mod:breccia", "peridot", "mod:other"));
+        assertEquals(2, placed.size());
+        assertEquals("mod:breccia", placed.get(0).block());
+        assertFalse(placed.get(0).enabled());
+        assertTrue(placed.get(1).enabled());
+        assertEquals(1, DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("peridot"), Map.of(), Map.of(),
+                Map.of("diamond", "")).size());
+    }
+
+    @Test
+    void depositWithoutEnabledOrePlacesNothingEvenWithReplacements() {
+        assertTrue(DepositSetup.activeMinerals(DEPOSIT, REGISTRY, Set.of("graphite"), Map.of(), Map.of(),
+                Map.of("diamond", "mod:breccia")).isEmpty());
     }
 
     @Test

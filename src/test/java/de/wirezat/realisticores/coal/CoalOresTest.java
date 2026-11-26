@@ -12,7 +12,11 @@ import org.junit.jupiter.api.Test;
 
 class CoalOresTest {
     private static ActiveMineral mineral(String ore, Rank rank, String block) {
-        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block);
+        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block, true);
+    }
+
+    private static ActiveMineral replaced(String ore, Rank rank, String block) {
+        return new ActiveMineral(ore, List.of(rank.name()), 1.0, false, block, false);
     }
 
     @Test
@@ -21,15 +25,11 @@ class CoalOresTest {
     }
 
     @Test
-    void coreFallsBackToCoalWithoutAnthracite() {
-        assertEquals(Map.of(Rank.HARD_COAL, "m:coal", Rank.ANTHRACITE, "m:coal"),
-                CoalOres.blocks(List.of(mineral("coal", Rank.HARD_COAL, "m:coal"))));
-    }
-
-    @Test
-    void anthraciteAloneFillsOnlyTheCore() {
-        assertEquals(Map.of(Rank.ANTHRACITE, "m:anthracite"),
-                CoalOres.blocks(List.of(mineral("anthracite", Rank.ANTHRACITE, "m:anthracite"))));
+    void disabledRankKeepsItsReplacementButIsNoCoal() {
+        List<ActiveMineral> placed = List.of(mineral("coal", Rank.HARD_COAL, "m:coal"),
+                replaced("anthracite", Rank.ANTHRACITE, "m:black_shale"));
+        assertEquals(Map.of(Rank.HARD_COAL, "m:coal", Rank.ANTHRACITE, "m:black_shale"), CoalOres.blocks(placed));
+        assertEquals(Set.of(Rank.HARD_COAL), CoalOres.coalRanks(placed));
     }
 
     @Test

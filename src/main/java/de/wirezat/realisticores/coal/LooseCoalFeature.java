@@ -29,7 +29,8 @@ public class LooseCoalFeature extends Feature<NoneFeatureConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
-        Set<Rank> ranks = OreConfig.resolved().coalBlocks().keySet();
+        Set<Rank> ranks = OreConfig.resolved().coalRanks();
+        Set<Rank> seams = OreConfig.resolved().coalBlocks().keySet();
         if (ranks.isEmpty() || level.getLevel().dimension() != Level.OVERWORLD
                 || !(context.chunkGenerator() instanceof NoiseBasedChunkGenerator generator)) {
             return false;
@@ -38,7 +39,7 @@ public class LooseCoalFeature extends Feature<NoneFeatureConfiguration> {
         int minX = chunk.getMinBlockX();
         int minZ = chunk.getMinBlockZ();
         List<ResolvedBasin> basins = Coal.basinsNear(level.getSeed(),
-                new LevelTerrainProbe(level.getLevel(), generator), ranks, minX, minZ, minX + 15, minZ + 15);
+                new LevelTerrainProbe(level.getLevel(), generator), seams, minX, minZ, minX + 15, minZ + 15);
         boolean placed = false;
         for (int i = 0; i < 256 && !basins.isEmpty(); i++) {
             int x = minX + i % 16;

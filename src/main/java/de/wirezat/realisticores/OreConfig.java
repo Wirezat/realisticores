@@ -1,5 +1,6 @@
 package de.wirezat.realisticores;
 
+import de.wirezat.realisticores.coal.CoalConfig;
 import de.wirezat.realisticores.coal.CoalOres;
 import de.wirezat.realisticores.coal.Rank;
 import de.wirezat.realisticores.ore.ActiveMineral;
@@ -36,9 +37,10 @@ public final class OreConfig {
      * @param kimberlitePipeActive true if at least one ore of the kimberlite pipe is enabled
      * @param kimberliteMinerals enabled minerals of the kimberlite pipe with the block each one places
      * @param coalBlocks block placed for each coal rank, empty if no ore of the coal basin is enabled
+     * @param coalRanks ranks whose coal is switched on; the others place their replacement
      */
     public record Resolved(OreMatcher matcher, boolean kimberlitePipeActive, List<ActiveMineral> kimberliteMinerals,
-            Map<Rank, String> coalBlocks) {
+            Map<Rank, String> coalBlocks, Set<Rank> coalRanks) {
     }
 
     static {
@@ -100,6 +102,16 @@ public final class OreConfig {
     }
 
     /**
+     * Checks a replacement entry of a deposit config.
+     *
+     * @param entry config value
+     * @return true for an empty string or a block id
+     */
+    public static boolean isValidReplacement(Object entry) {
+        return entry instanceof String text && (text.isEmpty() || ResourceLocation.tryParse(text) != null);
+    }
+
+    /**
      * Gives the largest search radius of the command.
      *
      * @return radius in blocks
@@ -127,7 +139,8 @@ public final class OreConfig {
         Resolved resolved = cachedResolved;
         if (resolved == null) {
             resolved = resolve(SUPPRESSED_ORES.get(), ENABLED_ORES.get(), ORE_OVERRIDES.get(),
-                    KimberliteConfig.fractions());
+                    KimberliteConfig.fractions(), KimberliteConfig.replacements(),
+                    CoalConfig.replacements());
             cachedResolved = resolved;
         }
         return resolved;
@@ -148,7 +161,8 @@ public final class OreConfig {
     }
 
     private static Resolved resolve(List<? extends String> suppressed, List<? extends String> enabled,
-            List<? extends String> overrides, Map<String, Double> fractions) {
+            List<? extends String> overrides, Map<String, Double> fractions, Map<String, String> replacements,
+            Map<String, String> coalReplacements) {
         Set<String> enabledOres = new HashSet<>(enabled);
         Map<String, String> overrideBlocks = new HashMap<>();
         for (String entry : overrides) {
@@ -160,9 +174,10 @@ public final class OreConfig {
                 .filter(id -> REGISTRY.ores().containsKey(id))
                 .forEach(id -> suppressedEntries.add("#" + REGISTRY.ores().get(id).tag()));
         Deposit pipe = REGISTRY.deposits().get(KIMBERLITE_PIPE);
+        List<ActiveMineral> coal = DepositSetup.activeMinerals(REGISTRY.deposits().get(COAL_BASIN), REGISTRY,
+                enabledOres, overrideBlocks, Map.of(), coalReplacements);
         return new Resolved(new OreMatcher(suppressedEntries), DepositSetup.isActive(pipe, enabledOres),
-                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions),
-                CoalOres.blocks(DepositSetup.activeMinerals(REGISTRY.deposits().get(COAL_BASIN), REGISTRY,
-                        enabledOres, overrideBlocks, Map.of())));
+                DepositSetup.activeMinerals(pipe, REGISTRY, enabledOres, overrideBlocks, fractions, replacements),
+                CoalOres.blocks(coal), CoalOres.coalRanks(coal));
     }
 }

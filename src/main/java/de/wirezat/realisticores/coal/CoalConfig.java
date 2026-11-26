@@ -1,5 +1,10 @@
 package de.wirezat.realisticores.coal;
 
+import de.wirezat.realisticores.OreConfig;
+import de.wirezat.realisticores.ore.Mineral;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -84,6 +89,9 @@ public final class CoalConfig {
     private static final Supplier<Double> SURFACE_SOIL_THRESHOLD;
     private static final Supplier<Double> SURFACE_SOIL_WAVELENGTH;
     private static final Supplier<Integer> SURFACE_SOIL_FRINGE;
+    private static final Map<String, Supplier<String>> MINERAL_REPLACEMENTS = new LinkedHashMap<>();
+    private static final Map<String, String> DEFAULT_REPLACEMENTS = Map.of("coal", "realisticores:black_shale",
+            "lignite", "realisticores:mudstone", "anthracite", "realisticores:black_shale");
 
     static {
         CoalParams d = CoalParams.defaults();
@@ -269,6 +277,16 @@ public final class CoalConfig {
         SURFACE_SOIL_FRINGE = integer(b, "soilFringe", d.surface().soilFringe(), 0, 200,
                 "Height in blocks of an eroded seam above the ground up to which coaly soil frays out.");
         b.pop();
+
+        b.comment("Block placed instead of each ore while it is switched off.").push("minerals");
+        for (Mineral mineral : OreConfig.registry().deposits().get(OreConfig.COAL_BASIN).minerals()) {
+            ModConfigSpec.ConfigValue<String> replacement = b.comment("Block placed instead of " + mineral.ore()
+                    + " while " + mineral.ore() + " is not in enabledOres; empty keeps the rock of the zone.")
+                    .define(camelCase(mineral.ore()) + "Replacement", DEFAULT_REPLACEMENTS.getOrDefault(mineral.ore(), ""),
+                            OreConfig::isValidReplacement);
+            MINERAL_REPLACEMENTS.put(mineral.ore(), replacement::get);
+        }
+        b.pop();
         SPEC = b.build();
     }
 
@@ -285,6 +303,25 @@ public final class CoalConfig {
             double max, String comment) {
         ModConfigSpec.DoubleValue config = builder.comment(comment).defineInRange(name, value, min, max);
         return config::get;
+    }
+
+    private static String camelCase(String id) {
+        StringBuilder name = new StringBuilder();
+        for (String part : id.split("_")) {
+            name.append(name.isEmpty() ? part : Character.toUpperCase(part.charAt(0)) + part.substring(1));
+        }
+        return name.toString();
+    }
+
+    /**
+     * Reads the blocks placed instead of disabled ores.
+     *
+     * @return block id by ore id, empty to keep the rock
+     */
+    public static Map<String, String> replacements() {
+        Map<String, String> replacements = new HashMap<>();
+        MINERAL_REPLACEMENTS.forEach((ore, value) -> replacements.put(ore, value.get()));
+        return replacements;
     }
 
     /**

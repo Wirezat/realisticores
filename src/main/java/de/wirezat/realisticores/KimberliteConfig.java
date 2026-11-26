@@ -89,6 +89,7 @@ public final class KimberliteConfig {
     private static final Supplier<Double> ILMENITE_LENGTH;
     private static final Supplier<Double> ILMENITE_PEAK;
     private static final Map<String, Supplier<Double>> MINERAL_FRACTIONS = new HashMap<>();
+    private static final Map<String, Supplier<String>> MINERAL_REPLACEMENTS = new HashMap<>();
 
     static {
         KimberliteParams d = KimberliteParams.defaults();
@@ -262,6 +263,10 @@ public final class KimberliteConfig {
         for (Mineral mineral : pipe.minerals()) {
             MINERAL_FRACTIONS.put(mineral.ore(), decimal(b, mineral.ore() + "Fraction", mineral.fraction(), 0.0, 1.0,
                     "Share of rock blocks in " + mineral.zones() + " that become " + mineral.ore() + " ore."));
+            ModConfigSpec.ConfigValue<String> replacement = b.comment("Block placed instead of " + mineral.ore()
+                    + " ore while " + mineral.ore() + " is not in enabledOres; empty keeps the rock of the zone.")
+                    .define(mineral.ore() + "Replacement", "", OreConfig::isValidReplacement);
+            MINERAL_REPLACEMENTS.put(mineral.ore(), replacement::get);
         }
         b.pop();
         SPEC = b.build();
@@ -338,5 +343,16 @@ public final class KimberliteConfig {
         Map<String, Double> fractions = new HashMap<>();
         MINERAL_FRACTIONS.forEach((ore, value) -> fractions.put(ore, value.get()));
         return fractions;
+    }
+
+    /**
+     * Reads the blocks placed instead of disabled ores.
+     *
+     * @return block id by ore id, empty to keep the rock
+     */
+    public static Map<String, String> replacements() {
+        Map<String, String> replacements = new HashMap<>();
+        MINERAL_REPLACEMENTS.forEach((ore, value) -> replacements.put(ore, value.get()));
+        return replacements;
     }
 }

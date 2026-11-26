@@ -2,6 +2,7 @@ package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ore.ActiveMineral;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,17 +16,27 @@ public final class CoalOres {
      * Maps the ranks to the blocks of the enabled ores.
      *
      * @param active enabled minerals of the coal basin
-     * @return block id by rank; without anthracite its place is taken by hard coal, other missing ranks are absent
+     * @return block id by rank, the ore or its replacement; ranks without either are absent
      */
     public static Map<Rank, String> blocks(List<ActiveMineral> active) {
         Map<Rank, String> blocks = new EnumMap<>(Rank.class);
         for (ActiveMineral mineral : active) {
             mineral.zones().forEach(zone -> blocks.put(Rank.valueOf(zone), mineral.block()));
         }
-        if (blocks.containsKey(Rank.HARD_COAL)) {
-            blocks.putIfAbsent(Rank.ANTHRACITE, blocks.get(Rank.HARD_COAL));
-        }
         return blocks;
+    }
+
+    /**
+     * Gives the ranks whose coal is switched on.
+     *
+     * @param active minerals of the coal basin
+     * @return ranks placing their own ore rather than a replacement
+     */
+    public static Set<Rank> coalRanks(List<ActiveMineral> active) {
+        Set<Rank> ranks = EnumSet.noneOf(Rank.class);
+        active.stream().filter(ActiveMineral::enabled).flatMap(mineral -> mineral.zones().stream())
+                .forEach(zone -> ranks.add(Rank.valueOf(zone)));
+        return ranks;
     }
 
     /**

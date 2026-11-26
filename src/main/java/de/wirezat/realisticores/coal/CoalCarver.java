@@ -52,9 +52,10 @@ public final class CoalCarver {
                 Optional<SeamColumn> column = model.column(basins, x, z);
                 if (column.isPresent() && blocks.containsKey(column.get().rank())) {
                     int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
-                    write(chunk, x, z, surfaceY, column.get(), seamBlock(column.get().rank(), blocks),
+                    boolean coal = OreConfig.resolved().coalRanks().contains(column.get().rank());
+                    write(chunk, x, z, surfaceY, column.get(), seamBlock(column.get().rank(), blocks, coal),
                             model.isOutcrop(x, z));
-                    if (Coal.surface().soil(seed, column.get(), surfaceY, x, z)) {
+                    if (coal && Coal.surface().soil(seed, column.get(), surfaceY, x, z)) {
                         writeSoil(chunk, x, z, surfaceY, column.get().rank() == Rank.LIGNITE);
                     }
                 }
@@ -62,11 +63,14 @@ public final class CoalCarver {
         }
     }
 
-    private static void write(ChunkAccess chunk, int x, int z, int surfaceY, SeamColumn column, BlockState seam,
-            boolean outcrop) {
+    private static void write(ChunkAccess chunk, int x, int z, int surfaceY, SeamColumn column,
+            Optional<BlockState> seam, boolean outcrop) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Layer layer : column.layers()) {
-            BlockState rock = layer.rock() == Rock.SEAM ? seam : rockBlock(layer.rock());
+            if (layer.rock() == Rock.SEAM && seam.isEmpty()) {
+                continue;
+            }
+            BlockState rock = layer.rock() == Rock.SEAM ? seam.get() : rockBlock(layer.rock());
             boolean throughSoil = outcrop && layer.rock() == Rock.SEAM;
             int topY = Math.min(layer.maxY(), surfaceY);
             for (int y = Math.max(layer.minY(), chunk.getMinBuildHeight()); y <= topY; y++) {
@@ -92,9 +96,9 @@ public final class CoalCarver {
         }
     }
 
-    private static BlockState seamBlock(Rank rank, Map<Rank, String> blocks) {
-        return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(blocks.get(rank)))
-                .orElseGet(() -> ownSeam(rank)).defaultBlockState();
+    private static Optional<BlockState> seamBlock(Rank rank, Map<Rank, String> blocks, boolean coal) {
+        Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(blocks.get(rank)));
+        return (coal ? Optional.of(block.orElseGet(() -> ownSeam(rank))) : block).map(Block::defaultBlockState);
     }
 
     private static Block ownSeam(Rank rank) {
