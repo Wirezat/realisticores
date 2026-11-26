@@ -5,61 +5,13 @@
         "model": "realisticores:block/shale"
       },
       {
-        "model": "realisticores:block/shale",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/shale",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/shale",
-        "y": 270
-      },
-      {
         "model": "realisticores:block/shale_1"
-      },
-      {
-        "model": "realisticores:block/shale_1",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/shale_1",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/shale_1",
-        "y": 270
       },
       {
         "model": "realisticores:block/shale_2"
       },
       {
-        "model": "realisticores:block/shale_2",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/shale_2",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/shale_2",
-        "y": 270
-      },
-      {
         "model": "realisticores:block/shale_3"
-      },
-      {
-        "model": "realisticores:block/shale_3",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/shale_3",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/shale_3",
-        "y": 270
       }
     ]
   }

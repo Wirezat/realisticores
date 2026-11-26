@@ -5,61 +5,13 @@
         "model": "realisticores:block/clinker"
       },
       {
-        "model": "realisticores:block/clinker",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/clinker",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/clinker",
-        "y": 270
-      },
-      {
         "model": "realisticores:block/clinker_1"
-      },
-      {
-        "model": "realisticores:block/clinker_1",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/clinker_1",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/clinker_1",
-        "y": 270
       },
       {
         "model": "realisticores:block/clinker_2"
       },
       {
-        "model": "realisticores:block/clinker_2",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/clinker_2",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/clinker_2",
-        "y": 270
-      },
-      {
         "model": "realisticores:block/clinker_3"
-      },
-      {
-        "model": "realisticores:block/clinker_3",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/clinker_3",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/clinker_3",
-        "y": 270
       }
     ]
   }
