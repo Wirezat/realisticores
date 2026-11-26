@@ -5,6 +5,7 @@ import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.BlockIds;
 import de.wirezat.realisticores.ore.MineralRoll;
+import de.wirezat.realisticores.worldgen.ChunkColumns;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -47,36 +48,33 @@ public final class KimberliteCarver {
             int waterY = crater.hasLake(site.wet()) ? crater.waterLevel(site.lowestRimY(), seaLevel) : Integer.MIN_VALUE;
             double reach = shape.reach(pipe);
             PipeShape.Outline outline = shape.outline(pipe);
-            for (int localX = 0; localX < 16; localX++) {
-                for (int localZ = 0; localZ < 16; localZ++) {
-                    int x = minX + localX;
-                    int z = minZ + localZ;
-                    double dx = x - pipe.x();
-                    double dz = z - pipe.z();
-                    if (dx * dx + dz * dz > reach * reach) {
-                        continue;
-                    }
-                    int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
-                    double surfaceWall = shape.normalizedDistance(outline, x, surfaceY, z);
-                    int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY(), surfaceY) : surfaceY;
-                    boolean bowl = floorY < surfaceY;
-                    BlockState topSoil = null;
-                    BlockState subSoil = null;
-                    if (bowl) {
-                        BlockState top = chunk.getBlockState(pos.set(x, surfaceY, z));
-                        BlockState below = chunk.getBlockState(pos.set(x, surfaceY - 1, z));
-                        if (isSoil(top)) {
-                            boolean underWater = waterY > floorY;
-                            subSoil = isSoil(below) ? below : Blocks.DIRT.defaultBlockState();
-                            topSoil = underWater ? subSoil : top;
-                        }
-                        fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
-                    }
-                    boolean overgrown = topSoil != null && !shape.isOutcrop(seed, x, z);
-                    carveBody(chunk, seed, pos, outline, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
-                            ores, overgrown ? topSoil : null, subSoil);
+            ChunkColumns.forEach(chunkPos, (localX, localZ, x, z) -> {
+                double dx = x - pipe.x();
+                double dz = z - pipe.z();
+                if (dx * dx + dz * dz > reach * reach) {
+                    return false;
                 }
-            }
+                int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
+                double surfaceWall = shape.normalizedDistance(outline, x, surfaceY, z);
+                int floorY = surfaceWall <= 1.0 ? crater.floorY(pipe, surfaceWall, site.meanRimY(), surfaceY) : surfaceY;
+                boolean bowl = floorY < surfaceY;
+                BlockState topSoil = null;
+                BlockState subSoil = null;
+                if (bowl) {
+                    BlockState top = chunk.getBlockState(pos.set(x, surfaceY, z));
+                    BlockState below = chunk.getBlockState(pos.set(x, surfaceY - 1, z));
+                    if (isSoil(top)) {
+                        boolean underWater = waterY > floorY;
+                        subSoil = isSoil(below) ? below : Blocks.DIRT.defaultBlockState();
+                        topSoil = underWater ? subSoil : top;
+                    }
+                    fillBowl(chunk, pos, x, z, floorY, surfaceY, waterY);
+                }
+                boolean overgrown = topSoil != null && !shape.isOutcrop(seed, x, z);
+                carveBody(chunk, seed, pos, outline, x, z, bottomY, bowl ? floorY : surfaceY, bowl, shape,
+                        ores, overgrown ? topSoil : null, subSoil);
+                return true;
+            });
         }
     }
 

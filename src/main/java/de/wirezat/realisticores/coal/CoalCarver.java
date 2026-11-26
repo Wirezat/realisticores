@@ -4,6 +4,7 @@ import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.BlockIds;
 import de.wirezat.realisticores.ore.MineralRoll;
+import de.wirezat.realisticores.worldgen.ChunkColumns;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -50,25 +51,23 @@ public final class CoalCarver {
         for (Rank rank : Rank.values()) {
             seamBlocks.put(rank, seamBlock(rank, seams.blocks(), seams.coal().contains(rank)));
         }
-        for (int localX = 0; localX < 16; localX++) {
-            for (int localZ = 0; localZ < 16; localZ++) {
-                int x = minX + localX;
-                int z = minZ + localZ;
-                Optional<SeamColumn> column = model.column(basins, x, z);
-                if (column.isPresent()) {
-                    int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
-                    boolean coal = seams.coal().contains(column.get().rank());
-                    Optional<BlockState> seam = seamBlocks.get(column.get().rank());
-                    write(chunk, seed, x, z, surfaceY, column.get(), seam, model.isOutcrop(seed, x, z), accents);
-                    if (burns(chunk, seed, column.get(), x, z, surfaceY)) {
-                        burn(chunk, seed, x, z, surfaceY, column.get(), coal ? seam : Optional.empty(),
-                                accents.get(SEAM_FIRE));
-                    } else if (coal && Coal.surface().soil(seed, column.get(), surfaceY, x, z)) {
-                        writeSoil(chunk, x, z, surfaceY, column.get().rank() == Rank.LIGNITE);
-                    }
-                }
+        ChunkColumns.forEach(chunkPos, (localX, localZ, x, z) -> {
+            Optional<SeamColumn> column = model.column(basins, x, z);
+            if (column.isEmpty()) {
+                return false;
             }
-        }
+            int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ);
+            boolean coal = seams.coal().contains(column.get().rank());
+            Optional<BlockState> seam = seamBlocks.get(column.get().rank());
+            write(chunk, seed, x, z, surfaceY, column.get(), seam, model.isOutcrop(seed, x, z), accents);
+            if (burns(chunk, seed, column.get(), x, z, surfaceY)) {
+                burn(chunk, seed, x, z, surfaceY, column.get(), coal ? seam : Optional.empty(),
+                        accents.get(SEAM_FIRE));
+            } else if (coal && Coal.surface().soil(seed, column.get(), surfaceY, x, z)) {
+                writeSoil(chunk, x, z, surfaceY, column.get().rank() == Rank.LIGNITE);
+            }
+            return true;
+        });
     }
 
     private record Accent(String ore, BlockState block, double fraction) {

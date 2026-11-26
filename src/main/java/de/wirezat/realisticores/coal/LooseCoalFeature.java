@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ModBlocks;
+import de.wirezat.realisticores.worldgen.ChunkColumns;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
@@ -37,16 +38,14 @@ public class LooseCoalFeature extends Feature<NoneFeatureConfiguration> {
         int minX = chunk.getMinBlockX();
         int minZ = chunk.getMinBlockZ();
         List<ResolvedBasin> basins = Coal.basinsNear(level.getSeed(), probe.get(), minX, minZ, minX + 15, minZ + 15);
-        boolean placed = false;
-        for (int i = 0; i < 256 && !basins.isEmpty(); i++) {
-            int x = minX + i % 16;
-            int z = minZ + i / 16;
-            Optional<SeamColumn> column = Coal.model().column(basins, x, z);
-            if (column.isPresent() && ranks.contains(column.get().rank())) {
-                placed |= placePieces(level, column.get(), x, z);
-            }
+        if (basins.isEmpty()) {
+            return false;
         }
-        return placed;
+        return ChunkColumns.forEach(chunk, (localX, localZ, x, z) -> {
+            Optional<SeamColumn> column = Coal.model().column(basins, x, z);
+            return column.isPresent() && ranks.contains(column.get().rank())
+                    && placePieces(level, column.get(), x, z);
+        });
     }
 
     /**
