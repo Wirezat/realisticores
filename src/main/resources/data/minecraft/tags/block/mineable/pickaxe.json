@@ -33,6 +33,11 @@
     "realisticores:sal_ammoniac_block",
     "realisticores:burning_coal_seam",
     "realisticores:burning_lignite_seam",
-    "realisticores:clinker"
+    "realisticores:clinker",
+    "realisticores:shale_ironstone_ore",
+    "realisticores:mudstone_ironstone_ore",
+    "realisticores:blackband_ironstone",
+    "realisticores:rust_stained_shale",
+    "realisticores:raw_siderite_block"
   ]
 }

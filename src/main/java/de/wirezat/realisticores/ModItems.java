@@ -25,6 +25,7 @@ public final class ModItems {
     public static final DeferredItem<Item> RAW_URANIUM = ITEMS.registerSimpleItem("raw_uranium");
     public static final DeferredItem<Item> PYRITE = ITEMS.registerSimpleItem("pyrite");
     public static final DeferredItem<Item> SAL_AMMONIAC = ITEMS.registerSimpleItem("sal_ammoniac");
+    public static final DeferredItem<Item> RAW_SIDERITE = ITEMS.registerSimpleItem("raw_siderite");
     public static final DeferredItem<Item> KIMBERLITE_MAP = ITEMS.register("kimberlite_map",
             () -> new KimberliteMapItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> IRON_PAN = ITEMS.register("iron_pan",

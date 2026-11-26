@@ -87,5 +87,11 @@
   "trim_material.realisticores.sal_ammoniac": "Sal Ammoniac Material",
   "block.realisticores.burning_coal_seam": "Burning Coal Seam",
   "block.realisticores.burning_lignite_seam": "Burning Lignite Seam",
-  "block.realisticores.clinker": "Clinker"
+  "block.realisticores.clinker": "Clinker",
+  "block.realisticores.shale_ironstone_ore": "Clay Ironstone in Shale",
+  "block.realisticores.mudstone_ironstone_ore": "Clay Ironstone in Mudstone",
+  "block.realisticores.blackband_ironstone": "Blackband Ironstone",
+  "block.realisticores.rust_stained_shale": "Rust-Stained Shale",
+  "block.realisticores.raw_siderite_block": "Block of Raw Siderite",
+  "item.realisticores.raw_siderite": "Raw Siderite"
 }

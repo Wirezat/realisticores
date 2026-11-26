@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "realisticores:raw_siderite_block"
+    }
+  ],
+  "result": {
+    "id": "realisticores:raw_siderite",
+    "count": 9
+  }
+}

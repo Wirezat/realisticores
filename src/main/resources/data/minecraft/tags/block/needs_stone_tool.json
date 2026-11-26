@@ -14,6 +14,10 @@
     "realisticores:black_shale_pyrite_ore",
     "realisticores:raw_uranium_block",
     "realisticores:pyrite_block",
-    "realisticores:sal_ammoniac_block"
+    "realisticores:sal_ammoniac_block",
+    "realisticores:shale_ironstone_ore",
+    "realisticores:mudstone_ironstone_ore",
+    "realisticores:blackband_ironstone",
+    "realisticores:raw_siderite_block"
   ]
 }

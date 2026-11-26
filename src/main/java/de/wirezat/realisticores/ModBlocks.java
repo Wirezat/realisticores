@@ -98,6 +98,17 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> ANTHRACITE_BLOCK =
             register("anthracite_block", BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK));
 
+    public static final DeferredBlock<Block> SHALE_IRONSTONE_ORE = register("shale_ironstone_ore",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.COLOR_GRAY).strength(3.0F, 3.0F));
+    public static final DeferredBlock<Block> MUDSTONE_IRONSTONE_ORE = register("mudstone_ironstone_ore",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
+                    .strength(2.5F, 3.0F));
+    public static final DeferredBlock<Block> BLACKBAND_IRONSTONE = register("blackband_ironstone",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_ORE).mapColor(MapColor.COLOR_BLACK).strength(3.0F, 3.0F));
+    public static final DeferredBlock<Block> RUST_STAINED_SHALE = register("rust_stained_shale",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).mapColor(MapColor.TERRACOTTA_ORANGE).strength(1.2F, 4.0F));
+    public static final DeferredBlock<Block> RAW_SIDERITE_BLOCK = register("raw_siderite_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.TERRACOTTA_BROWN));
     public static final DeferredBlock<Block> RAW_URANIUM_BLOCK = register("raw_uranium_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK).mapColor(MapColor.COLOR_BLACK));
     public static final DeferredBlock<Block> PYRITE_BLOCK = register("pyrite_block",

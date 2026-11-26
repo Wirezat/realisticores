@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "realisticores:block/rust_stained_shale_top",
+    "bottom": "realisticores:block/rust_stained_shale_top",
+    "side": "realisticores:block/rust_stained_shale"
+  }
+}

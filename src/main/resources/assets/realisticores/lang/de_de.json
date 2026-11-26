@@ -87,5 +87,11 @@
   "trim_material.realisticores.sal_ammoniac": "Salmiak",
   "block.realisticores.burning_coal_seam": "Brennendes Steinkohleflöz",
   "block.realisticores.burning_lignite_seam": "Brennendes Braunkohleflöz",
-  "block.realisticores.clinker": "Gebrannter Schiefer"
+  "block.realisticores.clinker": "Gebrannter Schiefer",
+  "block.realisticores.shale_ironstone_ore": "Toneisenstein im Schiefer",
+  "block.realisticores.mudstone_ironstone_ore": "Toneisenstein im Tonstein",
+  "block.realisticores.blackband_ironstone": "Kohleneisenstein",
+  "block.realisticores.rust_stained_shale": "Rostfleckiger Schiefer",
+  "block.realisticores.raw_siderite_block": "Roheisensteinblock",
+  "item.realisticores.raw_siderite": "Roheisenstein"
 }

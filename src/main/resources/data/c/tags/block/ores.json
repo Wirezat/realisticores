@@ -8,6 +8,8 @@
     "#c:ores/anthracite",
     "#c:ores/uranium",
     "#c:ores/pyrite",
-    "#c:ores/sal_ammoniac"
+    "#c:ores/sal_ammoniac",
+    "#c:ores/siderite",
+    "#c:ores/iron"
   ]
 }

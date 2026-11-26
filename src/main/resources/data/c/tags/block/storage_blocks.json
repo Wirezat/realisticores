@@ -10,6 +10,7 @@
     "#c:storage_blocks/anthracite",
     "#c:storage_blocks/raw_uranium",
     "#c:storage_blocks/pyrite",
-    "#c:storage_blocks/sal_ammoniac"
+    "#c:storage_blocks/sal_ammoniac",
+    "#c:storage_blocks/raw_siderite"
   ]
 }
