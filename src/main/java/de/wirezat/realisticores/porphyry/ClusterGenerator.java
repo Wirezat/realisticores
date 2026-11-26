@@ -16,6 +16,8 @@ public final class ClusterGenerator {
     private static final double MAX_ELONGATION = 1.6;
     private static final double SLIGHT_SHARE = 0.25;
     private static final double MODERATE_SHARE = 0.75;
+    private static final double MAX_TILT = Math.tan(Math.toRadians(10.0));
+    private static final int WORLD_TOP = 320;
 
     private final PorphyryParams params;
     private final Memo<CellKey, List<Body>> cells = new Memo<>(CACHE_LIMIT);
@@ -80,13 +82,43 @@ public final class ClusterGenerator {
                 }
                 int height = probe.terrainHeight(x, z);
                 if (height >= params.minHeight()) {
-                    bodies.add(new Body(x, z, params.radius().pick(rng), rng.nextDouble(1.0, MAX_ELONGATION),
-                            rng.nextDouble() * Math.PI, stage(rng.nextDouble()), height, rng.nextLong()));
+                    bodies.add(body(rng, x, z, height));
                     break;
                 }
             }
         }
         return List.copyOf(bodies);
+    }
+
+    /**
+     * Rolls the size, shape, erosion stage, tilt, breccia vents and dikes of one deposit.
+     *
+     * @param rng random stream of the group
+     * @param x world X of the axis
+     * @param z world Z of the axis
+     * @param height terrain height at the axis
+     * @return the deposit
+     */
+    private Body body(SplitMix64 rng, int x, int z, int height) {
+        int radius = params.radius().pick(rng);
+        double elongation = rng.nextDouble(1.0, MAX_ELONGATION);
+        double angle = rng.nextDouble() * Math.PI;
+        Stage stage = stage(rng.nextDouble());
+        long salt = rng.nextLong();
+        double tilt = rng.nextDouble(0.0, MAX_TILT);
+        double tiltAngle = rng.nextDouble() * 2.0 * Math.PI;
+        List<Body.Vent> vents = new ArrayList<>();
+        for (int i = rng.nextInt(0, 2); i > 0; i--) {
+            double shell = rng.nextDouble(0.6, 1.2);
+            double direction = rng.nextDouble() * 2.0 * Math.PI;
+            vents.add(new Body.Vent(shell * Math.cos(direction), shell * Math.sin(direction), rng.nextInt(4, 10)));
+        }
+        List<Body.Dike> dikes = new ArrayList<>();
+        for (int i = rng.nextInt(2, 5); i > 0; i--) {
+            dikes.add(new Body.Dike(rng.nextDouble() * Math.PI, rng.nextDouble(-0.25, 0.25), rng.nextInt(2, 4)));
+        }
+        return new Body(x, z, radius, elongation, angle, stage, height, salt, tilt * Math.cos(tiltAngle),
+                tilt * Math.sin(tiltAngle), List.copyOf(vents), List.copyOf(dikes));
     }
 
     /**
@@ -132,7 +164,8 @@ public final class ClusterGenerator {
      * @return deposits whose reach overlaps the rectangle
      */
     public List<Body> bodiesNear(long seed, TerrainProbe probe, int minX, int minZ, int maxX, int maxZ) {
-        double reach = slack() + PorphyryShape.OUTER * 1.2 * MAX_ELONGATION * params.radius().max();
+        double reach = slack() + PorphyryShape.OUTER * 1.2 * MAX_ELONGATION * params.radius().max()
+                + MAX_TILT * (WORLD_TOP - PorphyryShape.bottomLimit());
         List<Body> result = new ArrayList<>();
         Cells.around(minX, minZ, maxX, maxZ, reach, params.cellSize(), (cellX, cellZ) -> {
             for (Body body : bodiesAt(seed, probe, cellX, cellZ)) {

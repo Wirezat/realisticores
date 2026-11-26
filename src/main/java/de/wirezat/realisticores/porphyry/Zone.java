@@ -11,5 +11,6 @@ public enum Zone {
     POTASSIC,
     PHYLLIC,
     PROPYLITIC,
+    BRECCIA,
     HOST
 }

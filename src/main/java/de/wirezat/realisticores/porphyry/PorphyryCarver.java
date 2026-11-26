@@ -17,6 +17,7 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -40,6 +41,10 @@ public final class PorphyryCarver {
     private static final double POTASSIC_FLOOR = 0.25;
     private static final double MOLY_SHELL = 0.75;
     private static final double MOLY_DEPTH = 0.4;
+    private static final double BRECCIA_COPPER = 10.0 / 7.5;
+    private static final double SOIL_SHARE = 0.35;
+    private static final double SOIL_WAVELENGTH = 16.0;
+    private static final int SOIL_DEPTH = 5;
 
     private PorphyryCarver() {
     }
@@ -79,12 +84,15 @@ public final class PorphyryCarver {
                         chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, localX, localZ));
                 double smoothY = Porphyry.smoothHeight(seed, probe, x, z);
                 boolean changed = false;
+                Zone top = Zone.HOST;
+                int topY = bottomY;
                 for (int y = bottomY; y <= surfaceY; y++) {
                     if (!chunk.getBlockState(pos.set(x, y, z)).is(BlockTags.BASE_STONE_OVERWORLD)) {
                         continue;
                     }
                     double q = shape.shell(seed, body, x, y, z);
                     if (q > PorphyryShape.OUTER) {
+                        top = Zone.HOST;
                         continue;
                     }
                     Zone zone = shape.zone(seed, body, q, x, y, z, surfaceY, smoothY);
@@ -94,6 +102,12 @@ public final class PorphyryCarver {
                         chunk.setBlockState(pos, block != null ? block : rock(zone), false);
                         changed = true;
                     }
+                    top = zone;
+                    topY = y;
+                }
+                if (top == Zone.GOSSAN && inNest(seed ^ body.salt(), "soil", SOIL_SHARE, x, 0, z, SOIL_WAVELENGTH)) {
+                    stainSoil(chunk, pos, seed ^ body.salt(), x, z, topY, surfaceY);
+                    changed = true;
                 }
                 return changed;
             });
@@ -140,7 +154,10 @@ public final class PorphyryCarver {
             ActiveMineral mineral = ore.mineral();
             double share = mineral.fraction()
                     * (mineral.graded() ? richness(mineral.ore(), zone, q, highInCore) : 1.0);
-            if (share > 0 && inNest(seed, mineral.ore(), share, x, y, z)) {
+            double[] size = NESTS.get(mineral.ore());
+            boolean hit = size == null ? MineralRoll.roll(seed, mineral.ore(), x, y, z) < share
+                    : inNest(seed, mineral.ore(), share, x / size[0], y / size[1], z / size[0], 1.0);
+            if (share > 0 && hit) {
                 return ore.block();
             }
         }
@@ -164,6 +181,7 @@ public final class PorphyryCarver {
             case CEMENTATION -> q < PorphyryShape.CORE_EDGE ? 0.0 : q < CEMENT_RIM ? 1.0 : CEMENT_RIM_SHARE;
             case GOSSAN -> q < GOLD_RIM ? 1.0 : 0.0;
             case PHYLLIC -> ore.equals("chalcopyrite") ? PHYLLIC_COPPER : 1.0;
+            case BRECCIA -> BRECCIA_COPPER;
             case POTASSIC -> ore.equals("molybdenite") ? (q < MOLY_SHELL && !highInCore ? 1.0 : 0.0)
                     : Math.max(POTASSIC_FLOOR, 1.0 - Math.abs(q - POTASSIC_PEAK) / POTASSIC_FALL);
             default -> 1.0;
@@ -171,23 +189,46 @@ public final class PorphyryCarver {
     }
 
     /**
-     * Tells whether a block lies in a nest of an ore, so ore comes in small clumps rather than single blocks.
+     * Replaces the soil above a gossan cap with gossan or coarse dirt, clearing plants on bare gossan.
+     *
+     * @param chunk the chunk
+     * @param pos reusable position
+     * @param s noise seed of the deposit
+     * @param x world X
+     * @param z world Z
+     * @param rockY Y of the highest deposit rock in the column
+     * @param surfaceY terrain height of the column
+     */
+    private static void stainSoil(ChunkAccess chunk, BlockPos.MutableBlockPos pos, long s, int x, int z, int rockY,
+            int surfaceY) {
+        BlockState stain = ValueNoise.sample2(s + 9, x, z, SOIL_WAVELENGTH / 2) > 0
+                ? ModBlocks.GOSSAN.get().defaultBlockState() : Blocks.COARSE_DIRT.defaultBlockState();
+        for (int y = Math.max(rockY + 1, surfaceY - SOIL_DEPTH); y <= surfaceY; y++) {
+            if (chunk.getBlockState(pos.set(x, y, z)).is(BlockTags.DIRT)) {
+                chunk.setBlockState(pos, stain, false);
+            }
+        }
+        if (stain.is(ModBlocks.GOSSAN.get()) && chunk.getBlockState(pos.set(x, surfaceY + 1, z)).canBeReplaced()) {
+            chunk.setBlockState(pos, Blocks.AIR.defaultBlockState(), false);
+        }
+    }
+
+    /**
+     * Tells whether a point lies in a patch of a noise that covers the given share, used for ore nests and soil.
      *
      * @param seed world seed
-     * @param ore id of the ore
-     * @param share wanted share of blocks
-     * @param x world X
-     * @param y world Y
-     * @param z world Z
-     * @return true if the block becomes the ore
+     * @param key name that gives each kind of patch its own noise
+     * @param share wanted share of covered points
+     * @param x X in noise units after scaling
+     * @param y Y in noise units after scaling
+     * @param z Z in noise units after scaling
+     * @param wavelength extra scale on all axes
+     * @return true inside a patch
      */
-    private static boolean inNest(long seed, String ore, double share, int x, int y, int z) {
-        double[] size = NESTS.get(ore);
-        if (size == null) {
-            return MineralRoll.roll(seed, ore, x, y, z) < share;
-        }
-        double noise = ValueNoise.sample3(seed ^ SplitMix64.mix(ore.hashCode()), x / size[0], y / size[1],
-                z / size[0]);
+    private static boolean inNest(long seed, String key, double share, double x, double y, double z,
+            double wavelength) {
+        double noise = ValueNoise.sample3(seed ^ SplitMix64.mix(key.hashCode()), x / wavelength, y / wavelength,
+                z / wavelength);
         int index = (int) ((1.0 - Math.min(1.0, share)) * (QUANTILES.length - 1));
         return noise > QUANTILES[index];
     }
@@ -219,6 +260,7 @@ public final class PorphyryCarver {
             case GOSSAN -> ModBlocks.GOSSAN.get().defaultBlockState();
             case LEACHED, OXIDE, OXIDE_BASE -> ModBlocks.BLEACHED_PORPHYRY.get().defaultBlockState();
             case CEMENTATION, PHYLLIC -> ModBlocks.PHYLLIC_ROCK.get().defaultBlockState();
+            case BRECCIA -> ModBlocks.TOURMALINE_BRECCIA.get().defaultBlockState();
             case CORE -> ModBlocks.PORPHYRY.get().defaultBlockState();
             case POTASSIC -> ModBlocks.POTASSIC_PORPHYRY.get().defaultBlockState();
             case PROPYLITIC -> ModBlocks.PROPYLITE.get().defaultBlockState();

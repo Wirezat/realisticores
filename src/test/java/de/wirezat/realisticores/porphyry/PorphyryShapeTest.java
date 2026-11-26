@@ -12,7 +12,7 @@ class PorphyryShapeTest {
 
     @Test
     void weatheringZonesLieAboveTheFreshCoreOnTheAxis() {
-        Body body = new Body(0, 0, 60, 1.0, 0.0, Stage.MODERATE, SURFACE_Y, 7L);
+        Body body = new Body(0, 0, 60, 1.0, 0.0, Stage.MODERATE, SURFACE_Y, 7L, 0.0, 0.0, List.of(), List.of());
         PorphyryShape shape = new PorphyryShape();
         List<Zone> order = new ArrayList<>();
         for (int y = SURFACE_Y; y > 0; y--) {
@@ -23,5 +23,14 @@ class PorphyryShapeTest {
         }
         assertEquals(List.of(Zone.GOSSAN, Zone.LEACHED, Zone.OXIDE, Zone.OXIDE_BASE, Zone.CEMENTATION,
                 Zone.POTASSIC, Zone.CORE), order);
+    }
+
+    @Test
+    void brecciaVentReplacesTheFreshShellsButNotTheWeatheredTop() {
+        Body body = new Body(0, 0, 60, 1.0, 0.0, Stage.MODERATE, SURFACE_Y, 7L, 0.0, 0.0,
+                List.of(new Body.Vent(0.6, 0.0, 8)), List.of());
+        PorphyryShape shape = new PorphyryShape();
+        assertEquals(Zone.BRECCIA, shape.zone(SEED, body, 36, 40, 0, SURFACE_Y, SURFACE_Y));
+        assertEquals(Zone.GOSSAN, shape.zone(SEED, body, 36, SURFACE_Y - 1, 0, SURFACE_Y, SURFACE_Y));
     }
 }

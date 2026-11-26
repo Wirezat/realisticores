@@ -31,6 +31,9 @@ public final class PorphyryShape {
     private static final double GOSSAN_WAVELENGTH = 17.0;
     private static final double CEMENT_NOISE = 2.0;
     private static final double CEMENT_WAVELENGTH = 23.0;
+    private static final double VENT_TOP = 10.0;
+    private static final double VENT_WANDER = 2.0;
+    private static final double VENT_WAVELENGTH = 9.0;
 
     /**
      * Gives the lowest Y any deposit reaches.
@@ -48,7 +51,8 @@ public final class PorphyryShape {
      * @return reach in blocks
      */
     public static double reach(Body body) {
-        return (OUTER + WARP + EDGE_NOISE) * body.elongation() * body.radius();
+        return (OUTER + WARP + EDGE_NOISE) * body.elongation() * body.radius()
+                + Math.hypot(body.tiltX(), body.tiltZ()) * (body.surfaceY() - bottomLimit());
     }
 
     /**
@@ -73,8 +77,9 @@ public final class PorphyryShape {
      */
     public double shell(long seed, Body body, int x, int y, int z) {
         long s = seed ^ body.salt();
-        double dx = x - body.x();
-        double dz = z - body.z();
+        double yc = centreY(body);
+        double dx = x - body.x() - body.tiltX() * (y - yc);
+        double dz = z - body.z() - body.tiltZ() * (y - yc);
         double cos = Math.cos(body.angle());
         double sin = Math.sin(body.angle());
         double wavelength = WARP_WAVELENGTH * body.radius();
@@ -82,7 +87,6 @@ public final class PorphyryShape {
         double u = (dx * cos + dz * sin) / body.elongation() + warp * ValueNoise.sample3(s + 1, x, y, z, wavelength);
         double v = dz * cos - dx * sin + warp * ValueNoise.sample3(s + 2, x, y, z, wavelength);
         double r = Math.hypot(u, v);
-        double yc = centreY(body);
         double d = y > yc ? Math.hypot(r, DOME * (y - yc)) : r;
         return d / body.radius() + EDGE_NOISE * ValueNoise.sample3(s + 3, x, y, z, EDGE_WAVELENGTH);
     }
@@ -131,8 +135,67 @@ public final class PorphyryShape {
                 return weathered;
             }
         }
+        if (q < PHYLLIC_EDGE && inVent(s, body, x, y, z)) {
+            return Zone.BRECCIA;
+        }
+        if (inDike(body, x, y, z)) {
+            return Zone.CORE;
+        }
         return q < CORE_EDGE ? Zone.CORE : q < POTASSIC_EDGE ? Zone.POTASSIC : q < PHYLLIC_EDGE ? Zone.PHYLLIC
                 : Zone.PROPYLITIC;
+    }
+
+    /**
+     * Tells whether a block lies in one of the deposit's breccia vents, which end a little above the potassic dome.
+     *
+     * @param s noise seed of the deposit
+     * @param body the deposit
+     * @param x world X
+     * @param y world Y
+     * @param z world Z
+     * @return true inside a vent
+     */
+    private boolean inVent(long s, Body body, int x, int y, int z) {
+        double yc = centreY(body);
+        if (y > yc + body.radius() / DOME + VENT_TOP) {
+            return false;
+        }
+        double cos = Math.cos(body.angle());
+        double sin = Math.sin(body.angle());
+        for (int i = 0; i < body.vents().size(); i++) {
+            Body.Vent vent = body.vents().get(i);
+            double along = vent.u() * body.radius() * body.elongation();
+            double across = vent.v() * body.radius();
+            double vx = body.x() + body.tiltX() * (y - yc) + along * cos - across * sin
+                    + VENT_WANDER * ValueNoise.sample2(s + 8 + i, y, 0, VENT_WAVELENGTH);
+            double vz = body.z() + body.tiltZ() * (y - yc) + along * sin + across * cos;
+            if (Math.hypot(x - vx, z - vz) < vent.radius()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Tells whether a block lies in one of the deposit's porphyry dikes.
+     *
+     * @param body the deposit
+     * @param x world X
+     * @param y world Y
+     * @param z world Z
+     * @return true inside a dike
+     */
+    private boolean inDike(Body body, int x, int y, int z) {
+        double yc = centreY(body);
+        double dx = x - body.x() - body.tiltX() * (y - yc);
+        double dz = z - body.z() - body.tiltZ() * (y - yc);
+        for (Body.Dike dike : body.dikes()) {
+            double across = dz * Math.cos(dike.angle()) - dx * Math.sin(dike.angle());
+            if (Math.abs(across - dike.offset() * body.radius()) < dike.width() / 2.0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -2,8 +2,9 @@
   "minerals": [
     {"ore": "gossan_gold", "zones": ["GOSSAN"], "fraction": 0.001, "graded": true},
     {"ore": "chalcocite", "zones": ["CEMENTATION"], "fraction": 0.14, "graded": true},
-    {"ore": "chalcopyrite", "zones": ["OXIDE_BASE", "POTASSIC", "PHYLLIC"], "fraction": 0.075, "graded": true,
-     "blocks": {"OXIDE_BASE": "realisticores:leached_chalcopyrite_ore", "PHYLLIC": "realisticores:phyllic_chalcopyrite_ore"}},
+    {"ore": "chalcopyrite", "zones": ["OXIDE_BASE", "POTASSIC", "PHYLLIC", "BRECCIA"], "fraction": 0.075, "graded": true,
+     "blocks": {"OXIDE_BASE": "realisticores:leached_chalcopyrite_ore", "PHYLLIC": "realisticores:phyllic_chalcopyrite_ore",
+                "BRECCIA": "realisticores:breccia_chalcopyrite_ore"}},
     {"ore": "azurite", "zones": ["OXIDE", "OXIDE_BASE"], "fraction": 0.022, "graded": true},
     {"ore": "malachite", "zones": ["OXIDE", "OXIDE_BASE"], "fraction": 0.065, "graded": true},
     {"ore": "molybdenite", "zones": ["POTASSIC"], "fraction": 0.012, "graded": true},
