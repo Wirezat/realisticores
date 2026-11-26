@@ -1,7 +1,5 @@
-package de.wirezat.realisticores.indicator;
+package de.wirezat.realisticores.worldgen;
 
-import de.wirezat.realisticores.kimberlite.Climate;
-import de.wirezat.realisticores.kimberlite.TerrainProbe;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.ServerLevel;

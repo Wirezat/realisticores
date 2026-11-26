@@ -1,11 +1,12 @@
 package de.wirezat.realisticores.survey;
 
 import de.wirezat.realisticores.OreConfig;
-import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.Field;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.Pipe;
 import de.wirezat.realisticores.kimberlite.Plume;
+import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.Surveys;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +78,7 @@ public class KimberliteMapItem extends Item {
                         survey.ifPresentOrElse(found -> hand(server, reader, found), () -> playNothingFound(reader));
                     }
                 }, server.getServer())
-                .whenComplete(Kimberlite::logFailure);
+                .whenComplete(Surveys::logFailure);
         return InteractionResultHolder.consume(stack);
     }
 

@@ -1,6 +1,6 @@
 package de.wirezat.realisticores.coal;
 
-import de.wirezat.realisticores.kimberlite.SplitMix64;
+import de.wirezat.realisticores.worldgen.SplitMix64;
 import java.util.ArrayList;
 import java.util.List;
 

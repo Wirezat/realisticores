@@ -1,8 +1,8 @@
 package de.wirezat.realisticores.indicator;
 
 import de.wirezat.realisticores.ModItems;
-import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.Plume;
+import de.wirezat.realisticores.worldgen.Surveys;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -178,7 +178,7 @@ public class PanItem extends Item {
             return InteractionResult.FAIL;
         }
         if (context.getLevel() instanceof ServerLevel server) {
-            PanYield.measure(server, context.getClickedPos()).whenComplete(Kimberlite::logFailure);
+            PanYield.measure(server, context.getClickedPos()).whenComplete(Surveys::logFailure);
         }
         player.startUsingItem(context.getHand());
         return InteractionResult.CONSUME;
@@ -269,7 +269,7 @@ public class PanItem extends Item {
         PanYield.measure(server, pos)
                 .thenAcceptAsync(result -> collect(server, player, pos, id, result, keepBlock, fortune, reach),
                         server.getServer())
-                .whenComplete(Kimberlite::logFailure);
+                .whenComplete(Surveys::logFailure);
         return stack;
     }
 

@@ -1,9 +1,9 @@
 package de.wirezat.realisticores.mixin;
 
 import de.wirezat.realisticores.coal.CoalCarver;
-import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.KimberliteCarver;
-import de.wirezat.realisticores.kimberlite.TerrainProbe;
+import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;

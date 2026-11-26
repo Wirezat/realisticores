@@ -1,18 +1,15 @@
 package de.wirezat.realisticores.coal;
 
-import de.wirezat.realisticores.kimberlite.TerrainProbe;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 
 /** Shared generator objects of coal basin generation, rebuilt whenever the config changes. */
 public final class Coal {
-    private static final Executor SURVEYOR = new ForkJoinPool(1);
     private static final int MAX_CANDIDATES = 300;
 
     private static volatile State state;
@@ -122,15 +119,6 @@ public final class Coal {
     private static Stream<ResolvedBasin> resolved(State current, long seed, TerrainProbe probe, Stream<Basin> basins) {
         return basins.flatMap(basin -> current.basins().computeIfAbsent(new BasinKey(seed, basin),
                 key -> resolve(basin, probe, current.params())).stream());
-    }
-
-    /**
-     * Gives the background thread for surveys that measure many basins.
-     *
-     * @return executor with one thread
-     */
-    public static Executor surveyor() {
-        return SURVEYOR;
     }
 
     private static Optional<ResolvedBasin> resolve(Basin basin, TerrainProbe probe, CoalParams params) {

@@ -1,5 +1,7 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.ValueNoise;
+
 /** Decides which world positions lie on a craton, using low-frequency value noise. */
 public final class CratonMask {
     private static final long SALT = 0x4352415F4B494D42L;

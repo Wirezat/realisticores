@@ -1,5 +1,8 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.SplitMix64;
+import de.wirezat.realisticores.worldgen.ValueNoise;
+
 /** Picks the rock type at a position inside a pipe. */
 public final class FaciesSelector {
     private static final long SALT = 0x464143494553L;

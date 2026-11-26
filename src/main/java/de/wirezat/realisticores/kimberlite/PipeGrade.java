@@ -1,5 +1,8 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.SplitMix64;
+import de.wirezat.realisticores.worldgen.ValueNoise;
+
 /** Ore grade of a pipe: barren, poor or rich, varying by rock phase inside the pipe. */
 public final class PipeGrade {
     private static final long PIPE_SALT = 0x4752414445504950L;

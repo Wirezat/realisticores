@@ -1,4 +1,4 @@
-package de.wirezat.realisticores.kimberlite;
+package de.wirezat.realisticores.worldgen;
 
 import net.minecraft.core.Holder;
 import net.minecraft.tags.BiomeTags;

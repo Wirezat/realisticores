@@ -1,5 +1,7 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.TerrainProbe;
+
 /**
  * Terrain facts around one crater.
  *

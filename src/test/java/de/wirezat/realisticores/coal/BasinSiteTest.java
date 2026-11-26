@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.wirezat.realisticores.kimberlite.Climate;
-import de.wirezat.realisticores.kimberlite.TerrainProbe;
+import de.wirezat.realisticores.worldgen.Climate;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.function.IntBinaryOperator;
 import org.junit.jupiter.api.Test;
 

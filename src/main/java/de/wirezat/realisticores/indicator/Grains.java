@@ -2,7 +2,7 @@ package de.wirezat.realisticores.indicator;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import de.wirezat.realisticores.kimberlite.SplitMix64;
+import de.wirezat.realisticores.worldgen.SplitMix64;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

@@ -1,7 +1,7 @@
 package de.wirezat.realisticores.coal;
 
-import de.wirezat.realisticores.kimberlite.SplitMix64;
-import de.wirezat.realisticores.kimberlite.ValueNoise;
+import de.wirezat.realisticores.worldgen.SplitMix64;
+import de.wirezat.realisticores.worldgen.ValueNoise;
 import java.util.OptionalInt;
 
 /** Decides where a seam leaves loose coal and coaly soil on the surface. */

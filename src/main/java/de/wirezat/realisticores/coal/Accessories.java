@@ -1,7 +1,8 @@
 package de.wirezat.realisticores.coal;
 
-import de.wirezat.realisticores.kimberlite.SplitMix64;
-import de.wirezat.realisticores.kimberlite.ValueNoise;
+import de.wirezat.realisticores.worldgen.SplitMix64;
+import de.wirezat.realisticores.worldgen.ValueNoise;
+
 
 /** Decides where the minerals that accompany the coal lie: the roll front in sandstone, pyrite nests, seam fires. */
 public final class Accessories {

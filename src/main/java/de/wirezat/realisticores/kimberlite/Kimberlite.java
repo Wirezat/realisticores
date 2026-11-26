@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.kimberlite;
 
 import de.wirezat.realisticores.KimberliteConfig;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -8,12 +9,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ForkJoinPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Shared generator objects of kimberlite generation, rebuilt whenever the config changes. */
 public final class Kimberlite {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Kimberlite.class);
     private static final ForkJoinPool TRACERS =
             new ForkJoinPool(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
 
@@ -209,18 +207,6 @@ public final class Kimberlite {
         int maxX = maxOf(path.xs()) + SPOT_SEARCH_MARGIN;
         int maxZ = maxOf(path.zs()) + SPOT_SEARCH_MARGIN;
         return current.generator().pipesNear(seed, minX, minZ, maxX, maxZ);
-    }
-
-    /**
-     * Logs the failure of a background task; meant for {@link CompletableFuture#whenComplete}.
-     *
-     * @param result result of the task, ignored
-     * @param failure what went wrong, or null if the task succeeded
-     */
-    public static void logFailure(Object result, Throwable failure) {
-        if (failure != null) {
-            LOGGER.error("Background survey task failed", failure);
-        }
     }
 
     private static double distanceToArea(Pipe pipe, int minX, int minZ, int maxX, int maxZ) {

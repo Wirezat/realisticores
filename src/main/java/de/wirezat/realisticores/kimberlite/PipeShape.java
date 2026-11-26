@@ -1,5 +1,8 @@
 package de.wirezat.realisticores.kimberlite;
 
+import de.wirezat.realisticores.worldgen.SplitMix64;
+import de.wirezat.realisticores.worldgen.ValueNoise;
+
 /** Irregular outline of a pipe: elliptical base shape plus noisy walls. */
 public final class PipeShape {
     private static final long SHAPE_SALT = 0x5348415045504950L;

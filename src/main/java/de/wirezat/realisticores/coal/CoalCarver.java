@@ -2,9 +2,9 @@ package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.OreConfig;
-import de.wirezat.realisticores.kimberlite.TerrainProbe;
 import de.wirezat.realisticores.ore.ActiveMineral;
 import de.wirezat.realisticores.ore.MineralRoll;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

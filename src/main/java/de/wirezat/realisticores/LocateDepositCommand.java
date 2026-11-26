@@ -5,9 +5,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import de.wirezat.realisticores.coal.BasinType;
 import de.wirezat.realisticores.coal.Coal;
-import de.wirezat.realisticores.indicator.LevelTerrainProbe;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.Pipe;
+import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.Surveys;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -66,12 +67,12 @@ public final class LocateDepositCommand {
         CommandSourceStack source = context.getSource();
         ServerLevel level = source.getLevel();
         BlockPos origin = BlockPos.containing(source.getPosition());
-        CompletableFuture.supplyAsync(() -> search.nearest(level, origin), Coal.surveyor())
+        CompletableFuture.supplyAsync(() -> search.nearest(level, origin), Surveys.executor())
                 .thenAcceptAsync(found -> found.ifPresentOrElse(pos -> success(source, title, origin, pos),
                         () -> source.sendFailure(
                                 Component.translatable("commands.locate.structure.not_found", title))),
                         level.getServer())
-                .whenComplete(Kimberlite::logFailure);
+                .whenComplete(Surveys::logFailure);
         return 1;
     }
 

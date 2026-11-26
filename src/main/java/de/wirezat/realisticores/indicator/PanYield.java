@@ -6,6 +6,7 @@ import de.wirezat.realisticores.kimberlite.KimberliteParams;
 import de.wirezat.realisticores.kimberlite.PipeGrade;
 import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.kimberlite.PlumePath;
+import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;

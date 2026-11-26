@@ -1,6 +1,6 @@
 package de.wirezat.realisticores.coal;
 
-import de.wirezat.realisticores.kimberlite.TerrainProbe;
+import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Arrays;
 
 /**

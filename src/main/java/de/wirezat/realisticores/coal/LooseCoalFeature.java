@@ -2,7 +2,7 @@ package de.wirezat.realisticores.coal;
 
 import de.wirezat.realisticores.ModBlocks;
 import de.wirezat.realisticores.OreConfig;
-import de.wirezat.realisticores.indicator.LevelTerrainProbe;
+import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

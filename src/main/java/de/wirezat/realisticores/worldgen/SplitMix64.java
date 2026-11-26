@@ -1,4 +1,4 @@
-package de.wirezat.realisticores.kimberlite;
+package de.wirezat.realisticores.worldgen;
 
 /** Deterministic 64-bit hash and random stream (SplitMix64). */
 public final class SplitMix64 {

@@ -1,6 +1,7 @@
 package de.wirezat.realisticores.ore;
 
-import de.wirezat.realisticores.kimberlite.SplitMix64;
+import de.wirezat.realisticores.worldgen.SplitMix64;
+
 
 /** Deterministic random roll deciding whether a block becomes a given ore. */
 public final class MineralRoll {

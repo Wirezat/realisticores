@@ -1,4 +1,4 @@
-package de.wirezat.realisticores.kimberlite;
+package de.wirezat.realisticores.worldgen;
 
 /** Seeded value noise with smooth interpolation, output in [-1, 1). */
 public final class ValueNoise {

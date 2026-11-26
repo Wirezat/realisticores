@@ -1,4 +1,4 @@
-package de.wirezat.realisticores.kimberlite;
+package de.wirezat.realisticores.worldgen;
 
 /** Reads the terrain and climate of a world position without generating chunks. */
 public interface TerrainProbe {
