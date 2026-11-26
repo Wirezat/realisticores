@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/peridotite"
+      },
+      {
+        "model": "realisticores:block/peridotite_1"
+      },
+      {
+        "model": "realisticores:block/peridotite_2"
+      },
+      {
+        "model": "realisticores:block/peridotite_3"
+      }
+    ]
+  }
+}

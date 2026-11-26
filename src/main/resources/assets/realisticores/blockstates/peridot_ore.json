@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/peridot_ore"
+      },
+      {
+        "model": "realisticores:block/peridot_ore_1"
+      },
+      {
+        "model": "realisticores:block/peridot_ore_2"
+      },
+      {
+        "model": "realisticores:block/peridot_ore_3"
+      }
+    ]
+  }
+}

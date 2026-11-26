@@ -5,31 +5,13 @@
         "model": "realisticores:block/kimberlite_bort_ore"
       },
       {
-        "model": "realisticores:block/kimberlite_bort_ore",
-        "y": 90
+        "model": "realisticores:block/kimberlite_bort_ore_1"
       },
       {
-        "model": "realisticores:block/kimberlite_bort_ore",
-        "y": 180
+        "model": "realisticores:block/kimberlite_bort_ore_2"
       },
       {
-        "model": "realisticores:block/kimberlite_bort_ore",
-        "y": 270
-      },
-      {
-        "model": "realisticores:block/kimberlite_bort_ore_mirrored"
-      },
-      {
-        "model": "realisticores:block/kimberlite_bort_ore_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/kimberlite_bort_ore_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/kimberlite_bort_ore_mirrored",
-        "y": 270
+        "model": "realisticores:block/kimberlite_bort_ore_3"
       }
     ]
   }

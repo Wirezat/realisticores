@@ -5,31 +5,13 @@
         "model": "realisticores:block/kimberlite"
       },
       {
-        "model": "realisticores:block/kimberlite",
-        "y": 90
+        "model": "realisticores:block/kimberlite_1"
       },
       {
-        "model": "realisticores:block/kimberlite",
-        "y": 180
+        "model": "realisticores:block/kimberlite_2"
       },
       {
-        "model": "realisticores:block/kimberlite",
-        "y": 270
-      },
-      {
-        "model": "realisticores:block/kimberlite_mirrored"
-      },
-      {
-        "model": "realisticores:block/kimberlite_mirrored",
-        "y": 90
-      },
-      {
-        "model": "realisticores:block/kimberlite_mirrored",
-        "y": 180
-      },
-      {
-        "model": "realisticores:block/kimberlite_mirrored",
-        "y": 270
+        "model": "realisticores:block/kimberlite_3"
       }
     ]
   }

@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/serpentinized_kimberlite"
+      },
+      {
+        "model": "realisticores:block/serpentinized_kimberlite_1"
+      },
+      {
+        "model": "realisticores:block/serpentinized_kimberlite_2"
+      },
+      {
+        "model": "realisticores:block/serpentinized_kimberlite_3"
+      }
+    ]
+  }
+}

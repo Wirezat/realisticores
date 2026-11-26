@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/weathered_kimberlite"
+      },
+      {
+        "model": "realisticores:block/weathered_kimberlite_1"
+      },
+      {
+        "model": "realisticores:block/weathered_kimberlite_2"
+      },
+      {
+        "model": "realisticores:block/weathered_kimberlite_3"
+      }
+    ]
+  }
+}

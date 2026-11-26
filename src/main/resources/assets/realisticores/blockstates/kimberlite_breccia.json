@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/kimberlite_breccia"
+      },
+      {
+        "model": "realisticores:block/kimberlite_breccia_1"
+      },
+      {
+        "model": "realisticores:block/kimberlite_breccia_2"
+      },
+      {
+        "model": "realisticores:block/kimberlite_breccia_3"
+      }
+    ]
+  }
+}

@@ -1,7 +1,18 @@
 {
   "variants": {
-    "": {
-      "model": "realisticores:block/volcaniclastic_kimberlite"
-    }
+    "": [
+      {
+        "model": "realisticores:block/volcaniclastic_kimberlite"
+      },
+      {
+        "model": "realisticores:block/volcaniclastic_kimberlite_1"
+      },
+      {
+        "model": "realisticores:block/volcaniclastic_kimberlite_2"
+      },
+      {
+        "model": "realisticores:block/volcaniclastic_kimberlite_3"
+      }
+    ]
   }
 }

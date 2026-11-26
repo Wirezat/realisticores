@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "realisticores:block/volcaniclastic_kimberlite_top_2",
+    "bottom": "realisticores:block/volcaniclastic_kimberlite_top_2",
+    "side": "realisticores:block/volcaniclastic_kimberlite_2"
+  }
+}

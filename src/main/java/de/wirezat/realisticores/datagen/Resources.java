@@ -153,10 +153,8 @@ final class Resources {
      */
     static List<DeferredBlock<? extends Block>> cubes() {
         return List.of(ModBlocks.ANTHRACITE_BLOCK, ModBlocks.BORT_BLOCK, ModBlocks.CHROMITE_BLOCK,
-                ModBlocks.ILMENITE_BLOCK, ModBlocks.KIMBERLITE_BRECCIA, ModBlocks.LIGNITE_BLOCK,
-                ModBlocks.NATURAL_DIAMOND_BLOCK, ModBlocks.PERIDOT_BLOCK, ModBlocks.PERIDOT_ORE, ModBlocks.PERIDOTITE,
-                ModBlocks.PYRITE_BLOCK, ModBlocks.PYROPE_BLOCK, ModBlocks.RAW_SIDERITE_BLOCK,
-                ModBlocks.RAW_URANIUM_BLOCK, ModBlocks.SAL_AMMONIAC_BLOCK, ModBlocks.SERPENTINIZED_KIMBERLITE,
-                ModBlocks.WEATHERED_KIMBERLITE);
+                ModBlocks.ILMENITE_BLOCK, ModBlocks.LIGNITE_BLOCK, ModBlocks.NATURAL_DIAMOND_BLOCK,
+                ModBlocks.PERIDOT_BLOCK, ModBlocks.PYRITE_BLOCK, ModBlocks.PYROPE_BLOCK,
+                ModBlocks.RAW_SIDERITE_BLOCK, ModBlocks.RAW_URANIUM_BLOCK, ModBlocks.SAL_AMMONIAC_BLOCK);
     }
 }
