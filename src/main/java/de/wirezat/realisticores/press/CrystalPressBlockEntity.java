@@ -104,7 +104,8 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
      * @return true if a recipe takes it as material
      */
     private boolean acceptsMaterial(ItemStack stack) {
-        return level != null && PressIngredients.isMaterial(level.getRecipeManager().getRecipes(), stack);
+        return level != null
+                && PressIngredients.isMaterial(level.getRecipeManager().getRecipes(), level.isClientSide, stack);
     }
 
     /**
@@ -114,7 +115,8 @@ public class CrystalPressBlockEntity extends BlockEntity implements MenuProvider
      * @return true if a recipe takes it as catalyst
      */
     private boolean acceptsCatalyst(ItemStack stack) {
-        return level != null && PressIngredients.isCatalyst(level.getRecipeManager().getRecipes(), stack);
+        return level != null
+                && PressIngredients.isCatalyst(level.getRecipeManager().getRecipes(), level.isClientSide, stack);
     }
 
     /**

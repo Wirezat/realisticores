@@ -16,7 +16,10 @@ final class PressIngredients {
             Set<Item> catalysts) {
     }
 
-    private static volatile Index index = new Index(List.of(), List.of(), Set.of(), Set.of());
+    private static final Index EMPTY = new Index(List.of(), List.of(), Set.of(), Set.of());
+
+    private static volatile Index serverIndex = EMPTY;
+    private static volatile Index clientIndex = EMPTY;
 
     private PressIngredients() {
     }
@@ -25,11 +28,12 @@ final class PressIngredients {
      * Tells whether a stack is the material of any press recipe.
      *
      * @param recipes all loaded recipes as given by {@code RecipeManager.getRecipes()}; a new collection after a reload
+     * @param client true for the recipes of the client, which keep an index of their own
      * @param stack the stack
      * @return true if a recipe takes it as material
      */
-    static boolean isMaterial(Collection<RecipeHolder<?>> recipes, ItemStack stack) {
-        Index current = index(recipes);
+    static boolean isMaterial(Collection<RecipeHolder<?>> recipes, boolean client, ItemStack stack) {
+        Index current = index(recipes, client);
         return current.materials().contains(stack.getItem())
                 && current.recipes().stream().anyMatch(recipe -> recipe.material().test(stack));
     }
@@ -38,11 +42,12 @@ final class PressIngredients {
      * Tells whether a stack is the catalyst of any press recipe.
      *
      * @param recipes all loaded recipes as given by {@code RecipeManager.getRecipes()}; a new collection after a reload
+     * @param client true for the recipes of the client, which keep an index of their own
      * @param stack the stack
      * @return true if a recipe takes it as catalyst
      */
-    static boolean isCatalyst(Collection<RecipeHolder<?>> recipes, ItemStack stack) {
-        Index current = index(recipes);
+    static boolean isCatalyst(Collection<RecipeHolder<?>> recipes, boolean client, ItemStack stack) {
+        Index current = index(recipes, client);
         return current.catalysts().contains(stack.getItem())
                 && current.recipes().stream().anyMatch(recipe -> recipe.catalyst().test(stack));
     }
@@ -51,17 +56,22 @@ final class PressIngredients {
      * Gives the index of the recipes, rebuilding it when they are not the ones indexed last.
      *
      * @param recipes all loaded recipes
+     * @param client true for the index of the client
      * @return press recipes with the items of their materials and catalysts
      */
-    private static Index index(Collection<RecipeHolder<?>> recipes) {
-        Index current = index;
+    private static Index index(Collection<RecipeHolder<?>> recipes, boolean client) {
+        Index current = client ? clientIndex : serverIndex;
         if (current.source() == recipes) {
             return current;
         }
         List<PressRecipe> press = recipes.stream().map(RecipeHolder::value)
                 .filter(PressRecipe.class::isInstance).map(PressRecipe.class::cast).toList();
         current = new Index(recipes, press, items(press, PressRecipe::material), items(press, PressRecipe::catalyst));
-        index = current;
+        if (client) {
+            clientIndex = current;
+        } else {
+            serverIndex = current;
+        }
         return current;
     }
 

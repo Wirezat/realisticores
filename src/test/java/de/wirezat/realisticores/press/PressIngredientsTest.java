@@ -27,13 +27,13 @@ class PressIngredientsTest {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
         Collection<RecipeHolder<?>> before = recipes(Items.COAL, Items.IRON_INGOT);
-        assertTrue(PressIngredients.isMaterial(before, new ItemStack(Items.COAL)));
-        assertTrue(PressIngredients.isCatalyst(before, new ItemStack(Items.IRON_INGOT)));
-        assertFalse(PressIngredients.isMaterial(before, new ItemStack(Items.IRON_INGOT)));
+        assertTrue(PressIngredients.isMaterial(before, false, new ItemStack(Items.COAL)));
+        assertTrue(PressIngredients.isCatalyst(before, false, new ItemStack(Items.IRON_INGOT)));
+        assertFalse(PressIngredients.isMaterial(before, false, new ItemStack(Items.IRON_INGOT)));
 
         Collection<RecipeHolder<?>> after = recipes(Items.CHARCOAL, Items.GOLD_INGOT);
-        assertFalse(PressIngredients.isMaterial(after, new ItemStack(Items.COAL)));
-        assertTrue(PressIngredients.isMaterial(after, new ItemStack(Items.CHARCOAL)));
-        assertTrue(PressIngredients.isCatalyst(after, new ItemStack(Items.GOLD_INGOT)));
+        assertFalse(PressIngredients.isMaterial(after, false, new ItemStack(Items.COAL)));
+        assertTrue(PressIngredients.isMaterial(after, false, new ItemStack(Items.CHARCOAL)));
+        assertTrue(PressIngredients.isCatalyst(after, false, new ItemStack(Items.GOLD_INGOT)));
     }
 }
