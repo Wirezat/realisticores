@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/phyllic_pyrite_ore"
+      },
+      {
+        "model": "realisticores:block/phyllic_pyrite_ore_1"
+      },
+      {
+        "model": "realisticores:block/phyllic_pyrite_ore_2"
+      },
+      {
+        "model": "realisticores:block/phyllic_pyrite_ore_3"
+      }
+    ]
+  }
+}

@@ -102,7 +102,7 @@ final class Resources {
                     ModBlocks.AZURITE_BLOCK, "raw_azurite", Tier.STONE, "#2D4FB8", 0.9F, List.of()),
             new Resource("chalcopyrite", ModItems.CHALCOPYRITE,
                     List.of("raw_materials/chalcopyrite", "raw_materials/copper"), ModBlocks.CHALCOPYRITE_BLOCK,
-                    "raw_chalcopyrite", Tier.STONE, "#B89A3A", 0.6F, List.of()),
+                    "raw_chalcopyrite", Tier.STONE, "#9A922E", 0.6F, List.of()),
             new Resource("molybdenite", ModItems.MOLYBDENITE, List.of("raw_materials/molybdenite"),
                     ModBlocks.MOLYBDENITE_BLOCK, "raw_molybdenite", Tier.STONE, "#868C99", 0.2F, List.of()));
 

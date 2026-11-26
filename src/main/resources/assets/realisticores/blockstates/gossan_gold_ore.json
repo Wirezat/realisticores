@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/gossan_gold_ore"
+      },
+      {
+        "model": "realisticores:block/gossan_gold_ore_1"
+      },
+      {
+        "model": "realisticores:block/gossan_gold_ore_2"
+      },
+      {
+        "model": "realisticores:block/gossan_gold_ore_3"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/azurite_ore"
+      },
+      {
+        "model": "realisticores:block/azurite_ore_1"
+      },
+      {
+        "model": "realisticores:block/azurite_ore_2"
+      },
+      {
+        "model": "realisticores:block/azurite_ore_3"
+      }
+    ]
+  }
+}

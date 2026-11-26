@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/leached_chalcopyrite_ore"
+      },
+      {
+        "model": "realisticores:block/leached_chalcopyrite_ore_1"
+      },
+      {
+        "model": "realisticores:block/leached_chalcopyrite_ore_2"
+      },
+      {
+        "model": "realisticores:block/leached_chalcopyrite_ore_3"
+      }
+    ]
+  }
+}

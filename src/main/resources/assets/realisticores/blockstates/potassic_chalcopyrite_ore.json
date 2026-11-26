@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/potassic_chalcopyrite_ore"
+      },
+      {
+        "model": "realisticores:block/potassic_chalcopyrite_ore_1"
+      },
+      {
+        "model": "realisticores:block/potassic_chalcopyrite_ore_2"
+      },
+      {
+        "model": "realisticores:block/potassic_chalcopyrite_ore_3"
+      }
+    ]
+  }
+}

@@ -55,7 +55,11 @@
         "realisticores_uranium": "realisticores:trims/color_palettes/uranium",
         "realisticores_pyrite": "realisticores:trims/color_palettes/pyrite",
         "realisticores_sal_ammoniac": "realisticores:trims/color_palettes/sal_ammoniac",
-        "realisticores_siderite": "realisticores:trims/color_palettes/siderite"
+        "realisticores_siderite": "realisticores:trims/color_palettes/siderite",
+        "realisticores_malachite": "realisticores:trims/color_palettes/malachite",
+        "realisticores_azurite": "realisticores:trims/color_palettes/azurite",
+        "realisticores_chalcopyrite": "realisticores:trims/color_palettes/chalcopyrite",
+        "realisticores_molybdenite": "realisticores:trims/color_palettes/molybdenite"
       }
     }
   ]

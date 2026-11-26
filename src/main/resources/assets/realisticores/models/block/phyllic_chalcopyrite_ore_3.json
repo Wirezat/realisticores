@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "realisticores:block/phyllic_chalcopyrite_ore_3"
+  }
+}

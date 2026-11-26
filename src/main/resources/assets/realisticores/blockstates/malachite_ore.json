@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "realisticores:block/malachite_ore"
+      },
+      {
+        "model": "realisticores:block/malachite_ore_1"
+      },
+      {
+        "model": "realisticores:block/malachite_ore_2"
+      },
+      {
+        "model": "realisticores:block/malachite_ore_3"
+      }
+    ]
+  }
+}
