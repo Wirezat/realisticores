@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/grass_block",
+  "render_type": "minecraft:cutout_mipped",
+  "textures": {
+    "particle": "realisticores:block/coaly_dirt",
+    "bottom": "realisticores:block/coaly_dirt",
+    "side": "realisticores:block/coaly_dirt"
+  }
+}

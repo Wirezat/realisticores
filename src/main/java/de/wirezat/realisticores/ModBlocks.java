@@ -1,6 +1,8 @@
 package de.wirezat.realisticores;
 
 import de.wirezat.realisticores.coal.CoalPiecesBlock;
+import de.wirezat.realisticores.coal.CoalyDirtBlock;
+import de.wirezat.realisticores.coal.CoalyGrassBlock;
 import de.wirezat.realisticores.ore.DepositRegistry;
 import de.wirezat.realisticores.ore.OreDefinition;
 import de.wirezat.realisticores.press.CrystalPressBlock;
@@ -96,6 +98,13 @@ public final class ModBlocks {
     public static final DeferredBlock<CoalPiecesBlock> ANTHRACITE_PIECES =
             registerPieces("anthracite_pieces", MapColor.COLOR_BLACK, ModItems.ANTHRACITE);
 
+    public static final DeferredBlock<Block> COALY_DIRT = registerDirt("coaly_dirt", MapColor.COLOR_GRAY);
+    public static final DeferredBlock<Block> LIGNITIC_DIRT = registerDirt("lignitic_dirt", MapColor.PODZOL);
+    public static final DeferredBlock<CoalyGrassBlock> COALY_GRASS_BLOCK =
+            registerGrass("coaly_grass_block", MapColor.COLOR_GRAY, COALY_DIRT, 0x626248);
+    public static final DeferredBlock<CoalyGrassBlock> LIGNITIC_GRASS_BLOCK =
+            registerGrass("lignitic_grass_block", MapColor.PODZOL, LIGNITIC_DIRT, 0x8A6C3A);
+
     public static final DeferredBlock<CrystalPressBlock> CRYSTAL_PRESS = registerPress();
 
     private ModBlocks() {
@@ -120,6 +129,22 @@ public final class ModBlocks {
         return BLOCKS.registerBlock(name, props -> new CoalPiecesBlock(item, props),
                 BlockBehaviour.Properties.of().mapColor(color).sound(SoundType.STONE).instabreak().noCollission()
                         .noOcclusion().pushReaction(PushReaction.DESTROY));
+    }
+
+    private static DeferredBlock<Block> registerDirt(String name, MapColor color) {
+        DeferredBlock<Block> block = BLOCKS.registerBlock(name, CoalyDirtBlock::new,
+                BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).mapColor(color));
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
+        return block;
+    }
+
+    private static DeferredBlock<CoalyGrassBlock> registerGrass(String name, MapColor color,
+            DeferredBlock<Block> soil, int tint) {
+        DeferredBlock<CoalyGrassBlock> block = BLOCKS.registerBlock(name,
+                props -> new CoalyGrassBlock(soil, tint, props),
+                BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).mapColor(color));
+        BLOCK_ITEMS.add(ITEMS.registerSimpleBlockItem(name, block));
+        return block;
     }
 
     private static DeferredBlock<Block> registerOre(String name, String oreId, BlockBehaviour.Properties properties) {
@@ -156,5 +181,14 @@ public final class ModBlocks {
      */
     public static List<CoalPiecesBlock> coalPieces() {
         return Stream.of(COAL_PIECES, LIGNITE_PIECES, ANTHRACITE_PIECES).map(DeferredBlock::get).toList();
+    }
+
+    /**
+     * Gives the grass blocks with a fixed tint.
+     *
+     * @return one grass block per coaly soil
+     */
+    public static List<CoalyGrassBlock> coalyGrass() {
+        return Stream.of(COALY_GRASS_BLOCK, LIGNITIC_GRASS_BLOCK).map(DeferredBlock::get).toList();
     }
 }

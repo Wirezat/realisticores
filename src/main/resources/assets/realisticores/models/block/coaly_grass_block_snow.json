@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/grass_block_snow",
+  "textures": {
+    "particle": "realisticores:block/coaly_dirt",
+    "bottom": "realisticores:block/coaly_dirt",
+    "side": "realisticores:block/coaly_grass_block_snow"
+  }
+}

@@ -68,5 +68,9 @@
   "command.realisticores.locate.anthracite": "Anthracite Basin",
   "block.realisticores.coal_pieces": "Pieces of Coal",
   "block.realisticores.lignite_pieces": "Pieces of Lignite",
-  "block.realisticores.anthracite_pieces": "Pieces of Anthracite"
+  "block.realisticores.anthracite_pieces": "Pieces of Anthracite",
+  "block.realisticores.coaly_dirt": "Coaly Dirt",
+  "block.realisticores.coaly_grass_block": "Coaly Grass Block",
+  "block.realisticores.lignitic_dirt": "Lignitic Dirt",
+  "block.realisticores.lignitic_grass_block": "Lignitic Grass Block"
 }

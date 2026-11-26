@@ -12,6 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 /** Client-only registration of screens, tooltips and item properties. */
@@ -38,6 +39,26 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(PanTooltip.class, ClientPanTooltip::new);
+    }
+
+    /**
+     * Registers the colours of coaly grass blocks and the plants on them.
+     *
+     * @param event the block colour registration event
+     */
+    @SubscribeEvent
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        SoilTint.blocks(event);
+    }
+
+    /**
+     * Registers the colours of coaly grass block items.
+     *
+     * @param event the item colour registration event
+     */
+    @SubscribeEvent
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        SoilTint.items(event);
     }
 
     /**

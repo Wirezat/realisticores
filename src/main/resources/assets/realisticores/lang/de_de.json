@@ -68,5 +68,9 @@
   "command.realisticores.locate.anthracite": "Anthrazit-Becken",
   "block.realisticores.coal_pieces": "Kohlebrocken",
   "block.realisticores.lignite_pieces": "Braunkohlebrocken",
-  "block.realisticores.anthracite_pieces": "Anthrazitbrocken"
+  "block.realisticores.anthracite_pieces": "Anthrazitbrocken",
+  "block.realisticores.coaly_dirt": "Kohlige Erde",
+  "block.realisticores.coaly_grass_block": "Kohliger Grasblock",
+  "block.realisticores.lignitic_dirt": "Braunkohlige Erde",
+  "block.realisticores.lignitic_grass_block": "Braunkohliger Grasblock"
 }

@@ -1,0 +1,69 @@
+{
+  "variants": {
+    "snowy=false": [
+      {
+        "model": "realisticores:block/coaly_grass_block"
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_1"
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_1",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_1",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_1",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_2"
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_2",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_2",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_2",
+        "y": 270
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_3"
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_3",
+        "y": 90
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_3",
+        "y": 180
+      },
+      {
+        "model": "realisticores:block/coaly_grass_block_3",
+        "y": 270
+      }
+    ],
+    "snowy=true": {
+      "model": "realisticores:block/coaly_grass_block_snow"
+    }
+  }
+}
