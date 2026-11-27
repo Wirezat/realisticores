@@ -1,7 +1,13 @@
 package de.wirezat.realisticores.porphyry;
 
+import de.wirezat.realisticores.indicator.Plume;
+import de.wirezat.realisticores.indicator.PlumePath;
+import de.wirezat.realisticores.indicator.Plumes;
 import de.wirezat.realisticores.worldgen.Memo;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /** Shared generator objects of porphyry copper generation, rebuilt whenever the config changes. */
 public final class Porphyry {
@@ -13,7 +19,8 @@ public final class Porphyry {
     private Porphyry() {
     }
 
-    private record State(ClusterGenerator generator, PorphyryShape shape, Memo<GridKey, Integer> heights) {
+    private record State(PorphyryParams params, ClusterGenerator generator, PorphyryShape shape,
+            Memo<GridKey, Integer> heights, Plumes<Body> plumes) {
     }
 
     private record GridKey(long seed, int x, int z) {
@@ -27,8 +34,10 @@ public final class Porphyry {
     private static State state() {
         State current = state;
         if (current == null) {
-            current = new State(new ClusterGenerator(PorphyryConfig.params()), new PorphyryShape(),
-                    new Memo<>(CACHE_LIMIT));
+            PorphyryParams params = PorphyryConfig.params();
+            ClusterGenerator generator = new ClusterGenerator(params);
+            current = new State(params, generator, new PorphyryShape(), new Memo<>(CACHE_LIMIT),
+                    new Plumes<>(params.plume(), params.cellSize(), generator::bodiesNear));
             state = current;
         }
         return current;
@@ -55,6 +64,47 @@ public final class Porphyry {
      */
     public static PorphyryShape shape() {
         return state().shape();
+    }
+
+    /**
+     * Returns the active parameters.
+     *
+     * @return porphyry generation parameters
+     */
+    public static PorphyryParams params() {
+        return state().params();
+    }
+
+    /**
+     * Collects the indicator trails that can reach an area, tracing missing ones on the trail pool.
+     *
+     * @param seed world seed
+     * @param probe terrain and climate source, read from the pool's threads
+     * @param seaLevel Y of the sea surface
+     * @param minX west edge of the area in blocks
+     * @param minZ north edge of the area in blocks
+     * @param maxX east edge of the area in blocks
+     * @param maxZ south edge of the area in blocks
+     * @return future of the trails of all deposits close enough to the area
+     */
+    public static CompletableFuture<List<PlumePath<Body>>> plumesReaching(long seed, TerrainProbe probe,
+            int seaLevel, int minX, int minZ, int maxX, int maxZ) {
+        return state().plumes().reaching(seed, probe, seaLevel, minX, minZ, maxX, maxZ);
+    }
+
+    /**
+     * Picks a trail point for a map on the trail pool, away from every deposit if possible.
+     *
+     * @param seed world seed
+     * @param probe terrain and climate source, read from the pool's threads
+     * @param seaLevel Y of the sea surface
+     * @param bodies deposits to try, in this order
+     * @param pick random number that selects one of the suitable points
+     * @return future of the point, empty if no trail has one
+     */
+    public static CompletableFuture<Optional<Plume.Spot>> mapSpot(long seed, TerrainProbe probe, int seaLevel,
+            List<Body> bodies, int pick) {
+        return state().plumes().mapSpot(seed, probe, seaLevel, bodies, pick, body -> true);
     }
 
     /**

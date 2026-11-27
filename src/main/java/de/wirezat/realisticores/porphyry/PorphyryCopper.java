@@ -1,11 +1,13 @@
 package de.wirezat.realisticores.porphyry;
 
 import de.wirezat.realisticores.config.MineralConfig;
+import de.wirezat.realisticores.indicator.IndicatorSource;
 import de.wirezat.realisticores.ore.DepositType;
 import de.wirezat.realisticores.ore.LocateTarget;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
@@ -58,5 +60,10 @@ public final class PorphyryCopper implements DepositType {
         return List.of(new LocateTarget("porphyry", (seed, probe, origin, limit) -> Porphyry.generator()
                 .nearest(seed, probe, origin.getX(), origin.getZ(), limit)
                 .map(body -> new BlockPos(body.x(), 0, body.z()))));
+    }
+
+    @Override
+    public Optional<IndicatorSource> indicators() {
+        return Optional.of(PorphyryIndicators.INSTANCE);
     }
 }

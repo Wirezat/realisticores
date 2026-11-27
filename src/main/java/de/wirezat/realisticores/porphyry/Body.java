@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.porphyry;
 
+import de.wirezat.realisticores.indicator.TrailSource;
 import java.util.List;
 
 /**
@@ -19,7 +20,12 @@ import java.util.List;
  * @param dikes porphyry dikes
  */
 public record Body(int x, int z, int radius, double elongation, double angle, Stage stage, int surfaceY, long salt,
-        double tiltX, double tiltZ, List<Vent> vents, List<Dike> dikes) {
+        double tiltX, double tiltZ, List<Vent> vents, List<Dike> dikes) implements TrailSource {
+    @Override
+    public double outcrop() {
+        return radius * elongation;
+    }
+
     /**
      * A vertical breccia vent.
      *

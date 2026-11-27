@@ -1,5 +1,6 @@
 package de.wirezat.realisticores.porphyry;
 
+import de.wirezat.realisticores.indicator.PlumeParams;
 import de.wirezat.realisticores.worldgen.IntRange;
 
 /**
@@ -13,9 +14,10 @@ import de.wirezat.realisticores.worldgen.IntRange;
  * @param radius smallest and largest ore shell radius in blocks
  * @param minHeight lowest terrain height at a deposit's axis
  * @param placementAttempts tries to find a high enough spot for each deposit before it is skipped
+ * @param plume indicator mineral trail settings
  */
 public record PorphyryParams(int cellSize, double chance, double jitter, IntRange deposits, IntRange spacing,
-        IntRange radius, int minHeight, int placementAttempts) {
+        IntRange radius, int minHeight, int placementAttempts, PlumeParams plume) {
     /**
      * Gives the shipped defaults.
      *
@@ -23,6 +25,7 @@ public record PorphyryParams(int cellSize, double chance, double jitter, IntRang
      */
     public static PorphyryParams defaults() {
         return new PorphyryParams(4000, 0.5, 0.3, new IntRange(1, 3), new IntRange(300, 800), new IntRange(40, 80),
-                90, 8);
+                90, 8, new PlumeParams(32.0, 1500.0, 0.6, 0.05, 20.0, 0.08, 2.5, 0.6, 0.5, 30.0,
+                        PlumeParams.indicatorsOf(PorphyryCopper.ID)));
     }
 }

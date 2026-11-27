@@ -5,6 +5,8 @@ import static de.wirezat.realisticores.config.ConfigValues.integer;
 
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.config.MineralConfig;
+import de.wirezat.realisticores.indicator.PlumeConfig;
+import de.wirezat.realisticores.indicator.PlumeParams;
 import de.wirezat.realisticores.worldgen.IntRange;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -44,12 +46,14 @@ public final class PorphyryConfig {
         Supplier<Integer> placementAttempts = integer(b, "placementAttempts", d.placementAttempts(), 1, 100,
                 "Tries to find high enough ground for each deposit before it is skipped.");
         b.pop();
+        Supplier<PlumeParams> plume = PlumeConfig.define(b, d.plume(), "deposit");
         MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(PorphyryCopper.ID), mineral -> true,
                 Map.of());
         PARAMS = () -> new PorphyryParams(cellSize.get(), chance.get(), jitter.get(),
                 new IntRange(minDeposits.get(), maxDeposits.get()).ordered(),
                 new IntRange(minSpacing.get(), maxSpacing.get()).ordered(),
-                new IntRange(minRadius.get(), maxRadius.get()).ordered(), minHeight.get(), placementAttempts.get());
+                new IntRange(minRadius.get(), maxRadius.get()).ordered(), minHeight.get(), placementAttempts.get(),
+                plume.get());
         SPEC = b.build();
     }
 

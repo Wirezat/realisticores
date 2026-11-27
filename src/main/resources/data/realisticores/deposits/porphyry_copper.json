@@ -9,5 +9,10 @@
     {"ore": "malachite", "zones": ["OXIDE", "OXIDE_BASE"], "fraction": 0.065, "graded": true},
     {"ore": "molybdenite", "zones": ["POTASSIC"], "fraction": 0.003, "graded": true},
     {"ore": "pyrite", "zones": ["PHYLLIC"], "fraction": 0.08, "blocks": {"PHYLLIC": "realisticores:phyllic_pyrite_ore"}}
+  ],
+  "indicators": [
+    {"id": "tourmaline", "item": "realisticores:tourmaline", "length": 500.0, "peak": 0.5, "pitch": 0.7},
+    {"id": "gold", "item": "minecraft:gold_nugget", "length": 250.0, "peak": 0.3, "pitch": 1.1},
+    {"id": "chalcopyrite", "item": "realisticores:chalcopyrite", "length": 80.0, "peak": 0.5, "pitch": 1.5}
   ]
 }
