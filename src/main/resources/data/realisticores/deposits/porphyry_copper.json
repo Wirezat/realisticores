@@ -7,7 +7,7 @@
                 "BRECCIA": "realisticores:breccia_chalcopyrite_ore"}},
     {"ore": "azurite", "zones": ["OXIDE", "OXIDE_BASE"], "fraction": 0.022, "graded": true},
     {"ore": "malachite", "zones": ["OXIDE", "OXIDE_BASE"], "fraction": 0.065, "graded": true},
-    {"ore": "molybdenite", "zones": ["POTASSIC"], "fraction": 0.012, "graded": true},
+    {"ore": "molybdenite", "zones": ["POTASSIC"], "fraction": 0.003, "graded": true},
     {"ore": "pyrite", "zones": ["PHYLLIC"], "fraction": 0.08, "blocks": {"PHYLLIC": "realisticores:phyllic_pyrite_ore"}}
   ]
 }
