@@ -41,7 +41,7 @@
   "enchantment.realisticores.trail_sense.desc": "Leads a trail of ghostly flames from the panning spot to the source of the indicator minerals.",
   "tooltip.realisticores.pan.grams": "%s g",
   "tooltip.realisticores.pan.water": "Water: %s %%",
-  "jei.realisticores.pan": "Fill it at water and wash sand, gravel or dirt. The upper row shows the indicator minerals of the last wash, the lower row what has collected in the pan. Higher values lie closer to the source. Ilmenite only turns up near it. The colour of the pyrope in the upper row tells where it comes from: violet from pipes rich in diamonds, red from poor ones, brown from barren ones. Pale means there is too little to tell.",
+  "jei.realisticores.pan": "Fill it at water and wash sand, gravel or dirt. The upper row shows the indicator minerals of the last wash, the lower row what has collected in the pan. Walk upstream while the values grow. Which grains come from which deposit and how far they travel is shown under Prospecting.",
   "jei.realisticores.kimberlite_map": "The cross lies on a trail of indicator minerals washed out of a kimberlite. The pan leads on from there.",
   "tooltip.realisticores.pan.efficiency": "Washes material faster.",
   "tooltip.realisticores.pan.fortune": "Collects more indicator minerals from every wash.",
@@ -121,5 +121,11 @@
   "item.realisticores.chalcocite": "Chalcocite",
   "item.realisticores.tourmaline": "Tourmaline",
   "block.realisticores.tourmaline_block": "Block of Tourmaline",
-  "trim_material.realisticores.tourmaline": "Tourmaline Material"
+  "trim_material.realisticores.tourmaline": "Tourmaline Material",
+  "jei.realisticores.prospecting": "Prospecting",
+  "jei.realisticores.prospecting.distance": "~%s",
+  "jei.realisticores.prospecting.kimberlite_pipe.name": "Kimberlite Pipe",
+  "jei.realisticores.prospecting.kimberlite_pipe": "Start in streams on old continents. The pyrope colour in the pan's upper row tells the pipe: violet rich in diamonds, red poor, brown barren. Pale means too little to tell.",
+  "jei.realisticores.prospecting.porphyry_copper.name": "Porphyry Copper Deposit",
+  "jei.realisticores.prospecting.porphyry_copper": "Start in valleys below high ground."
 }

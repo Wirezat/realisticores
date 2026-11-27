@@ -145,7 +145,7 @@ Configs live in `config/realisticores/` and reload while the game runs; changes 
 - **`suppressedOres`** in `main.toml` suppresses further ores, by block id or tag (`#c:ores/tin`).
 - **`oreBlockOverrides`** places another mod's block instead of this mod's ore while the ore is enabled, e.g. `peridot=othermod:peridot_ore`.
 - **Tags.** Every resource carries the common `c:` tags (`c:ores/*`, `c:gems/*`, `c:raw_materials/*`, `c:storage_blocks/*`). Gems and ornamental stones (natural diamond, peridot, pyrope, malachite, azurite, pyrite) are armor trim materials; raw ores and coals are not, as in vanilla.
-- **JEI and EMI** show the crystal press recipes. Both are optional.
+- **JEI and EMI** show the crystal press recipes. JEI also shows, under Prospecting, which grains each deposit sheds and how far they travel. Both are optional.
 
 ## Building from source
 
