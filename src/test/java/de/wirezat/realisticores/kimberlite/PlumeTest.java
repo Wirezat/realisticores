@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.wirezat.realisticores.indicator.GuidePoint;
+import de.wirezat.realisticores.indicator.Plume;
+import de.wirezat.realisticores.indicator.PlumeParams;
+import de.wirezat.realisticores.indicator.PlumePath;
 import de.wirezat.realisticores.worldgen.Climate;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
@@ -51,9 +54,9 @@ class PlumeTest {
 
     @Test
     void trailRunsDownhillAndIlmeniteStopsBeforePyrope() {
-        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PlumeParams params = KimberliteParams.defaults().plume();
         Pipe pipe = Pipe.of(0L, 0, 0, 70);
-        PlumePath path = Plume.trace(pipe, Math.PI, slopeEast(Climate.TEMPERATE), 0, params);
+        PlumePath<Pipe> path = Plume.trace(pipe, Math.PI, slopeEast(Climate.TEMPERATE), 0, params);
         assertTrue(path.xs()[path.xs().length - 1] > 500.0);
         assertEquals(0.0, path.zs()[path.zs().length - 1], 50.0);
         double pyropeDownhill = Plume.density(path, 300, 0, params, params.lead());
@@ -65,13 +68,13 @@ class PlumeTest {
 
     @Test
     void coldClimateStretchesTheTrailAndOceanShortensIt() {
-        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PlumeParams params = KimberliteParams.defaults().plume();
         Pipe pipe = Pipe.of(0L, 0, 0, 70);
         double temperate = Plume.density(Plume.trace(pipe, 0.0, slopeEast(Climate.TEMPERATE), 0, params),
                 600, 0, params, params.lead());
         double cold = Plume.density(Plume.trace(pipe, 0.0, slopeEast(Climate.COLD), 0, params),
                 600, 0, params, params.lead());
-        PlumePath ocean = Plume.trace(pipe, 0.0, slopeEast(Climate.OCEAN), 0, params);
+        PlumePath<Pipe> ocean = Plume.trace(pipe, 0.0, slopeEast(Climate.OCEAN), 0, params);
         assertTrue(cold > temperate * 2.0);
         assertTrue(Plume.density(ocean, 600, 0, params, params.lead()) < temperate);
         assertEquals(params.lead().peak(), Plume.density(ocean, 0, 0, params, params.lead()), 1e-12);
@@ -79,8 +82,8 @@ class PlumeTest {
 
     @Test
     void guideLeadsFromThePannedSpotBackToThePipe() {
-        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
-        PlumePath path = Plume.trace(Pipe.of(0L, 0, 0, 70), 0.0, slopeEast(Climate.TEMPERATE), 0, params);
+        PlumeParams params = KimberliteParams.defaults().plume();
+        PlumePath<Pipe> path = Plume.trace(Pipe.of(0L, 0, 0, 70), 0.0, slopeEast(Climate.TEMPERATE), 0, params);
         List<GuidePoint> guide = Plume.guide(path, 300, 0, 400, 10);
         assertTrue(guide.size() > 20);
         assertTrue(guide.get(0).x() > 250.0);
@@ -94,8 +97,8 @@ class PlumeTest {
 
     @Test
     void trailRunsOnOverShallowSeaFloorAndEndsInDeepWater() {
-        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
-        PlumePath path = Plume.trace(Pipe.of(0L, 0, 0, 70), 0.0, shelf(), 63, params);
+        PlumeParams params = KimberliteParams.defaults().plume();
+        PlumePath<Pipe> path = Plume.trace(Pipe.of(0L, 0, 0, 70), 0.0, shelf(), 63, params);
         double end = path.xs()[path.xs().length - 1];
         assertTrue(end > 200.0);
         assertTrue(end < 1000.0);
@@ -103,10 +106,10 @@ class PlumeTest {
 
     @Test
     void mapSpotsKeepTheirDistanceFromEveryPipeAndStayOnLand() {
-        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PlumeParams params = KimberliteParams.defaults().plume();
         Pipe source = Pipe.of(0L, -1200, 0, 70);
         Pipe neighbour = Pipe.of(0L, -500, 0, 70);
-        PlumePath path = Plume.trace(source, 0.0, shelf(), 63, params);
+        PlumePath<Pipe> path = Plume.trace(source, 0.0, shelf(), 63, params);
         List<Plume.Spot> spots = Plume.mapSpots(path, List.of(source, neighbour), 250.0, shelf(), 63, params);
         assertFalse(spots.isEmpty());
         for (Plume.Spot spot : spots) {
@@ -119,16 +122,16 @@ class PlumeTest {
 
     @Test
     void mapSpotsAreKeptOnlyWhereTheStrongestTrailHasDiamonds() {
-        KimberliteParams.PlumeParams params = KimberliteParams.defaults().plume();
+        PlumeParams params = KimberliteParams.defaults().plume();
         PipeGrade grade = new PipeGrade(KimberliteParams.defaults().grade());
         Pipe barren = pipeWith(grade, true);
         Pipe graded = pipeWith(grade, false);
-        PlumePath barrenTrail = straight(barren);
-        PlumePath gradedTrail = straight(graded);
+        PlumePath<Pipe> barrenTrail = straight(barren);
+        PlumePath<Pipe> gradedTrail = straight(graded);
         Plume.Spot onBarren = new Plume.Spot(barren.x() + 300, barren.z());
         Plume.Spot onGraded = new Plume.Spot(graded.x() + 300, graded.z());
-        assertEquals(List.of(onGraded), Plume.withDiamonds(List.of(onBarren, onGraded),
-                List.of(barrenTrail, gradedTrail), grade, params));
+        assertEquals(List.of(onGraded), Plume.keepFrom(List.of(onBarren, onGraded),
+                List.of(barrenTrail, gradedTrail), params, pipe -> grade.pipeFactor(pipe) > 0.0));
     }
 
     private static Pipe pipeWith(PipeGrade grade, boolean barren) {
@@ -139,8 +142,8 @@ class PlumeTest {
         return Pipe.of(0L, 0, z, 70);
     }
 
-    private static PlumePath straight(Pipe pipe) {
-        return new PlumePath(pipe, new double[] {pipe.x(), pipe.x() + 1600}, new double[] {pipe.z(), pipe.z()},
+    private static PlumePath<Pipe> straight(Pipe pipe) {
+        return new PlumePath<>(pipe, new double[] {pipe.x(), pipe.x() + 1600}, new double[] {pipe.z(), pipe.z()},
                 new double[] {0, 1600}, 1.0);
     }
 }

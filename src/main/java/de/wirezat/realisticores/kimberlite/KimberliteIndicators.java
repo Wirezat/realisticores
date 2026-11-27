@@ -4,6 +4,9 @@ import de.wirezat.realisticores.indicator.GradeTone;
 import de.wirezat.realisticores.indicator.Grains;
 import de.wirezat.realisticores.indicator.IndicatorSource;
 import de.wirezat.realisticores.indicator.Measurement;
+import de.wirezat.realisticores.indicator.Plume;
+import de.wirezat.realisticores.indicator.PlumeParams;
+import de.wirezat.realisticores.indicator.PlumePath;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,7 +22,7 @@ public final class KimberliteIndicators implements IndicatorSource {
 
     @Override
     public CompletableFuture<Measurement> measure(ServerLevel level, TerrainProbe probe, BlockPos pos) {
-        KimberliteParams.PlumeParams params = Kimberlite.params().plume();
+        PlumeParams params = Kimberlite.params().plume();
         PipeGrade grade = Kimberlite.grade();
         return Kimberlite.plumesReaching(level.getSeed(), probe, level.getSeaLevel(), pos.getX(), pos.getZ(),
                 pos.getX(), pos.getZ())
@@ -37,14 +40,14 @@ public final class KimberliteIndicators implements IndicatorSource {
      * @param z world Z in blocks
      * @return grains of the trail with the most of the lead indicator there
      */
-    static Measurement combine(List<PlumePath> paths, KimberliteParams.PlumeParams params, PipeGrade grade,
-            long seed, int x, int z) {
-        PlumePath source = Plume.strongest(paths, x, z, params);
+    static Measurement combine(List<PlumePath<Pipe>> paths, PlumeParams params, PipeGrade grade, long seed, int x,
+            int z) {
+        PlumePath<Pipe> source = Plume.strongest(paths, x, z, params);
         if (source == null) {
             return Measurement.NONE;
         }
         Grains grains = Grains.measure(Plume.densities(source, x, z, params), seed, x, z);
         return new Measurement(grains, grains.isEmpty() ? null : source,
-                GradeTone.of(grade.pipeFactor(source.pipe()), grains.get(params.lead().id())));
+                GradeTone.of(grade.pipeFactor(source.source()), grains.get(params.lead().id())));
     }
 }

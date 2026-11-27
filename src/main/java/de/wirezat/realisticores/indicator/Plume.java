@@ -1,6 +1,5 @@
-package de.wirezat.realisticores.kimberlite;
+package de.wirezat.realisticores.indicator;
 
-import de.wirezat.realisticores.indicator.GuidePoint;
 import de.wirezat.realisticores.worldgen.SplitMix64;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
 import java.util.ArrayList;
@@ -8,9 +7,10 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.jetbrains.annotations.Nullable;
 
-/** Traces the downhill trail of indicator grains from a pipe and tells how dense the grains are at a position. */
+/** Traces the downhill trail of indicator grains from a deposit and tells how dense the grains are at a position. */
 public final class Plume {
     private static final long SALT = 0x504C554D455F4B49L;
     private static final double SPOT_MIN_LEAD = 0.02;
@@ -19,28 +19,29 @@ public final class Plume {
     }
 
     /**
-     * Gives the regional flow direction used where the terrain is flat. Pipes in the same area share it.
+     * Gives the regional flow direction used where the terrain is flat. Deposits in the same area share it.
      *
      * @param seed world seed
-     * @param pipe the pipe
+     * @param source the deposit
      * @param areaSize edge of the area in blocks that shares one direction
      * @return heading in radians
      */
-    public static double fallbackAngle(long seed, Pipe pipe, int areaSize) {
-        long hash = SplitMix64.hash(seed ^ SALT, Math.floorDiv(pipe.x(), areaSize), Math.floorDiv(pipe.z(), areaSize));
+    public static double fallbackAngle(long seed, TrailSource source, int areaSize) {
+        long hash = SplitMix64.hash(seed ^ SALT, Math.floorDiv(source.x(), areaSize),
+                Math.floorDiv(source.z(), areaSize));
         return new SplitMix64(hash).nextDouble() * 2.0 * Math.PI;
     }
 
     /**
-     * Gives the length factor of a pipe from the climate at its centre.
+     * Gives the length factor of a deposit from the climate at its centre.
      *
-     * @param pipe the pipe
+     * @param source the deposit
      * @param probe terrain and climate source
      * @param params trail settings
      * @return factor applied to the trail length and the mineral spread
      */
-    public static double lengthFactor(Pipe pipe, TerrainProbe probe, KimberliteParams.PlumeParams params) {
-        return switch (probe.climate(pipe.x(), pipe.z())) {
+    public static double lengthFactor(TrailSource source, TerrainProbe probe, PlumeParams params) {
+        return switch (probe.climate(source.x(), source.z())) {
             case COLD -> params.coldFactor();
             case DRY -> params.dryFactor();
             case OCEAN -> params.oceanFactor();
@@ -54,29 +55,30 @@ public final class Plume {
      * @param params trail settings
      * @return the largest of the climate factors and 1
      */
-    public static double maxFactor(KimberliteParams.PlumeParams params) {
+    public static double maxFactor(PlumeParams params) {
         return Math.max(1.0, Math.max(params.coldFactor(), Math.max(params.dryFactor(), params.oceanFactor())));
     }
 
     /**
-     * Follows the terrain downhill from the pipe until the trail is long enough or leaves the shallow sea floor.
+     * Follows the terrain downhill from the deposit until the trail is long enough or leaves the shallow sea floor.
      *
-     * @param pipe the source pipe
+     * @param source the deposit
+     * @param <S> kind of deposit
      * @param fallbackAngle heading in radians used where the terrain is flat
      * @param probe terrain height source
      * @param seaLevel Y of the sea surface; a trail ends where the terrain lies deeper below it than the depth limit
      * @param params trail settings
-     * @return the path from the pipe centre to its end
+     * @return the path from the deposit centre to its end
      */
-    public static PlumePath trace(Pipe pipe, double fallbackAngle, TerrainProbe probe, int seaLevel,
-            KimberliteParams.PlumeParams params) {
-        double factor = lengthFactor(pipe, probe, params);
+    public static <S extends TrailSource> PlumePath<S> trace(S source, double fallbackAngle, TerrainProbe probe,
+            int seaLevel, PlumeParams params) {
+        double factor = lengthFactor(source, probe, params);
         int capacity = (int) Math.ceil(params.maxLength() * factor / params.stepLength()) + 1;
         double[] xs = new double[capacity];
         double[] zs = new double[capacity];
         double[] lengths = new double[capacity];
-        xs[0] = pipe.x();
-        zs[0] = pipe.z();
+        xs[0] = source.x();
+        zs[0] = source.z();
         double headingX = Math.cos(fallbackAngle);
         double headingZ = Math.sin(fallbackAngle);
         double sample = params.stepLength();
@@ -110,7 +112,7 @@ public final class Plume {
                 break;
             }
         }
-        return new PlumePath(pipe, Arrays.copyOf(xs, count), Arrays.copyOf(zs, count),
+        return new PlumePath<>(source, Arrays.copyOf(xs, count), Arrays.copyOf(zs, count),
                 Arrays.copyOf(lengths, count), factor);
     }
 
@@ -129,32 +131,32 @@ public final class Plume {
     /**
      * Gives how dense a mineral is at a position.
      *
-     * @param path trail of the pipe
+     * @param path trail of the deposit
      * @param x world X in blocks
      * @param z world Z in blocks
      * @param indicator spread of the mineral
      * @param params trail settings
      * @return density from 0 to 1; it falls with the distance along the trail and from its centre line
      */
-    public static double density(PlumePath path, double x, double z,
-            KimberliteParams.PlumeParams params, KimberliteParams.IndicatorParams indicator) {
+    public static double density(PlumePath<?> path, double x, double z,
+            PlumeParams params, PlumeParams.IndicatorParams indicator) {
         return density(path, nearest(path, x, z), params, indicator);
     }
 
     /**
      * Gives how dense every indicator mineral is at a position.
      *
-     * @param path trail of the pipe
+     * @param path trail of the deposit
      * @param x world X in blocks
      * @param z world Z in blocks
      * @param params trail settings
      * @return density from 0 to 1 by indicator id, in the order of the indicators
      */
-    public static Map<String, Double> densities(PlumePath path, double x, double z,
-            KimberliteParams.PlumeParams params) {
+    public static Map<String, Double> densities(PlumePath<?> path, double x, double z,
+            PlumeParams params) {
         Nearest nearest = nearest(path, x, z);
         Map<String, Double> densities = new LinkedHashMap<>();
-        for (KimberliteParams.IndicatorParams indicator : params.indicators()) {
+        for (PlumeParams.IndicatorParams indicator : params.indicators()) {
             densities.put(indicator.id(), density(path, nearest, params, indicator));
         }
         return densities;
@@ -163,15 +165,15 @@ public final class Plume {
     /**
      * Gives how dense a mineral is, given the nearest point of the trail.
      *
-     * @param path trail of the pipe
+     * @param path trail of the deposit
      * @param nearest nearest point of the trail to the position
      * @param params trail settings
      * @param indicator spread of the mineral
      * @return density from 0 to 1
      */
-    private static double density(PlumePath path, Nearest nearest, KimberliteParams.PlumeParams params,
-            KimberliteParams.IndicatorParams indicator) {
-        double outside = Math.max(0.0, nearest.distance() - path.pipe().diameter() / 2.0);
+    private static double density(PlumePath<?> path, Nearest nearest, PlumeParams params,
+            PlumeParams.IndicatorParams indicator) {
+        double outside = Math.max(0.0, nearest.distance() - path.source().outcrop());
         double width = params.startWidth() + params.widthGrowth() * nearest.length();
         double decay = nearest.length() == 0.0 ? 1.0
                 : Math.exp(-nearest.length() / (indicator.length() * path.factor()));
@@ -188,25 +190,25 @@ public final class Plume {
     }
 
     /**
-     * Lists the trail points a map may mark: on land, rich enough in the lead indicator and away from every pipe.
+     * Lists the trail points a map may mark: on land, rich enough in the lead indicator and away from every deposit.
      *
-     * @param path trail of the pipe
-     * @param pipes all pipes near the trail
-     * @param minDistance smallest distance to the edge of every pipe in blocks
+     * @param path trail of the deposit
+     * @param sources all deposits near the trail
+     * @param minDistance smallest distance to the edge of every deposit in blocks
      * @param probe terrain height source
      * @param seaLevel Y of the sea surface
      * @param params trail settings
-     * @return the points from the pipe to the end of the trail, possibly none
+     * @return the points from the deposit to the end of the trail, possibly none
      */
-    public static List<Spot> mapSpots(PlumePath path, List<Pipe> pipes, double minDistance, TerrainProbe probe,
-            int seaLevel, KimberliteParams.PlumeParams params) {
+    public static List<Spot> mapSpots(PlumePath<?> path, List<? extends TrailSource> sources, double minDistance,
+            TerrainProbe probe, int seaLevel, PlumeParams params) {
         List<Spot> spots = new ArrayList<>();
         for (int i = 0; i < path.xs().length; i++) {
             double x = path.xs()[i];
             double z = path.zs()[i];
             if (density(path, x, z, params, params.lead()) >= SPOT_MIN_LEAD
-                    && pipes.stream().allMatch(pipe -> Math.hypot(x - pipe.x(), z - pipe.z())
-                            >= minDistance + pipe.diameter() / 2.0)
+                    && sources.stream().allMatch(source -> Math.hypot(x - source.x(), z - source.z())
+                            >= minDistance + source.outcrop())
                     && height(probe, x, z) >= seaLevel - 1) {
                 spots.add(new Spot(x, z));
             }
@@ -215,19 +217,20 @@ public final class Plume {
     }
 
     /**
-     * Keeps the points where the strongest trail belongs to a pipe with diamonds.
+     * Keeps the points where the strongest trail belongs to a wanted deposit.
      *
      * @param spots the points
      * @param paths all trails that may reach them
-     * @param grade diamond grade of the pipes
      * @param params trail settings
-     * @return the points a player will find diamonds from
+     * @param wanted tells which deposits a map may lead to
+     * @param <S> kind of deposit
+     * @return the points whose strongest trail comes from a wanted deposit
      */
-    public static List<Spot> withDiamonds(List<Spot> spots, List<PlumePath> paths, PipeGrade grade,
-            KimberliteParams.PlumeParams params) {
+    public static <S extends TrailSource> List<Spot> keepFrom(List<Spot> spots, List<PlumePath<S>> paths,
+            PlumeParams params, Predicate<? super S> wanted) {
         return spots.stream().filter(spot -> {
-            PlumePath strongest = strongest(paths, spot.x(), spot.z(), params);
-            return strongest != null && grade.pipeFactor(strongest.pipe()) > 0.0;
+            PlumePath<S> strongest = strongest(paths, spot.x(), spot.z(), params);
+            return strongest != null && wanted.test(strongest.source());
         }).toList();
     }
 
@@ -238,13 +241,15 @@ public final class Plume {
      * @param x world X in blocks
      * @param z world Z in blocks
      * @param params trail settings
+     * @param <S> kind of deposit
      * @return the strongest trail, or null without trails
      */
     @Nullable
-    public static PlumePath strongest(List<PlumePath> paths, double x, double z, KimberliteParams.PlumeParams params) {
+    public static <S extends TrailSource> PlumePath<S> strongest(List<PlumePath<S>> paths, double x, double z,
+            PlumeParams params) {
         double most = 0.0;
-        PlumePath strongest = null;
-        for (PlumePath path : paths) {
+        PlumePath<S> strongest = null;
+        for (PlumePath<S> path : paths) {
             double lead = density(path, x, z, params, params.lead());
             if (lead > most) {
                 most = lead;
@@ -265,7 +270,7 @@ public final class Plume {
      * @param z world Z
      * @return segment, position on it, distance and length along the trail
      */
-    private static Nearest nearest(PlumePath path, double x, double z) {
+    private static Nearest nearest(PlumePath<?> path, double x, double z) {
         int segment = -1;
         double fraction = 0.0;
         double bestDistance = Math.hypot(x - path.xs()[0], z - path.zs()[0]);
@@ -288,16 +293,16 @@ public final class Plume {
 
     /**
      * Lists evenly spaced points from a position to the nearest trail point and on along the trail back toward the
-     * pipe.
+     * deposit.
      *
-     * @param path trail of the pipe
+     * @param path trail of the deposit
      * @param x world X in blocks
      * @param z world Z in blocks
      * @param reach distance in blocks to cover, counted from the position
      * @param spacing distance in blocks between two points
-     * @return points ordered from the position toward the pipe, empty if the trail has no segment
+     * @return points ordered from the position toward the deposit, empty if the trail has no segment
      */
-    public static List<GuidePoint> guide(PlumePath path, double x, double z, double reach, double spacing) {
+    public static List<GuidePoint> guide(PlumePath<?> path, double x, double z, double reach, double spacing) {
         List<GuidePoint> points = new ArrayList<>();
         if (path.xs().length < 2) {
             return points;

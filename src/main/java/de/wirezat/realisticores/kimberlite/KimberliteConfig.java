@@ -1,15 +1,14 @@
 package de.wirezat.realisticores.kimberlite;
 
-import static de.wirezat.realisticores.config.ConfigValues.camelCase;
 import static de.wirezat.realisticores.config.ConfigValues.decimal;
 import static de.wirezat.realisticores.config.ConfigValues.flag;
 import static de.wirezat.realisticores.config.ConfigValues.integer;
 
 import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.config.MineralConfig;
+import de.wirezat.realisticores.indicator.PlumeConfig;
+import de.wirezat.realisticores.indicator.PlumeParams;
 import de.wirezat.realisticores.worldgen.IntRange;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -194,41 +193,7 @@ public final class KimberliteConfig {
         Supplier<KimberliteParams.GradeParams> grade = () -> new KimberliteParams.GradeParams(gradeBarrenShare.get(),
                 gradePoorShare.get(), gradePoorFactor.get(), gradePhaseWavelength.get(), gradePhaseAmplitude.get());
 
-        b.comment("Indicator mineral trails: grains washed downhill from a pipe, found by panning.").push("plume");
-        Supplier<Double> plumeStepLength = decimal(b, "stepLength", d.plume().stepLength(), 8.0, 128.0,
-                "Distance in blocks between two points of the trail path.");
-        Supplier<Double> plumeMaxLength = decimal(b, "maxLength", d.plume().maxLength(), 100.0, 5000.0,
-                "Longest trail in blocks.");
-        Supplier<Double> plumeInertia = decimal(b, "inertia", d.plume().inertia(), 0.0, 0.95,
-                "Share of the previous heading kept at each step; higher values give straighter trails.");
-        Supplier<Double> plumeFlatSlope = decimal(b, "flatSlope", d.plume().flatSlope(), 0.001, 1.0,
-                "Terrain slope in blocks per block at which the trail follows the downhill direction fully.");
-        Supplier<Double> plumeStartWidth = decimal(b, "startWidth", d.plume().startWidth(), 1.0, 200.0,
-                "Half width of the trail at the pipe in blocks.");
-        Supplier<Double> plumeWidthGrowth = decimal(b, "widthGrowth", d.plume().widthGrowth(), 0.0, 1.0,
-                "Growth of the half width per block of trail length.");
-        Supplier<Double> plumeColdFactor = decimal(b, "coldFactor", d.plume().coldFactor(), 0.0, 10.0,
-                "Trail length factor for pipes in cold biomes; glaciers carry grains far.");
-        Supplier<Double> plumeDryFactor = decimal(b, "dryFactor", d.plume().dryFactor(), 0.0, 10.0,
-                "Trail length factor for pipes in dry biomes.");
-        Supplier<Double> plumeOceanFactor = decimal(b, "oceanFactor", d.plume().oceanFactor(), 0.0, 10.0,
-                "Trail length factor for pipes in oceans; 0 leaves grains only at the pipe.");
-        Supplier<Double> plumeMaxSeaDepth = decimal(b, "maxSeaDepth", d.plume().maxSeaDepth(), 0.0, 200.0,
-                "Depth in blocks below the sea surface at which a trail ends; trails run on over shallow sea floor.");
-        List<Supplier<KimberliteParams.IndicatorParams>> indicators = new ArrayList<>();
-        for (KimberliteParams.IndicatorParams indicator : d.plume().indicators()) {
-            String key = camelCase(indicator.id());
-            Supplier<Double> length = decimal(b, key + "Length", indicator.length(), 10.0, 5000.0,
-                    "Length in blocks over which " + indicator.id() + " falls to 1/e.");
-            Supplier<Double> peak = decimal(b, key + "Peak", indicator.peak(), 0.0, 1.0,
-                    "Measured share of " + indicator.id() + " next to the pipe; 1 is 100 g per wash.");
-            indicators.add(() -> new KimberliteParams.IndicatorParams(indicator.id(), length.get(), peak.get()));
-        }
-        b.pop();
-        Supplier<KimberliteParams.PlumeParams> plume = () -> new KimberliteParams.PlumeParams(plumeStepLength.get(),
-                plumeMaxLength.get(), plumeInertia.get(), plumeFlatSlope.get(), plumeStartWidth.get(),
-                plumeWidthGrowth.get(), plumeColdFactor.get(), plumeDryFactor.get(), plumeOceanFactor.get(),
-                plumeMaxSeaDepth.get(), indicators.stream().map(Supplier::get).toList());
+        Supplier<PlumeParams> plume = PlumeConfig.define(b, d.plume(), "pipe");
 
         MINERALS = MineralConfig.define(b, OreConfig.registry().deposits().get(KimberlitePipe.ID),
                 mineral -> true, Map.of());

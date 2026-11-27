@@ -1,11 +1,11 @@
 package de.wirezat.realisticores.survey;
 
 import de.wirezat.realisticores.OreConfig;
+import de.wirezat.realisticores.indicator.Plume;
 import de.wirezat.realisticores.kimberlite.Field;
 import de.wirezat.realisticores.kimberlite.Kimberlite;
 import de.wirezat.realisticores.kimberlite.KimberlitePipe;
 import de.wirezat.realisticores.kimberlite.Pipe;
-import de.wirezat.realisticores.kimberlite.Plume;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import de.wirezat.realisticores.worldgen.Surveys;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
