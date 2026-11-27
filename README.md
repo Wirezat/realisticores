@@ -1,7 +1,7 @@
 <h1 align="center">RealisticOres</h1>
 
 <p align="center">
-  <img src=".github/assets/items.png" alt="Natural diamond, peridot, pyrope, chromite, ilmenite, graphite, bort, anthracite, lignite, raw uranium, pyrite, sal ammoniac, raw siderite, malachite, azurite, chalcopyrite, molybdenite and the iron pan" width="560">
+  <img src=".github/assets/items.png" alt="Natural diamond, peridot, pyrope, chromite, ilmenite, graphite, bort, anthracite, lignite, raw uranium, pyrite, sal ammoniac, raw siderite, malachite, azurite, chalcopyrite, chalcocite, molybdenite, tourmaline and the iron pan" width="600">
 </p>
 
 <p align="center">
@@ -24,8 +24,8 @@ Vanilla ores come as scattered blobs that tell you nothing. In RealisticOres an 
 
 - **[Kimberlite pipes](#kimberlite-pipes)**: carrot-shaped volcanic pipes with craters, five kimberlite facies and a peridotite rim. Diamond, bort, graphite and peridot, with rich, poor and barren pipes.
 - **[Coal basins](#coal-basins)**: layered basins of hard coal, lignite or anthracite, with sandstone and uranium roll fronts, pyritic black shale, clay ironstone and burning seams.
-- **[Porphyry copper](#porphyry-copper-in-progress)** (in progress): zoned copper rock from gossan cap to potassic core.
-- **[Prospecting](#prospecting)**: pan sediment for indicator minerals, follow their trail upstream, buy a map to the nearest field.
+- **[Porphyry copper](#porphyry-copper)**: groups of deposits on high ground, with a rusty gossan cap, a weathered and enriched top, alteration shells around a porphyry stock, breccia vents and dikes.
+- **[Prospecting](#prospecting)**: pan sediment for indicator minerals, follow their trail upstream, buy a map to the nearest deposit.
 - **[Crystal press](#crystal-press)**: press graphite into synthetic diamond, faster and richer with the right catalyst and a seed crystal.
 - **[Plays well with others](#compatibility)**: enabled ores suppress same-tagged ores of vanilla and other mods; every resource carries `c:` tags and a storage block; gems and ornamental stones are armor trim materials.
 
@@ -69,11 +69,27 @@ What else lies in a basin, and how to read it:
 
 Sandstone, black shale and seam fires are part of every basin, whether or not their ores are switched on.
 
-### Porphyry copper (in progress)
+### Porphyry copper
 
-<img src=".github/assets/porphyry.png" alt="Gossan with gold, bleached porphyry with malachite, azurite and chalcopyrite, propylite, phyllic rock with pyrite and chalcopyrite, potassic porphyry with chalcopyrite and molybdenite, porphyry, tourmaline breccia with chalcopyrite" width="720">
+<img src=".github/assets/porphyry.png" alt="Gossan, gold ore, bleached porphyry, malachite, azurite and chalcopyrite ore, phyllic rock, chalcocite, pyrite and chalcopyrite ore, propylite, potassic porphyry, chalcopyrite and molybdenite ore, porphyry, tourmaline breccia, chalcopyrite ore" width="720">
 
-Rocks, ores and minerals are in the game; the deposit that places them is not yet. From cap to core: a rusty gossan with gold, bleached porphyry with malachite, azurite and leached chalcopyrite, an outer halo of propylite, phyllic rock with pyrite and chalcopyrite, and the potassic core with chalcopyrite and molybdenite. Tourmaline breccia carries chalcopyrite too.
+Porphyry deposits form in groups on high ground, like a stretch of a porphyry belt. Each one is a stock of porphyry wrapped in shells of altered rock: potassic porphyry around a barren core, phyllic rock outside it and a wide halo of green propylite. Breccia vents of tourmaline breccia and steep porphyry dikes cut through the stock, and the whole body can lean.
+
+The top has been weathered. Rain leached the copper out of the upper rock and carried it down, so the profile reads from the surface:
+
+| Zone | Rock | Ores |
+| --- | --- | --- |
+| Gossan | rusty gossan | gold |
+| Leached cap | bleached porphyry | none |
+| Oxide zone | bleached porphyry | malachite, azurite, leached chalcopyrite at its base |
+| Cementation zone | phyllic rock | chalcocite, the richest copper ore |
+| Potassic shell | potassic porphyry | chalcopyrite, molybdenite |
+| Phyllic shell | phyllic rock | chalcopyrite, pyrite |
+| Breccia vents | tourmaline breccia | chalcopyrite |
+
+Erosion has cut each deposit to a different depth. Slightly eroded ones still hide the potassic dome under a thick cap, deeply eroded ones have lost most of their weathered top and expose the core. Patches of gossan and coarse dirt in the soil mark a cap below. Copper sits in a ring around the barren core: the weathered ores lie above that ring and thin out toward the rim, and molybdenite stays deep in the potassic shell.
+
+All copper ores count as copper for other mods (`c:ores/copper`) and smelt to copper ingots; gossan gold drops gold nuggets. None of them suppresses vanilla copper or gold.
 
 ## Prospecting
 
@@ -87,9 +103,17 @@ Kimberlite pipes shed **indicator minerals** that rivers and erosion carry away 
 
 The colour of the pyrope also hints at the grade of the pipe it came from.
 
+Porphyry copper deposits sit on high ground, and streams wash their grains down into the valleys:
+
+| Indicator | Travels about | Means |
+| --- | --- | --- |
+| Tourmaline | 500 blocks | a deposit is somewhere upstream |
+| Gold nugget | 250 blocks | getting closer |
+| Chalcopyrite | 80 blocks | the deposit is near |
+
 - **Iron pan.** Fill it with water and use it on sand, gravel or dirt. It washes the sediment, weighs the indicator grains it finds and keeps them. Efficiency washes faster, Fortune collects more grains, Silk Touch leaves the block in place for half the yield.
 - **Trail Sense.** An enchantment for the pan, found as a book in shipwreck and buried treasure. After a wash, a trail of ghostly flames leads from the panning spot toward the source of the grains.
-- **Kimberlite map.** Sold by cartographers, found in mineshafts and desert pyramids. Used, it turns into a map to a trail point of the nearest kimberlite field.
+- **Kimberlite map and porphyry map.** Sold by cartographers, found in mineshafts and desert pyramids. Used, each turns into a map to a trail point of the nearest kimberlite field or porphyry copper deposit.
 
 ## Crystal press
 
@@ -113,7 +137,7 @@ Configs live in `config/realisticores/` and reload while the game runs; changes 
 
 ## Commands
 
-`/locate realisticores <target>` finds the nearest deposit, like the vanilla locate command. Targets: `kimberlite_pipe`, `hard_coal`, `lignite`, `anthracite`. A deposit that is switched off is reported as not found.
+`/locate realisticores <target>` finds the nearest deposit, like the vanilla locate command. Targets: `kimberlite_pipe`, `hard_coal`, `lignite`, `anthracite`, `porphyry`. A deposit that is switched off is reported as not found.
 
 ## Compatibility
 
