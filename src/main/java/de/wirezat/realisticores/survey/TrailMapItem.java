@@ -1,17 +1,11 @@
 package de.wirezat.realisticores.survey;
 
-import de.wirezat.realisticores.OreConfig;
 import de.wirezat.realisticores.indicator.Plume;
-import de.wirezat.realisticores.kimberlite.Field;
-import de.wirezat.realisticores.kimberlite.Kimberlite;
-import de.wirezat.realisticores.kimberlite.KimberlitePipe;
-import de.wirezat.realisticores.kimberlite.Pipe;
 import de.wirezat.realisticores.worldgen.LevelTerrainProbe;
 import de.wirezat.realisticores.worldgen.Surveys;
 import de.wirezat.realisticores.worldgen.TerrainProbe;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -34,19 +28,39 @@ import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
-/** The empty kimberlite map: when used it turns into a map to a trail of the nearest kimberlite field. */
-public class KimberliteMapItem extends Item {
-    private static final int MAX_SEARCH = 40000;
+/** An empty survey map: when used it turns into a map to a point on the indicator trail of a nearby deposit. */
+public class TrailMapItem extends Item {
     private static final int MAX_WAIT_TICKS = 1200;
     private static final byte MAP_SCALE = 4;
+
+    private final Target target;
+    private final String filledName;
+
+    /** Finds the trail point a map marks. */
+    @FunctionalInterface
+    public interface Target {
+        /**
+         * Looks for a trail point near a player, called on the server thread.
+         *
+         * @param level the overworld
+         * @param probe reader for the original terrain
+         * @param player the player who uses the map
+         * @return future of the point, empty if no deposit or trail was found
+         */
+        CompletableFuture<Optional<Plume.Spot>> find(ServerLevel level, TerrainProbe probe, Player player);
+    }
 
     /**
      * Creates the map item.
      *
      * @param properties item properties
+     * @param target finds the trail point
+     * @param filledName translation key of the filled map's name
      */
-    public KimberliteMapItem(Properties properties) {
+    public TrailMapItem(Properties properties, Target target, String filledName) {
         super(properties);
+        this.target = target;
+        this.filledName = filledName;
     }
 
     @Override
@@ -55,20 +69,13 @@ public class KimberliteMapItem extends Item {
         if (!(level instanceof ServerLevel server) || !(player instanceof ServerPlayer reader)) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
-        Optional<Field> field = level.dimension() == Level.OVERWORLD && OreConfig.resolved().active(KimberlitePipe.ID)
-                ? Kimberlite.generator().nearestField(server.getSeed(), player.getBlockX(), player.getBlockZ(),
-                        MAX_SEARCH)
-                : Optional.empty();
         Optional<TerrainProbe> probe = LevelTerrainProbe.of(server);
-        if (field.isEmpty() || probe.isEmpty()) {
+        if (level.dimension() != Level.OVERWORLD || probe.isEmpty()) {
             playNothingFound(reader);
             return InteractionResultHolder.fail(stack);
         }
         player.getCooldowns().addCooldown(this, MAX_WAIT_TICKS);
-        List<Pipe> pipes = new ArrayList<>(field.get().pipes());
-        Util.shuffle(pipes, level.getRandom());
-        Kimberlite.mapSpot(server.getSeed(), probe.get(), server.getSeaLevel(), pipes,
-                level.getRandom().nextInt())
+        target.find(server, probe.get(), player)
                 .thenApplyAsync(spot -> spot.map(found -> survey(server, found)), Util.backgroundExecutor())
                 .whenCompleteAsync((survey, failure) -> {
                     if (player.isRemoved() || !server.getServer().isSameThread()) {
@@ -124,7 +131,7 @@ public class KimberliteMapItem extends Item {
     }
 
     /**
-     * Swaps one empty kimberlite map of a player for the filled map.
+     * Swaps one empty survey map of a player for the filled map.
      *
      * @param level the world
      * @param player the player
@@ -171,7 +178,7 @@ public class KimberliteMapItem extends Item {
      * @param survey the marked point and the water outlines around it
      * @return a filled map that fills in as the player explores it
      */
-    private static ItemStack surveyMap(ServerLevel level, Survey survey) {
+    private ItemStack surveyMap(ServerLevel level, Survey survey) {
         MapItemSavedData data = mapData(survey.x(), survey.z(), level.registryAccess());
         for (int i = 0; i < survey.outlines().length; i++) {
             if (survey.outlines()[i] != 0) {
@@ -184,7 +191,7 @@ public class KimberliteMapItem extends Item {
         map.set(DataComponents.MAP_ID, mapId);
         MapItemSavedData.addTargetDecoration(map, new BlockPos(survey.x(), 0, survey.z()), "+",
                 MapDecorationTypes.RED_X);
-        map.set(DataComponents.ITEM_NAME, Component.translatable("item.realisticores.kimberlite_map.filled"));
+        map.set(DataComponents.ITEM_NAME, Component.translatable(filledName));
         return map;
     }
 }

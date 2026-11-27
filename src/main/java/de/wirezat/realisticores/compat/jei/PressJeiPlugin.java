@@ -36,6 +36,8 @@ public class PressJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(ModItems.IRON_PAN.get(), Component.translatable("jei.realisticores.pan"));
         registration.addIngredientInfo(ModItems.KIMBERLITE_MAP.get(),
                 Component.translatable("jei.realisticores.kimberlite_map"));
+        registration.addIngredientInfo(ModItems.PORPHYRY_MAP.get(),
+                Component.translatable("jei.realisticores.porphyry_map"));
     }
 
     @Override

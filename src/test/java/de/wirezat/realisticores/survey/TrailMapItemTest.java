@@ -10,12 +10,12 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.junit.jupiter.api.Test;
 
-class KimberliteMapItemTest {
+class TrailMapItemTest {
     @Test
     void mapIsCentredOnTheCrossAndKeepsItsScaleAcrossASave() {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
-        MapItemSavedData data = KimberliteMapItem.mapData(-5003, 12345, RegistryAccess.EMPTY);
+        MapItemSavedData data = TrailMapItem.mapData(-5003, 12345, RegistryAccess.EMPTY);
         assertTrue(Math.abs(data.centerX + 5003) < 16);
         assertTrue(Math.abs(data.centerZ - 12345) < 16);
         MapItemSavedData reloaded = MapItemSavedData.load(data.save(new CompoundTag(), RegistryAccess.EMPTY),

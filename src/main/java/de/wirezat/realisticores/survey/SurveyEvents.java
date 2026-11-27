@@ -2,11 +2,13 @@ package de.wirezat.realisticores.survey;
 
 import de.wirezat.realisticores.ModItems;
 import de.wirezat.realisticores.RealisticOres;
+import java.util.List;
 import java.util.Set;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -17,7 +19,7 @@ import net.neoforged.neoforge.common.BasicItemListing;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 
-/** Adds the kimberlite map to the cartographer's trades and to structure chests, and books to other chests. */
+/** Adds the survey maps to the cartographer's trades and to structure chests, and books to other chests. */
 public final class SurveyEvents {
     private static final int TRADE_LEVEL = 3;
     private static final int TRADE_EMERALDS = 16;
@@ -32,7 +34,8 @@ public final class SurveyEvents {
             ResourceLocation.withDefaultNamespace("chests/shipwreck_treasure"),
             ResourceLocation.withDefaultNamespace("chests/buried_treasure"));
 
-    private static final ResourceKey<LootTable> MAP_INJECTION = injection("kimberlite_map");
+    private static final List<ResourceKey<LootTable>> MAP_INJECTIONS =
+            List.of(injection("kimberlite_map"), injection("porphyry_map"));
     private static final ResourceKey<LootTable> BOOK_INJECTION = injection("trail_sense_book");
 
     private SurveyEvents() {
@@ -50,15 +53,17 @@ public final class SurveyEvents {
     }
 
     /**
-     * Offers the kimberlite map at the cartographer.
+     * Offers the survey maps at the cartographer.
      *
      * @param event the villager trades event
      */
     public static void onTrades(VillagerTradesEvent event) {
         if (event.getType() == VillagerProfession.CARTOGRAPHER) {
-            event.getTrades().get(TRADE_LEVEL).add(new BasicItemListing(new ItemStack(Items.EMERALD, TRADE_EMERALDS),
-                    new ItemStack(ModItems.KIMBERLITE_MAP.get()), TRADE_MAX_USES, TRADE_XP,
-                    TRADE_PRICE_MULTIPLIER));
+            for (Item map : List.of(ModItems.KIMBERLITE_MAP.get(), ModItems.PORPHYRY_MAP.get())) {
+                event.getTrades().get(TRADE_LEVEL).add(new BasicItemListing(
+                        new ItemStack(Items.EMERALD, TRADE_EMERALDS), new ItemStack(map), TRADE_MAX_USES, TRADE_XP,
+                        TRADE_PRICE_MULTIPLIER));
+            }
         }
     }
 
@@ -69,7 +74,7 @@ public final class SurveyEvents {
      */
     public static void onLoot(LootTableLoadEvent event) {
         if (MAP_CHESTS.contains(event.getName())) {
-            event.getTable().addPool(pool(MAP_INJECTION));
+            MAP_INJECTIONS.forEach(map -> event.getTable().addPool(pool(map)));
         } else if (BOOK_CHESTS.contains(event.getName())) {
             event.getTable().addPool(pool(BOOK_INJECTION));
         }

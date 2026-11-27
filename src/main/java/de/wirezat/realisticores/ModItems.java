@@ -1,7 +1,8 @@
 package de.wirezat.realisticores;
 
 import de.wirezat.realisticores.indicator.PanItem;
-import de.wirezat.realisticores.survey.KimberliteMapItem;
+import de.wirezat.realisticores.survey.MapTargets;
+import de.wirezat.realisticores.survey.TrailMapItem;
 import java.util.Collection;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
@@ -33,7 +34,11 @@ public final class ModItems {
     public static final DeferredItem<Item> CHALCOCITE = ITEMS.registerSimpleItem("chalcocite");
     public static final DeferredItem<Item> TOURMALINE = ITEMS.registerSimpleItem("tourmaline");
     public static final DeferredItem<Item> KIMBERLITE_MAP = ITEMS.register("kimberlite_map",
-            () -> new KimberliteMapItem(new Item.Properties().stacksTo(1)));
+            () -> new TrailMapItem(new Item.Properties().stacksTo(1), MapTargets::kimberlite,
+                    "item.realisticores.kimberlite_map.filled"));
+    public static final DeferredItem<Item> PORPHYRY_MAP = ITEMS.register("porphyry_map",
+            () -> new TrailMapItem(new Item.Properties().stacksTo(1), MapTargets::porphyry,
+                    "item.realisticores.porphyry_map.filled"));
     public static final DeferredItem<Item> IRON_PAN = ITEMS.register("iron_pan",
             () -> new PanItem(new Item.Properties().stacksTo(1)));
 
